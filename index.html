@@ -45,6 +45,33 @@
     <button type="button" class="login-btn" onclick="openAuthModal('login')">Login</button>
     <button type="button" class="mob-cta" onclick="openAuthModal('signup')" style="width: 100%; text-align: center;">Get Started Free →</button>
   </div>
+<script>
+  // Mobile menu toggle
+  (function(){
+    const ham = document.getElementById('ham');
+    const menu = document.getElementById('mobileMenu');
+    if (ham && menu) {
+      ham.addEventListener('click', () => {
+        menu.classList.toggle('open');
+        ham.classList.toggle('open');
+        const expanded = ham.classList.contains('open');
+        ham.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      });
+      // Close menu when any link is clicked
+      menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+        menu.classList.remove('open'); ham.classList.remove('open'); ham.setAttribute('aria-expanded','false');
+      }));
+      // Close on Escape
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { menu.classList.remove('open'); ham.classList.remove('open'); ham.setAttribute('aria-expanded','false'); } });
+      // Close when clicking outside the menu on small screens
+      document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target) && !ham.contains(e.target) && menu.classList.contains('open')) {
+          menu.classList.remove('open'); ham.classList.remove('open'); ham.setAttribute('aria-expanded','false');
+        }
+      });
+    }
+  })();
+</script>
 </nav>
 <section id="hero">
   <div class="hero-glow"></div>

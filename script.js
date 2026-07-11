@@ -14,12 +14,27 @@
                 spans[1].style.opacity = open ? '0' : '1';
                 spans[2].style.transform = open ? 'translateY(-7px) rotate(-45deg)' : '';
             }
+            document.body.style.overflow = open ? 'hidden' : '';
         }
         ham.addEventListener('click', () => setMenu(!mob.classList.contains('open')));
-        $$('#mobileMenu a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+        $$('#mobileMenu a').forEach(a => {
+            a.addEventListener('click', (e) => {
+                const href = a.getAttribute('href') || '';
+                setMenu(false);
+                if (href.startsWith('#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        const y = target.getBoundingClientRect().top + window.scrollY - 90;
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                    }
+                }
+            });
+        });
         document.addEventListener('click', (e) => {
             if (!mob.contains(e.target) && !ham.contains(e.target)) setMenu(false);
         });
+        window.addEventListener('popstate', () => setMenu(false));
     }
     function initMarquee() {
         const techs = [
