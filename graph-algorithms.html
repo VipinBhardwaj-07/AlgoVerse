@@ -1,0 +1,1296 @@
+
+Graph algorithms · HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AlgoVerse Pro | Graph Algorithms Mastery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #05050f;
+      --bg-surface: linear-gradient(160deg, rgba(22, 22, 54, 0.8), rgba(7, 7, 20, 0.95));
+      --bg-surface-solid: #0b0b22;
+      --card-shadow-3d: 0 40px 90px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      --border-glow: rgba(129, 98, 255, 0.25);
+      --border-bright: rgba(0, 255, 208, 0.5);
+      --neon-purple: #8162ff;
+      --neon-cyan: #00ffd0;
+      --neon-magenta: #ff3b93;
+      --neon-green: #00ff66;
+      --text-main: #f5f5fa;
+      --text-muted: #a9aecd;
+      --text-dark: #4d5171;
+      --transition-cosmic: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    .space-matrix-background {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 50% 30%, #151242 0%, #03030a 85%);
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .perspective-floor-grid {
+      position: absolute;
+      width: 200%; height: 200%;
+      top: -30%; left: -50%;
+      background-image:
+        linear-gradient(rgba(129, 98, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(129, 98, 255, 0.06) 1px, transparent 1px);
+      background-size: 60px 60px;
+      transform: perspective(300px) rotateX(65deg);
+      transform-origin: center center;
+      animation: gridScroll 20s linear infinite;
+    }
+    @keyframes gridScroll {
+      0% { transform: perspective(300px) rotateX(65deg) translateY(0); }
+      100% { transform: perspective(300px) rotateX(65deg) translateY(60px); }
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: rgba(129, 98, 255, 0.3); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); }
+    .hero-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 6rem 2rem; position: relative; z-index: 1; }
+    .hero-shell.is-hidden { display: none !important; }
+    .hero-card { width: min(1200px, 100%); border-radius: 36px; padding: 5.5rem 4.5rem; background: var(--bg-surface); border: 1px solid var(--border-glow); box-shadow: var(--card-shadow-3d); backdrop-filter: blur(30px); text-align: center; position: relative; }
+    .hero-card h1 { font-family: 'Syne', sans-serif; font-size: clamp(2.6rem, 5.5vw, 4.2rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.2rem; letter-spacing: -0.02em; color: #ffffff; text-shadow: 0 1px 0 #7353ff, 0 2px 0 #573be6, 0 4px 20px rgba(129, 98, 255, 0.4); }
+    .hero-card > p { color: var(--text-muted); max-width: 780px; margin: 1.5rem auto 3.5rem; font-size: 1.2rem; font-weight: 500; }
+    .badge { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.6rem 1.5rem; border-radius: 999px; background: rgba(0, 255, 208, 0.06); color: var(--neon-cyan); border: 1px solid rgba(0, 255, 208, 0.25); font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2.5rem; }
+    .hero-actions { display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin-bottom: 5rem; }
+    .start-btn { background: #ffffff; color: #05050f; border: none; padding: 1.3rem 4rem; border-radius: 999px; font-weight: 700; font-size: 1.05rem; cursor: pointer; transition: var(--transition-cosmic); box-shadow: 0 12px 35px rgba(255, 255, 255, 0.15); }
+    .start-btn:hover { transform: translateY(-4px); background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); color: #fff; box-shadow: 0 20px 45px rgba(0, 255, 208, 0.35); }
+    .secondary-link { display: inline-flex; align-items: center; padding: 1.3rem 4rem; border-radius: 999px; font-weight: 600; border: 1px solid var(--border-glow); background: rgba(255, 255, 255, 0.01); transition: var(--transition-cosmic); color: var(--text-main); text-decoration: none; }
+    .secondary-link:hover { background: rgba(255, 255, 255, 0.04); border-color: #fff; }
+    .home-dsa-showcase-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin: 4.5rem 0; text-align: left; }
+    .dsa-preview-card { background: rgba(4, 4, 15, 0.7); border: 1px solid rgba(255, 255, 255, 0.02); border-radius: 20px; padding: 1.75rem; box-shadow: inset 0 2px 15px rgba(0,0,0,0.6); display: flex; flex-direction: column; justify-content: space-between; gap: 1.5rem; transition: var(--transition-cosmic); }
+    .dsa-preview-card:hover { transform: translateY(-8px) scale(1.02); border-color: rgba(129, 98, 255, 0.4); background: rgba(129, 98, 255, 0.03); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+    .dsa-preview-card h4 { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; color: #fff; font-weight: 700; margin-bottom: 0.4rem; }
+    .dsa-preview-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+    .card-graphic-wrapper { background: #050512; border-radius: 12px; padding: 1rem; border: 1px solid rgba(255,255,255,0.01); display: flex; justify-content: center; align-items: center; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 3.5rem; }
+    .stat-card { background: rgba(255, 255, 255, 0.01); border: 1px solid var(--border-glow); border-radius: 20px; padding: 2rem; text-align: left; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03); transition: var(--transition-cosmic); cursor: pointer; }
+    .stat-card:hover { border-color: var(--neon-purple); transform: translateY(-4px); box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5); }
+    .stat-card strong { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+    .stat-card span { color: var(--text-muted); font-size: 0.92rem; font-weight: 500; }
+    .curriculum-shell { display: none; position: relative; z-index: 1; }
+    .curriculum-shell.active { display: block !important; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 3rem; position: sticky; top: 0; z-index: 100; background: rgba(5, 5, 13, 0.9); border-bottom: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); }
+    .back-btn { display: inline-flex; align-items: center; padding: 0.6rem 1.4rem; border-radius: 999px; border: 1px solid var(--border-glow); background: rgba(255, 255, 255, 0.02); font-size: 0.85rem; font-weight: 600; color: var(--text-muted); transition: var(--transition-cosmic); text-decoration: none; cursor: pointer; }
+    .back-btn:hover { border-color: var(--neon-cyan); color: #fff; }
+    .progress-wrap { display: flex; align-items: center; gap: 1.2rem; }
+    .progress-wrap span { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--neon-cyan); }
+    .progress-track { width: 200px; height: 5px; border-radius: 99px; background: rgba(255, 255, 255, 0.04); overflow: hidden; }
+    .progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple)); transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    .layout { display: grid; grid-template-columns: 360px 1fr; min-height: calc(100vh - 73px); }
+    .sidebar { padding: 2.5rem 1.5rem; background: var(--bg-surface-solid); border-right: 1px solid rgba(255, 255, 255, 0.05); overflow-y: auto; height: calc(100vh - 73px); position: sticky; top: 73px; }
+    .sidebar-search { display: flex; align-items: center; gap: 0.75rem; padding: 0.9rem 1.2rem; margin-bottom: 2.5rem; border: 1px solid var(--border-glow); border-radius: 14px; background: rgba(0, 0, 0, 0.3); transition: var(--transition-cosmic); }
+    .sidebar-search:focus-within { border-color: var(--neon-purple); box-shadow: 0 0 20px rgba(129, 98, 255, 0.12); }
+    .sidebar-search span { color: var(--text-dark); font-size: 1rem; }
+    .sidebar-search input { width: 100%; border: none; outline: none; background: transparent; color: var(--text-main); font-size: 0.9rem; font-family: inherit; }
+    .module { border-radius: 16px; margin-bottom: 0.75rem; background: rgba(255, 255, 255, 0.01); border: 1px solid transparent; transition: var(--transition-cosmic); overflow: hidden; }
+    .module.open { background: rgba(255, 255, 255, 0.015); border-color: rgba(255, 255, 255, 0.04); }
+    .module-head { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 1.1rem; cursor: pointer; user-select: none; }
+    .module-head span:first-child { font-size: 0.92rem; font-weight: 700; max-width: 85%; }
+    .module-head .chevron { font-size: 0.75rem; color: var(--text-dark); transition: transform 0.3s ease; }
+    .module.open .chevron { transform: rotate(90deg); color: var(--neon-purple); }
+    .module-body { display: none; padding: 0 0.6rem 1.2rem; }
+    .module.open .module-body { display: block; }
+    .topic-link { display: flex; align-items: center; padding: 0.8rem 1.1rem; margin-top: 0.4rem; border-radius: 10px; cursor: pointer; color: var(--text-muted); font-size: 0.88rem; font-weight: 500; transition: var(--transition-cosmic); }
+    .topic-link:hover { background: rgba(255, 255, 255, 0.03); color: #fff; }
+    .topic-link.active { background: rgba(129, 98, 255, 0.12); color: #fff; font-weight: 600; border-left: 3px solid var(--neon-purple); }
+    .topic-link.done { color: var(--neon-green); position: relative; }
+    .topic-link.done::after { content: '●'; position: absolute; right: 16px; font-size: 0.7rem; color: var(--neon-green); }
+    .content { padding: 4rem 6rem; max-width: 1050px; margin: 0 auto; }
+    .content-header { margin-bottom: 3.5rem; }
+    .content-tag { display: inline-block; padding: 0.4rem 1rem; border-radius: 8px; background: rgba(255, 59, 147, 0.06); border: 1px solid rgba(255, 59, 147, 0.2); color: #ff6cb1; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.2rem; }
+    .content-header h2 { font-family: 'Space Grotesk', sans-serif; font-size: 2.8rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.6rem; }
+    .content-meta { color: var(--text-dark); font-size: 0.95rem; font-weight: 600; }
+    .content-hero { padding: 2rem 2.5rem; border-radius: 24px; background: linear-gradient(135deg, rgba(129, 98, 255, 0.06), rgba(0, 255, 208, 0.01)); border: 1px solid var(--border-glow); box-shadow: var(--card-shadow-3d); margin-bottom: 3rem; }
+    .content-hero .eyebrow { font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--neon-cyan); font-weight: 700; margin-bottom: 0.6rem; }
+    .content-hero p { color: var(--text-muted); font-size: 1.05rem; }
+    .learning-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 4rem; }
+    .learning-card { padding: 1.75rem; border-radius: 20px; background: #0f0f24; border: 1px solid rgba(255, 255, 255, 0.03); box-shadow: var(--card-shadow-3d); }
+    .learning-card strong { display: block; font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; color: #fff; }
+    .learning-card span { color: var(--text-muted); font-size: 0.85rem; }
+    .content-body p { margin-bottom: 2rem; color: #dbdee9; font-size: 1.1rem; }
+    .content-body ul, .content-body ol { margin-bottom: 2.5rem; padding-left: 1.75rem; color: #dbdee9; }
+    .content-body li { margin-bottom: 0.75rem; }
+    .content-body h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.75rem; margin: 3.5rem 0 1.2rem; color: #fff; }
+    .content-body pre { background: #04040c; border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 16px; padding: 1.75rem; overflow-x: auto; margin: 2.5rem 0; }
+    .content-body code { font-family: 'JetBrains Mono', monospace; font-size: 0.92rem; color: #9effdf; }
+    .callout { border-left: 3px solid var(--neon-purple); padding: 1.75rem 2rem; border-radius: 0 20px 20px 0; background: rgba(129, 98, 255, 0.03); margin: 3rem 0; color: #dfd8ff; font-size: 1.05rem; }
+    .visual-block { margin: 3rem 0; padding: 2.5rem; border-radius: 24px; background: linear-gradient(160deg, #111129, #080816); border: 1px solid var(--border-glow); box-shadow: var(--card-shadow-3d); }
+    .visual-head { font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dark); margin-bottom: 2rem; }
+    .flow-grid { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .flow-chip { padding: 0.75rem 1.6rem; border-radius: 12px; background: rgba(129, 98, 255, 0.06); border: 1px solid rgba(129, 98, 255, 0.15); color: #cbd2ff; font-weight: 600; font-size: 0.9rem; }
+    .flow-arrow { color: var(--neon-cyan); font-weight: 700; font-size: 1.2rem; filter: drop-shadow(0 0 4px var(--neon-cyan)); }
+    .visual-caption { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+    .compare-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+    .compare-card { padding: 1.4rem; border-radius: 14px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.02); }
+    .compare-card strong { display: block; font-size: 0.95rem; color: #fff; margin-bottom: 0.3rem; }
+    .compare-card span { color: var(--text-dark); font-size: 0.85rem; }
+    .actions-row { display: flex; justify-content: flex-start; align-items: center; margin-top: 5rem; padding-top: 2.5rem; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+    .mark-btn { background: transparent; border: 1px solid rgba(0, 255, 208, 0.3); color: var(--neon-cyan); padding: 0.9rem 2.4rem; border-radius: 999px; font-weight: 700; font-size: 0.92rem; cursor: pointer; transition: var(--transition-cosmic); }
+    .mark-btn:hover { background: rgba(0, 255, 208, 0.04); border-color: var(--neon-cyan); }
+    .mark-btn.done { background: var(--neon-cyan); border-color: var(--neon-cyan); color: #060610; box-shadow: 0 0 30px rgba(0, 255, 208, 0.25); }
+    .nav-buttons { display: flex; justify-content: space-between; gap: 1.5rem; margin-top: 3rem; }
+    .nav-btn { flex: 1; padding: 1.5rem 1.75rem; border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 20px; background: #0f0f24; cursor: pointer; text-align: left; box-shadow: var(--card-shadow-3d); transition: var(--transition-cosmic); }
+    .nav-btn:hover { border-color: rgba(129, 98, 255, 0.4); background: rgba(129, 98, 255, 0.02); }
+    .nav-btn.disabled { opacity: 0.15; pointer-events: none; }
+    .nav-btn strong { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dark); margin-bottom: 0.4rem; }
+    .nav-btn span { color: var(--text-main); font-size: 1.05rem; font-weight: 600; }
+    .nav-btn#nextBtn { text-align: right; }
+    .challenge-console { margin: 3.5rem 0; border-radius: 24px; background: linear-gradient(160deg, #0d0d26, #06060f); border: 1px solid var(--border-bright); box-shadow: 0 40px 90px rgba(0, 0, 0, 0.85), 0 0 60px rgba(0, 255, 208, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.08); overflow: hidden; position: relative; }
+    .challenge-console::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-purple), var(--neon-magenta), transparent); opacity: 0.8; }
+    .console-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1.8rem 2.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.06); background: rgba(0, 255, 208, 0.02); }
+    .console-title { display: flex; align-items: center; gap: 0.9rem; }
+    .console-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--neon-cyan); box-shadow: 0 0 12px var(--neon-cyan); animation: pulseDot 2s ease-in-out infinite; }
+    @keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+    .console-title span { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dark); }
+    .console-title strong { font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 700; color: #fff; display: block; }
+    .console-count { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--neon-cyan); border: 1px solid rgba(0, 255, 208, 0.3); padding: 0.4rem 1rem; border-radius: 999px; background: rgba(0, 255, 208, 0.05); }
+    .console-body { padding: 2rem 2.5rem 2.5rem; display: flex; flex-direction: column; gap: 1.1rem; }
+    .challenge-card { border-radius: 16px; background: rgba(255, 255, 255, 0.015); border: 1px solid rgba(255, 255, 255, 0.05); padding: 1.6rem 1.8rem; transition: var(--transition-cosmic); }
+    .challenge-card:hover { border-color: rgba(129, 98, 255, 0.35); background: rgba(129, 98, 255, 0.03); transform: translateX(4px); }
+    .challenge-row { display: flex; align-items: flex-start; gap: 1.1rem; }
+    .challenge-index { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 600; color: var(--neon-purple); min-width: 52px; padding-top: 0.15rem; }
+    .challenge-main { flex: 1; }
+    .challenge-meta { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem; flex-wrap: wrap; }
+    .diff-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.28rem 0.75rem; border-radius: 999px; }
+    .diff-badge.easy { color: var(--neon-green); background: rgba(0, 255, 102, 0.08); border: 1px solid rgba(0, 255, 102, 0.3); }
+    .diff-badge.medium { color: #ffc857; background: rgba(255, 200, 87, 0.08); border: 1px solid rgba(255, 200, 87, 0.3); }
+    .diff-badge.hard { color: var(--neon-magenta); background: rgba(255, 59, 147, 0.08); border: 1px solid rgba(255, 59, 147, 0.3); }
+    .type-badge { font-family: 'Space Grotesk', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dark); padding: 0.28rem 0.75rem; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.08); }
+    .challenge-question { color: #e6e8f5; font-size: 1.02rem; font-weight: 500; line-height: 1.6; margin-bottom: 0.4rem; }
+    .hint-toggle { background: none; border: none; color: var(--neon-cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0; display: inline-flex; align-items: center; gap: 0.4rem; transition: var(--transition-cosmic); }
+    .hint-toggle:hover { color: #fff; gap: 0.6rem; }
+    .hint-panel { display: none; margin-top: 0.9rem; padding: 1rem 1.3rem; border-radius: 12px; background: rgba(0, 0, 0, 0.35); border-left: 3px solid var(--neon-cyan); color: var(--text-muted); font-size: 0.92rem; line-height: 1.55; }
+    .hint-panel.open { display: block; }
+    .console-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 1.4rem 2.5rem; border-top: 1px solid rgba(255, 255, 255, 0.06); background: rgba(0,0,0,0.2); }
+    .console-footer p { color: var(--text-dark); font-size: 0.85rem; margin: 0; }
+    .console-cta { font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 700; color: #060610; background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); padding: 0.7rem 1.6rem; border-radius: 999px; border: none; cursor: pointer; transition: var(--transition-cosmic); box-shadow: 0 10px 25px rgba(0, 255, 208, 0.2); }
+    .console-cta:hover { transform: translateY(-2px); box-shadow: 0 15px 35px rgba(0, 255, 208, 0.35); }
+    @media (max-width: 640px) { .console-header, .console-body, .console-footer { padding-left: 1.4rem; padding-right: 1.4rem; } .challenge-row { flex-direction: column; gap: 0.5rem; } }
+    @media (max-width: 1200px) { .home-dsa-showcase-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 1024px) { .layout { grid-template-columns: 1fr; } .sidebar { height: auto; position: static; border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding: 1.5rem; } .content { padding: 3rem 1.5rem; } .stats { grid-template-columns: 1fr; gap: 1rem; } .learning-grid { grid-template-columns: 1fr; } .home-dsa-showcase-grid { grid-template-columns: 1fr; } }
+    .challenge-btn-row { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
+    .sol-toggle { background: none; border: none; color: var(--neon-green); font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0; display: inline-flex; align-items: center; gap: 0.4rem; transition: var(--transition-cosmic); }
+    .sol-toggle:hover { color: #fff; gap: 0.6rem; }
+    .hint-panel.sol-panel { border-left-color: var(--neon-green); color: #d7ffe8; }
+    .hint-panel.sol-panel strong { color: var(--neon-green); }
+    .mcq-console { border-color: rgba(255, 59, 147, 0.35); box-shadow: 0 40px 90px rgba(0, 0, 0, 0.85), 0 0 60px rgba(255, 59, 147, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+    .mcq-console::before { background: linear-gradient(90deg, transparent, var(--neon-magenta), var(--neon-purple), var(--neon-cyan), transparent); }
+    .mcq-card { border-radius: 16px; background: rgba(255, 255, 255, 0.015); border: 1px solid rgba(255, 255, 255, 0.05); padding: 1.5rem 1.7rem; }
+    .mcq-question { color: #e6e8f5; font-size: 1rem; font-weight: 600; margin-bottom: 1rem; }
+    .mcq-num { color: var(--neon-magenta); font-family: 'JetBrains Mono', monospace; margin-right: 0.4rem; }
+    .mcq-options { display: flex; flex-direction: column; gap: 0.6rem; }
+    .mcq-option { display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1.1rem; border-radius: 12px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: var(--transition-cosmic); }
+    .mcq-option:hover { border-color: rgba(129, 98, 255, 0.4); }
+    .mcq-option input { accent-color: var(--neon-purple); cursor: pointer; }
+    .mcq-option-letter { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text-dark); min-width: 16px; }
+    .mcq-option-text { color: #d5d9e8; font-size: 0.92rem; }
+    .mcq-option.correct { border-color: var(--neon-green); background: rgba(0, 255, 102, 0.08); }
+    .mcq-option.correct .mcq-option-letter { color: var(--neon-green); }
+    .mcq-option.wrong { border-color: var(--neon-magenta); background: rgba(255, 59, 147, 0.08); }
+    .mcq-option.wrong .mcq-option-letter { color: var(--neon-magenta); }
+    .interview-shell { display: none; position: relative; z-index: 1; }
+    .interview-shell.active { display: block !important; }
+    .interview-content { padding: 3rem 6rem 6rem; max-width: 1050px; margin: 0 auto; }
+    .interview-intro { padding: 2.5rem; border-radius: 24px; background: linear-gradient(135deg, rgba(255, 59, 147, 0.07), rgba(129, 98, 255, 0.03)); border: 1px solid var(--border-glow); box-shadow: var(--card-shadow-3d); margin-bottom: 3rem; }
+    .interview-intro h2 { font-family: 'Space Grotesk', sans-serif; font-size: 2.4rem; margin-bottom: 0.8rem; }
+    .interview-intro p { color: var(--text-muted); font-size: 1.05rem; }
+    .iq-module { border-radius: 20px; margin-bottom: 1.2rem; background: rgba(255, 255, 255, 0.012); border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden; }
+    .iq-module-head { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; cursor: pointer; user-select: none; }
+    .iq-module-head strong { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; color: #fff; }
+    .iq-module-head span.iq-sub { display:block; color: var(--text-dark); font-size: 0.85rem; font-weight: 500; margin-top: 0.2rem; }
+    .iq-module-head .chevron { font-size: 0.8rem; color: var(--text-dark); transition: transform 0.3s ease; }
+    .iq-module.open .chevron { transform: rotate(90deg); color: var(--neon-magenta); }
+    .iq-module-body { display: none; padding: 0 2rem 2rem; flex-direction: column; gap: 1.2rem; }
+    .iq-module.open .iq-module-body { display: flex; }
+    .iq-card { border-radius: 16px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.05); padding: 1.6rem 1.8rem; }
+    .iq-q { color: #fff; font-weight: 700; font-size: 1.02rem; margin-bottom: 0.8rem; }
+    .iq-q span { color: var(--neon-cyan); font-family: 'JetBrains Mono', monospace; margin-right: 0.5rem; }
+    .iq-a { color: #dbdee9; font-size: 0.98rem; margin-bottom: 0.9rem; }
+    .iq-a strong { color: var(--neon-green); }
+    .iq-analysis { border-left: 3px solid var(--neon-purple); padding: 0.9rem 1.2rem; border-radius: 0 12px 12px 0; background: rgba(129, 98, 255, 0.04); color: var(--text-muted); font-size: 0.88rem; }
+    .iq-analysis strong { color: #cbd2ff; }
+    .iq-rank-table { display: grid; gap: 0.6rem; margin-top: 1rem; }
+    .iq-rank-row { display: grid; grid-template-columns: 50px 1fr 160px; gap: 1rem; padding: 0.9rem 1.3rem; border-radius: 10px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.03); font-size: 0.88rem; align-items: center; }
+    .iq-rank-row .rank-num { color: var(--neon-magenta); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+    .iq-rank-row .rank-topic { color: var(--text-dark); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    .browse-card { border-radius: 16px; background: rgba(255, 255, 255, 0.015); border: 1px solid rgba(255, 255, 255, 0.05); padding: 1.4rem 1.7rem; cursor: pointer; transition: var(--transition-cosmic); display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .browse-card:hover { border-color: rgba(129, 98, 255, 0.4); background: rgba(129, 98, 255, 0.04); transform: translateX(4px); }
+    .browse-card-main strong { display: block; font-size: 1.02rem; color: #fff; font-weight: 700; margin-bottom: 0.3rem; }
+    .browse-card-main span { color: var(--text-dark); font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .browse-arrow { color: var(--neon-cyan); font-size: 1.1rem; flex-shrink: 0; }
+    .browse-count-pill { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--neon-purple); border: 1px solid rgba(129, 98, 255, 0.35); padding: 0.3rem 0.8rem; border-radius: 999px; background: rgba(129, 98, 255, 0.06); }
+    .roadmap-note { margin-top: 2rem; padding: 1.4rem 1.8rem; border-radius: 16px; background: rgba(255, 200, 87, 0.05); border: 1px solid rgba(255, 200, 87, 0.2); color: #ffd98a; font-size: 0.9rem; }
+    @media (max-width: 1024px) { .interview-content { padding: 2rem 1.5rem 4rem; } .iq-rank-row { grid-template-columns: 40px 1fr; } .iq-rank-row .rank-topic { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="space-matrix-background"><div class="perspective-floor-grid"></div></div>
+  <section class="hero-shell" id="heroShell">
+    <div class="hero-card">
+      <div class="badge">⚡ Production Graph Core v1.0 · Modules 1–6 Live</div>
+      <h1>Graph Algorithms Mastery</h1>
+      <p>Master BFS, DFS, shortest paths, minimum spanning trees, DAGs, and connectivity algorithms through engineered lesson pipelines, complexity breakdowns, and real interview vectors.</p>
+      <div class="hero-actions">
+        <button class="start-btn" id="startLearningBtn">Start Learning</button>
+        <a class="secondary-link" href="index.html">Back to Home</a>
+      </div>
+      <div class="home-dsa-showcase-grid">
+        <div class="dsa-preview-card">
+          <div><h4>Traversal Engines</h4><p>BFS and DFS pipelines that unlock shortest paths, components, and ordering.</p></div>
+          <div class="card-graphic-wrapper">
+            <svg width="100%" height="40" viewBox="0 0 160 40" fill="none">
+              <circle cx="20" cy="20" r="6" fill="#05050f" stroke="#8162ff" stroke-width="2"/>
+              <circle cx="60" cy="8" r="6" fill="#05050f" stroke="#00ffd0" stroke-width="2"/>
+              <circle cx="60" cy="32" r="6" fill="#05050f" stroke="#00ffd0" stroke-width="2"/>
+              <circle cx="100" cy="8" r="6" fill="#05050f" stroke="#ff3b93" stroke-width="1.5"/>
+              <circle cx="100" cy="32" r="6" fill="#05050f" stroke="#ff3b93" stroke-width="1.5"/>
+              <path d="M26 20 L54 9 M26 20 L54 31 M66 8 L94 8 M66 32 L94 32" stroke="#4d5171" stroke-width="1.5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="dsa-preview-card">
+          <div><h4>Shortest Paths</h4><p>Weighted routing logic behind Dijkstra, Bellman-Ford, and Floyd-Warshall.</p></div>
+          <div class="card-graphic-wrapper">
+            <svg width="100%" height="40" viewBox="0 0 160 40" fill="none">
+              <circle cx="15" cy="20" r="5" fill="#8162ff" fill-opacity="0.3" stroke="#8162ff"/>
+              <circle cx="75" cy="8" r="5" fill="#8162ff" fill-opacity="0.3" stroke="#8162ff"/>
+              <circle cx="75" cy="32" r="5" fill="#8162ff" fill-opacity="0.3" stroke="#8162ff"/>
+              <circle cx="140" cy="20" r="5" fill="#00ffd0" fill-opacity="0.3" stroke="#00ffd0"/>
+              <path d="M20 20 L70 9" stroke="#00ffd0" stroke-width="1.5"/>
+              <path d="M20 20 L70 31" stroke="#4d5171" stroke-width="1.5"/>
+              <path d="M80 8 L135 19" stroke="#00ffd0" stroke-width="1.5"/>
+              <path d="M80 32 L135 21" stroke="#4d5171" stroke-width="1.5"/>
+              <text x="45" y="10" fill="#00ffd0" font-size="7" font-family="monospace">2</text>
+              <text x="105" y="10" fill="#00ffd0" font-size="7" font-family="monospace">4</text>
+            </svg>
+          </div>
+        </div>
+        <div class="dsa-preview-card">
+          <div><h4>Spanning Trees</h4><p>Prim's and Kruskal's build minimum-cost networks with Union-Find.</p></div>
+          <div class="card-graphic-wrapper">
+            <svg width="100%" height="40" viewBox="0 0 160 40" fill="none">
+              <circle cx="80" cy="8" r="5" fill="#05050f" stroke="#00ffd0" stroke-width="2"/>
+              <circle cx="30" cy="30" r="5" fill="#05050f" stroke="#00ffd0" stroke-width="2"/>
+              <circle cx="130" cy="30" r="5" fill="#05050f" stroke="#00ffd0" stroke-width="2"/>
+              <circle cx="80" cy="34" r="5" fill="#05050f" stroke="#8162ff" stroke-width="1.5" stroke-dasharray="2 2"/>
+              <path d="M80 13 L33 27 M80 13 L127 27" stroke="#00ffd0" stroke-width="2"/>
+              <path d="M30 30 L80 34" stroke="#4d5171" stroke-width="1.2" stroke-dasharray="3 3"/>
+            </svg>
+          </div>
+        </div>
+        <div class="dsa-preview-card">
+          <div><h4>DAGs &amp; Ordering</h4><p>Topological sort and dependency resolution for scheduling problems.</p></div>
+          <div class="card-graphic-wrapper">
+            <svg width="100%" height="40" viewBox="0 0 160 40" fill="none">
+              <rect x="8" y="14" width="28" height="14" rx="4" fill="#8162ff" fill-opacity="0.2" stroke="#8162ff"/>
+              <rect x="66" y="4" width="28" height="14" rx="4" fill="#00ffd0" fill-opacity="0.2" stroke="#00ffd0"/>
+              <rect x="66" y="24" width="28" height="14" rx="4" fill="#00ffd0" fill-opacity="0.2" stroke="#00ffd0"/>
+              <rect x="124" y="14" width="28" height="14" rx="4" fill="#ff3b93" fill-opacity="0.2" stroke="#ff3b93"/>
+              <path d="M36 21 L66 11 M36 21 L66 31 M94 11 L124 21 M94 31 L124 21" stroke="#4d5171" stroke-width="1.5"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat-card trigger-interview" data-view="topics"><strong>18 Topics</strong><span>Systematic graph algorithm modules — click to browse all topics →</span></div>
+        <div class="stat-card trigger-interview" data-view="modules"><strong>6 Modules</strong><span>Fundamentals through Connectivity, live now — click to browse modules →</span></div>
+        <div class="stat-card trigger-interview" data-view="interview"><strong>Interview Ready</strong><span>Optimized for fast platform profiling — click to view Q&amp;A →</span></div>
+      </div>
+    </div>
+  </section>
+  <div class="curriculum-shell" id="curriculumView">
+    <div class="topbar">
+      <div style="display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;">
+        <a href="index.html" class="back-btn">← Back to Home</a>
+        <div style="font-weight:700; font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em;">AlgoVerse Workspace · Graphs</div>
+      </div>
+      <div class="progress-wrap">
+        <span id="progressText">0 / 18 topics</span>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+    </div>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-search"><span>🔍</span><input id="topicSearch" type="text" placeholder="Filter modules and lessons..." /></div>
+        <div id="moduleList"></div>
+      </aside>
+      <main class="content" id="contentArea"></main>
+    </div>
+  </div>
+  <div class="interview-shell" id="interviewShell">
+    <div class="topbar">
+      <div style="display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;">
+        <button class="back-btn" id="interviewBackBtn">← Back to Home</button>
+        <div style="font-weight:700; font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em;" id="interviewShellLabel">Interview Ready · Q&amp;A Bank</div>
+      </div>
+      <button class="back-btn" id="interviewToCourseBtn">Go to Course →</button>
+    </div>
+    <div class="interview-content" id="interviewContent"></div>
+  </div>
+  <script>
+    const course = [
+      {
+        module: 'Module 1',
+        title: 'Graph Fundamentals',
+        topics: [
+          {
+            title: 'What is a Graph? Vertices, Edges & Terminology',
+            tag: 'Concept',
+            body: `<p>A graph is a data structure made of a set of <strong>vertices</strong> (nodes) connected by <strong>edges</strong> (links). Unlike arrays or trees, a graph places no restriction on how many connections a node can have — this makes it the most general structure for modeling relationships.</p><div class="callout"><strong>Key idea:</strong> If your data is "things connected to other things" — people, cities, web pages, tasks — a graph is almost always the right lens.</div><p>Core vocabulary you'll use constantly:</p><ul><li><strong>Vertex (node):</strong> a single entity in the graph, e.g. a city or a person.</li><li><strong>Edge:</strong> a connection between two vertices, e.g. a road or a friendship.</li><li><strong>Degree:</strong> the number of edges touching a vertex. In directed graphs this splits into <strong>in-degree</strong> (incoming edges) and <strong>out-degree</strong> (outgoing edges).</li><li><strong>Adjacent / neighbor:</strong> two vertices connected by a direct edge.</li><li><strong>Path:</strong> a sequence of edges connecting a sequence of distinct vertices.</li><li><strong>Cycle:</strong> a path that starts and ends at the same vertex.</li></ul><p>Graphs generalize almost every structure you've studied before — a tree is just a graph with no cycles and exactly one path between any two nodes, and a linked list is a graph where every vertex has degree at most 2.</p>`,
+            exercises: [
+              { q: 'A graph has vertices {A, B, C, D} and edges A-B, B-C, C-D, D-A. What is the degree of vertex B?', diff: 'easy', type: 'Conceptual', hint: 'Count how many edges touch B directly.', sol: 'Vertex B has edges A-B and B-C touching it, so its degree is 2.' },
+              { q: 'In a directed graph modeling Twitter "follows" (A → B means A follows B), what does a high in-degree mean for a vertex, and what does a high out-degree mean?', diff: 'medium', type: 'Conceptual', hint: 'In-degree counts incoming arrows; out-degree counts outgoing arrows — think about who is doing the following.', sol: 'A high in-degree means many accounts follow this vertex (it\'s an influencer/popular account). A high out-degree means this account follows many others.' },
+              { q: 'Prove that the sum of degrees of all vertices in an undirected graph is always even.', diff: 'hard', type: 'Analysis', hint: 'Think about how many vertices a single edge touches, and how many times it gets counted in the degree sum.', sol: 'Every edge connects exactly two vertices and contributes exactly 1 to each vertex\'s degree count — so each edge adds exactly 2 to the total degree sum. Since the sum is a total of contributions in groups of 2, it must be even (this is the Handshaking Lemma).' }
+            ],
+            mcqs: [
+              { q: 'A single connection between two vertices is called a(n):', options: ['Node', 'Edge', 'Path', 'Cycle'], answer: 1 },
+              { q: 'In a directed graph, the number of edges pointing into a vertex is its:', options: ['Out-degree', 'In-degree', 'Total degree', 'Weight'], answer: 1 },
+              { q: 'A path that starts and ends at the same vertex is called a:', options: ['Tree', 'Cycle', 'Matching', 'Cut'], answer: 1 },
+              { q: 'The sum of all vertex degrees in an undirected graph is always:', options: ['Odd', 'Even', 'Equal to the vertex count', 'Zero'], answer: 1 },
+              { q: 'A tree can be described as a graph that is:', options: ['Cyclic and disconnected', 'Connected and acyclic', 'Directed only', 'Always weighted'], answer: 1 }
+            ]
+          },
+          {
+            title: 'Types of Graphs',
+            tag: 'Comparison',
+            body: `<p>Before picking an algorithm, you must correctly classify the graph — the wrong assumption here silently breaks otherwise-correct code.</p><h3>Directed vs Undirected</h3><p>In a <strong>directed graph</strong> (digraph), edges have a direction — A → B does not imply B → A (e.g. a one-way street, a "follows" relationship). In an <strong>undirected graph</strong>, an edge A-B works both ways (e.g. a friendship, a two-way road).</p><h3>Weighted vs Unweighted</h3><p>A <strong>weighted graph</strong> attaches a cost or distance to each edge (e.g. flight duration, road distance). An <strong>unweighted graph</strong> treats every edge as costing the same "1 step" — this is why BFS alone solves shortest paths on unweighted graphs, but weighted graphs need Dijkstra or Bellman-Ford.</p><h3>Cyclic vs Acyclic</h3><p>A graph containing at least one cycle is <strong>cyclic</strong>. A graph with no cycles at all is <strong>acyclic</strong> — a directed acyclic graph (DAG) is central to scheduling and dependency problems.</p><h3>Connected vs Disconnected</h3><p>A graph is <strong>connected</strong> if there's a path between every pair of vertices. Otherwise it's <strong>disconnected</strong>, splitting into multiple connected components.</p>`,
+            exercises: [
+              { q: 'Classify each: (a) a family tree of "parent of" relationships, (b) a road map with two-way streets, (c) a flight network with ticket prices.', diff: 'easy', type: 'Conceptual', hint: 'Ask: does direction matter? Does cost matter?', sol: '(a) Directed, unweighted (parent → child is one-directional). (b) Undirected, unweighted (if just checking connectivity) or weighted (if distances matter). (c) Directed or undirected depending on route symmetry, and weighted by ticket price.' },
+              { q: 'You are given an undirected graph with 5 vertices and 3 edges. Can it possibly be connected? Explain the minimum number of edges needed for connectivity.', diff: 'medium', type: 'Analysis', hint: 'A tree connecting n vertices needs exactly n-1 edges — compare that minimum to what\'s given.', sol: 'No — connecting 5 vertices requires at least 4 edges (forming a spanning tree). With only 3 edges, the graph has at most 4 vertices in one component, so at least one vertex must be disconnected from the rest.' },
+              { q: 'Explain why a DAG (directed acyclic graph) cannot be undirected. Could an undirected graph ever be "acyclic" in a similar sense?', diff: 'hard', type: 'Analysis', hint: 'Consider what a single undirected edge A-B implies about traversal direction.', sol: 'In an undirected graph, a single edge A-B already lets you go A→B→A, which by most definitions counts as a trivial cycle (or is handled as a special case) — so meaningful cycle-freedom depends on direction. An undirected acyclic connected graph is exactly a tree; the DAG concept (used for scheduling, ordering) specifically needs direction to express "must happen before" relationships, which undirected edges cannot express.' }
+            ],
+            mcqs: [
+              { q: 'A graph where A → B does not imply B → A is called:', options: ['Undirected', 'Directed', 'Weighted', 'Cyclic'], answer: 1 },
+              { q: 'Shortest path in an unweighted graph can be solved with:', options: ['Only Dijkstra', 'Plain BFS', 'Only Bellman-Ford', 'Only DFS'], answer: 1 },
+              { q: 'A DAG is:', options: ['Directed and cyclic', 'Directed and acyclic', 'Undirected and acyclic', 'Undirected and cyclic'], answer: 1 },
+              { q: 'A graph with 5 vertices split into two groups with no edges between them is:', options: ['Connected', 'Disconnected', 'Weighted', 'A DAG'], answer: 1 },
+              { q: 'The minimum number of edges to connect n vertices into a tree is:', options: ['n', 'n+1', 'n-1', '2n'], answer: 2 }
+            ]
+          },
+          {
+            title: 'Graph Representations & Complexity',
+            tag: 'Core',
+            body: `<p>How you store a graph in memory directly determines how fast your algorithms run. The three standard representations trade off memory against lookup speed.</p><pre><code># Adjacency List (most common)
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A'],
+    'D': ['B']
+}</code></pre><ul><li><strong>Adjacency Matrix:</strong> a V×V grid where cell [i][j] marks whether an edge exists between vertex i and j. Checking if an edge exists is O(1), but it uses O(V²) space even for sparse graphs.</li><li><strong>Adjacency List:</strong> each vertex keeps a list of its neighbors. Uses O(V + E) space, ideal for sparse graphs, and is the default choice in most real systems.</li><li><strong>Edge List:</strong> a flat list of all (u, v) pairs (with weight, if any). Simple and compact, but slow for neighbor lookups — commonly used as an input format or for algorithms like Kruskal's that just need to scan all edges.</li></ul><div class="callout"><strong>Rule of thumb:</strong> use an adjacency list unless the graph is dense (E close to V²) or you need O(1) "is there an edge here?" checks.</div>`,
+            exercises: [
+              { q: 'A graph has 6 vertices and 5 edges. Roughly how much space would an adjacency matrix use vs. an adjacency list?', diff: 'easy', type: 'Analysis', hint: 'Matrix space depends only on V; list space depends on V + E.', sol: 'Adjacency matrix: 6×6 = 36 cells regardless of edge count. Adjacency list: proportional to V + E = 6 + 5 = 11 entries. For this sparse graph, the list is far more space-efficient.' },
+              { q: 'Write pseudocode to build an adjacency list from a given edge list for an undirected graph.', diff: 'medium', type: 'Coding', hint: 'Remember that each undirected edge must be added to both vertices\' neighbor lists.', sol: 'Initialize an empty list/map for every vertex. For each edge (u, v) in the edge list: append v to adjList[u], and append u to adjList[v] (since the edge works both ways). This runs in O(V + E) time.' },
+              { q: 'For a social network with 500 million users where each user follows ~200 others on average, would you use an adjacency matrix or adjacency list? Justify with actual numbers.', diff: 'hard', type: 'Design', hint: 'Compute V² vs V + E for these numbers and compare to realistic memory limits.', sol: 'V = 5×10⁸. An adjacency matrix needs V² ≈ 2.5×10¹⁷ cells — computationally impossible to store. An adjacency list needs O(V + E) ≈ 5×10⁸ + (5×10⁸ × 200) ≈ 10¹¹ entries, which, while still large, is the only remotely feasible option — this is exactly why every real social graph uses adjacency-list-style storage (often sharded across many machines).' }
+            ],
+            mcqs: [
+              { q: 'An adjacency matrix uses space:', options: ['O(V)', 'O(E)', 'O(V + E)', 'O(V²)'], answer: 3 },
+              { q: 'An adjacency list is generally preferred for graphs that are:', options: ['Dense', 'Sparse', 'Always weighted', 'Always small'], answer: 1 },
+              { q: 'Checking if an edge exists between two vertices is fastest with:', options: ['Edge list', 'Adjacency list', 'Adjacency matrix', 'All are equal'], answer: 2 },
+              { q: 'An edge list is most useful for algorithms that:', options: ['Need O(1) neighbor lookup', 'Just need to scan all edges once (e.g. Kruskal\'s)', 'Only work on trees', 'Require a matrix'], answer: 1 },
+              { q: 'Adjacency list space complexity is:', options: ['O(V²)', 'O(V + E)', 'O(E²)', 'O(1)'], answer: 1 }
+            ]
+          }
+        ]
+      },
+      {
+        module: 'Module 2',
+        title: 'Graph Traversal Algorithms',
+        topics: [
+          {
+            title: 'Breadth First Search (BFS) & Applications',
+            tag: 'Core',
+            body: `<p>BFS explores a graph level by level — visiting all neighbors of the start vertex before moving further out. It uses a <strong>queue</strong> to always expand the closest unvisited vertices first.</p><pre><code>def bfs(graph, start):
+    visited = {start}
+    queue = [start]
+    while queue:
+        node = queue.pop(0)
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)</code></pre><h3>Applications</h3><ul><li><strong>Shortest path in an unweighted graph:</strong> because BFS visits vertices in increasing order of distance from the source, the first time it reaches a vertex is guaranteed to be via the shortest path.</li><li><strong>Connected components:</strong> running BFS from every unvisited vertex and counting how many BFS runs it takes gives the number of connected components.</li><li><strong>Bipartite check:</strong> BFS while 2-coloring vertices level by level — if any edge connects two same-colored vertices, the graph isn't bipartite.</li></ul>`,
+            exercises: [
+              { q: 'Given graph A-B, A-C, B-D, C-D, run BFS from A and list the order vertices are visited.', diff: 'easy', type: 'Coding', hint: 'Visit A\'s neighbors first (in list order), then their unvisited neighbors.', sol: 'Order: A, B, C, D. Starting at A, its neighbors B and C are enqueued and visited next; D is reached from B (or C) afterward, but only visited once.' },
+              { q: 'Write pseudocode to count the number of connected components in an undirected graph using BFS.', diff: 'medium', type: 'Coding', hint: 'Keep a global visited set; every time you have to start a fresh BFS from an unvisited vertex, that\'s a new component.', sol: 'count = 0; visited = {}. For each vertex v in the graph: if v not in visited, increment count, run BFS from v marking everything reachable as visited. Return count — the number of times a fresh BFS had to be started.' },
+              { q: 'Design a bipartite-check algorithm using BFS 2-coloring, and explain exactly what condition proves the graph is NOT bipartite.', diff: 'hard', type: 'Analysis', hint: 'Assign alternating colors level by level, then watch for a conflict at any edge.', sol: 'Color the start vertex 0, enqueue it. For each dequeued vertex, look at its neighbors: if a neighbor is uncolored, color it the opposite color and enqueue it; if it\'s already colored the SAME color as the current vertex, the graph is not bipartite (an edge connects two same-colored vertices, violating the 2-coloring requirement). If BFS finishes with no such conflict across all components, the graph is bipartite.' }
+            ],
+            mcqs: [
+              { q: 'BFS uses which core data structure?', options: ['Stack', 'Queue', 'Heap', 'Hashmap only'], answer: 1 },
+              { q: 'BFS guarantees shortest paths on:', options: ['Only weighted graphs', 'Only trees', 'Unweighted graphs', 'Only directed graphs'], answer: 2 },
+              { q: 'Counting connected components with BFS means:', options: ['Running BFS once total', 'Running BFS from every unvisited vertex and counting the runs', 'Running BFS only from vertex 0', 'Not possible with BFS'], answer: 1 },
+              { q: 'A graph is bipartite if:', options: ['It has no edges', 'It can be 2-colored with no edge connecting same-colored vertices', 'It is always a tree', 'It is always disconnected'], answer: 1 },
+              { q: 'The time complexity of BFS on a graph with V vertices and E edges (adjacency list) is:', options: ['O(V)', 'O(E)', 'O(V + E)', 'O(V²)'], answer: 2 }
+            ]
+          },
+          {
+            title: 'Depth First Search (DFS) & Applications',
+            tag: 'Core',
+            body: `<p>DFS explores as far as possible along one branch before backtracking, using recursion (or an explicit stack) rather than a queue.</p><pre><code>def dfs(graph, node, visited):
+    visited.add(node)
+    for neighbor in graph[node]:
+        if neighbor not in visited:
+            dfs(graph, neighbor, visited)</code></pre><h3>Applications</h3><ul><li><strong>Cycle detection:</strong> in a directed graph, tracking a "currently in recursion stack" set catches back-edges, which signal a cycle. In undirected graphs, finding a visited neighbor that isn't the immediate parent signals a cycle.</li><li><strong>Topological sorting:</strong> running DFS and pushing each vertex onto a stack after all its neighbors are processed produces a valid dependency order once reversed.</li><li><strong>Bridges:</strong> edges whose removal disconnects the graph, found using DFS discovery/low-link times.</li><li><strong>Articulation points:</strong> vertices whose removal disconnects the graph, found similarly.</li></ul>`,
+            exercises: [
+              { q: 'Given graph A-B, B-C, C-A, run DFS from A and explain how a cycle is detected.', diff: 'easy', type: 'Conceptual', hint: 'While exploring from C, look at its neighbors — one of them has already been visited and isn\'t C\'s parent.', sol: 'DFS visits A → B → C. From C, the neighbor A is already visited and is not C\'s immediate parent (B is), so this back-edge C-A reveals a cycle.' },
+              { q: 'Write pseudocode for detecting a cycle in a directed graph using DFS with a recursion-stack tracking set.', diff: 'medium', type: 'Coding', hint: 'A cycle exists specifically when you reach a vertex that is still "in progress" (on the current recursion path), not just any visited vertex.', sol: 'Maintain visited (globally seen) and inStack (on current DFS path). On visiting node: mark visited and inStack=true. For each neighbor: if neighbor is in inStack, a cycle is found; else if neighbor not visited, recurse. Before returning from node, set inStack[node]=false. A cycle is only real if the neighbor is currently on the active path, not just previously visited in another branch.' },
+              { q: 'Explain, step by step, how DFS produces a valid topological order for a DAG, and why reversing the DFS finish order is necessary.', diff: 'hard', type: 'Analysis', hint: 'Think about which vertex finishes DFS first: a source with no dependents, or a sink that nothing depends on?', sol: 'DFS finishes (fully explores) a vertex only after all of its dependents (descendants) are fully explored — so a "sink" vertex with no outgoing edges finishes first, and a "source" vertex finishes last. Pushing each vertex onto a stack as it finishes and then reading the stack top-to-bottom (i.e. reversing the finish order) puts sources before sinks — exactly the dependency order required by a valid topological sort.' }
+            ],
+            mcqs: [
+              { q: 'DFS is naturally implemented using:', options: ['A queue', 'Recursion (the call stack) or an explicit stack', 'A heap', 'A hashmap only'], answer: 1 },
+              { q: 'A directed cycle is detected in DFS when you reach a vertex that is:', options: ['Any previously visited vertex', 'Currently on the active recursion stack', 'The starting vertex only', 'Never visited'], answer: 1 },
+              { q: 'Topological sort using DFS requires:', options: ['Sorting by discovery time ascending', 'Reversing the order vertices finish DFS', 'Running BFS instead', 'No specific order'], answer: 1 },
+              { q: 'Bridges and articulation points are both found using:', options: ['BFS level order', 'DFS discovery and low-link times', 'Sorting edges by weight', 'Union-Find only'], answer: 1 },
+              { q: 'DFS time complexity on an adjacency list is:', options: ['O(V + E)', 'O(V²)', 'O(E²)', 'O(log V)'], answer: 0 }
+            ]
+          },
+          {
+            title: 'Iterative vs Recursive DFS, and BFS vs DFS',
+            tag: 'Comparison',
+            body: `<p>DFS can be written recursively (relying on the call stack) or iteratively (using your own explicit stack). Both visit the same vertices, but with important practical differences.</p><pre><code># Iterative DFS
+def dfs_iterative(graph, start):
+    visited = set()
+    stack = [start]
+    while stack:
+        node = stack.pop()
+        if node not in visited:
+            visited.add(node)
+            for neighbor in graph[node]:
+                stack.append(neighbor)</code></pre><ul><li><strong>Recursive DFS</strong> is shorter and more intuitive, but on very deep or large graphs it can trigger a <strong>stack overflow</strong>, since each call adds a frame to the call stack.</li><li><strong>Iterative DFS</strong> avoids that risk by managing its own stack on the heap, at the cost of slightly more verbose code.</li></ul><h3>BFS vs DFS</h3><div class="compare-grid"><div class="compare-card"><strong>BFS</strong><span>Best for shortest paths in unweighted graphs, level-order problems, and "closest first" exploration.</span></div><div class="compare-card"><strong>DFS</strong><span>Best for cycle detection, topological sort, connectivity structure (bridges/articulation points), and exhaustive search / backtracking.</span></div><div class="compare-card"><strong>Both</strong><span>Run in O(V + E) time and can find connected components — the choice depends on what property you need, not raw speed.</span></div></div>`,
+            exercises: [
+              { q: 'Why might recursive DFS crash on a graph with 100,000 vertices arranged in one long chain, while iterative DFS would not?', diff: 'easy', type: 'Conceptual', hint: 'Each recursive call adds a frame to a limited-size call stack; an explicit stack on the heap has no such fixed limit.', sol: 'A chain of 100,000 vertices means 100,000 nested recursive calls, each adding a stack frame — this can exceed the call stack\'s size limit and crash with a stack overflow. Iterative DFS stores the same information in a heap-allocated list/array, which has far more available capacity.' },
+              { q: 'Convert this recursive DFS traversal order intuition into an iterative version: explain why the neighbor visiting order can differ between recursive and iterative DFS using a plain stack.', diff: 'medium', type: 'Analysis', hint: 'A stack is LIFO — the last neighbor pushed is explored first, which can reverse the order compared to recursion.', sol: 'Recursive DFS explores neighbors in the order they appear in the adjacency list (first neighbor recursed into immediately). Iterative DFS with a plain stack pushes all neighbors then pops the last one pushed first — so unless neighbors are pushed in reverse order, the traversal order comes out reversed compared to the recursive version. The set of visited vertices is identical either way, only the order changes.' },
+              { q: 'You need to detect cycles in a dependency graph with millions of nodes in a production service. Would you pick recursive or iterative DFS, and what modification would you make to safely track the "in-progress" state iteratively?', diff: 'hard', type: 'Design', hint: 'An iterative DFS needs to explicitly track when a vertex is fully finished, not just first visited, to correctly maintain an "in recursion stack" style set.', sol: 'Iterative DFS is the safer choice at that scale, to avoid stack overflow risk. To track "in-progress" state (equivalent to the recursion stack) iteratively, push a (vertex, state) pair or use a second explicit stack: when a vertex is first popped, mark it in-progress and re-push it as "finished" along with its unprocessed neighbors; when a vertex marked "finished" is popped again, remove it from in-progress. A back-edge to any vertex still marked in-progress signals a cycle.' }
+            ],
+            mcqs: [
+              { q: 'Recursive DFS risks which failure on very deep graphs?', options: ['Infinite loop', 'Stack overflow', 'Memory leak only', 'Incorrect results always'], answer: 1 },
+              { q: 'Iterative DFS avoids call-stack limits by:', options: ['Using recursion differently', 'Managing its own explicit stack on the heap', 'Using a queue instead', 'Not visiting all vertices'], answer: 1 },
+              { q: 'Which is generally the better fit for finding the shortest path in an unweighted graph?', options: ['DFS', 'BFS', 'Either works identically well', 'Neither'], answer: 1 },
+              { q: 'Which is generally the better fit for topological sorting?', options: ['BFS only (Kahn\'s is a BFS variant, but plain BFS isn\'t enough alone)', 'DFS (finish-order based)', 'Neither works', 'Only sorting algorithms work'], answer: 1 },
+              { q: 'Both BFS and DFS run in what time complexity on an adjacency list?', options: ['O(V)', 'O(E)', 'O(V + E)', 'O(V × E)'], answer: 2 }
+            ]
+          }
+        ]
+      },
+      {
+        module: 'Module 3',
+        title: 'Shortest Path Algorithms',
+        topics: [
+          {
+            title: "Dijkstra's Algorithm (Single Source, Non-negative Weights)",
+            tag: 'Core',
+            body: `<p>Dijkstra's algorithm finds the shortest path from a single source vertex to every other vertex in a weighted graph — but only when all edge weights are <strong>non-negative</strong>.</p><pre><code>import heapq
+def dijkstra(graph, start):
+    dist = {v: float('inf') for v in graph}
+    dist[start] = 0
+    pq = [(0, start)]
+    while pq:
+        d, node = heapq.heappop(pq)
+        if d > dist[node]: continue
+        for neighbor, weight in graph[node]:
+            nd = d + weight
+            if nd < dist[neighbor]:
+                dist[neighbor] = nd
+                heapq.heappush(pq, (nd, neighbor))
+    return dist</code></pre><p>It works by greedily picking the closest unvisited vertex (using a min-heap/priority queue) and relaxing its neighbors' distances. Because weights are non-negative, once a vertex is popped from the heap with its final distance, that distance can never be improved later — this greedy guarantee is exactly why negative weights break Dijkstra.</p><div class="callout"><strong>Complexity:</strong> O((V + E) log V) with a binary heap — efficient enough for most real-world routing graphs.</div>`,
+            exercises: [
+              { q: 'Explain in one sentence why Dijkstra\'s algorithm fails on a graph with a negative-weight edge.', diff: 'easy', type: 'Conceptual', hint: 'Think about whether a vertex\'s "final" shortest distance can still get smaller after it\'s already been finalized.', sol: 'A negative edge can later reduce the distance to an already-finalized vertex, but Dijkstra never revisits finalized vertices — so it can lock in a wrong, too-large distance.' },
+              { q: 'Given edges A→B (weight 4), A→C (weight 1), C→B (weight 1), trace Dijkstra from A and give the final shortest distance to B.', diff: 'medium', type: 'Coding', hint: 'Compare going directly A→B against going A→C→B.', sol: 'Direct A→B costs 4. Via C: A→C (1) + C→B (1) = 2, which is shorter. Dijkstra correctly finds dist[B] = 2 by relaxing B through C after popping C (distance 1) before finalizing B.' },
+              { q: 'Explain why using a plain array (O(V) per extract-min) versus a binary heap (O(log V) per extract-min) changes Dijkstra\'s overall complexity, and when the array version might actually be faster in practice.', diff: 'hard', type: 'Analysis', hint: 'Total extract-min calls are always V — the difference comes purely from the cost of finding the minimum each time. Consider what happens when the graph is very dense.', sol: 'With an array, each extract-min is O(V), giving O(V²) total for extraction plus O(E) for relaxation → O(V² + E). With a binary heap, each extract-min/decrease-key is O(log V), giving O((V + E) log V). For dense graphs where E is close to V², the array version\'s O(V²) can actually beat the heap version\'s O(V² log V), since the log V factor multiplies a term that already dominates — this is why some competitive programmers still use the array form for dense graphs.' }
+            ],
+            mcqs: [
+              { q: "Dijkstra's algorithm requires edge weights to be:", options: ['All equal', 'Non-negative', 'All negative', 'Integers only'], answer: 1 },
+              { q: 'Dijkstra uses which data structure to pick the next closest vertex efficiently?', options: ['Stack', 'Min-heap / priority queue', 'Regular queue', 'Hashmap only'], answer: 1 },
+              { q: "Dijkstra's complexity with a binary heap is:", options: ['O(V + E)', 'O(V²)', 'O((V + E) log V)', 'O(V³)'], answer: 2 },
+              { q: 'Once Dijkstra finalizes (pops) a vertex\'s shortest distance, that distance:', options: ['Can still improve later', 'Is guaranteed final (given non-negative weights)', 'Is always wrong', 'Gets recalculated at the end'], answer: 1 },
+              { q: 'For a graph with a negative-weight edge, which algorithm should be used instead?', options: ['BFS', 'Dijkstra', 'Bellman-Ford', 'DFS'], answer: 2 }
+            ]
+          },
+          {
+            title: 'Bellman-Ford Algorithm, 0-1 BFS & Multi-source BFS',
+            tag: 'Core',
+            body: `<p>Bellman-Ford finds shortest paths from a single source even when edges have <strong>negative weights</strong>, and it can also detect <strong>negative-weight cycles</strong> — something Dijkstra cannot do.</p><pre><code>def bellman_ford(edges, V, start):
+    dist = [float('inf')] * V
+    dist[start] = 0
+    for _ in range(V - 1):
+        for u, v, w in edges:
+            if dist[u] + w < dist[v]:
+                dist[v] = dist[u] + w
+    for u, v, w in edges:
+        if dist[u] + w < dist[v]:
+            return "Negative cycle detected"
+    return dist</code></pre><p>The algorithm relaxes every edge V−1 times — this is enough because the longest possible shortest path (without cycles) uses at most V−1 edges. A final V-th pass that still finds an improvement proves a negative cycle exists.</p><h3>0-1 BFS</h3><p>When edge weights are only 0 or 1, a deque-based BFS gives O(V + E) shortest paths without needing a heap — push 0-weight edges to the front of the deque and 1-weight edges to the back.</p><h3>Multi-source BFS</h3><p>To find the shortest distance from any of several sources simultaneously, initialize the BFS queue with all sources at distance 0 at once, rather than running BFS separately for each — this is a single O(V + E) pass instead of O(k(V + E)) for k sources.</p>`,
+            exercises: [
+              { q: 'Why does Bellman-Ford need exactly V-1 rounds of relaxation, not more or fewer, to guarantee correct shortest paths (assuming no negative cycle)?', diff: 'easy', type: 'Conceptual', hint: 'A shortest simple path can visit at most V vertices, meaning at most how many edges?', sol: 'A shortest simple path (no repeated vertices) can use at most V-1 edges. Each round of relaxation extends the "confirmed" shortest path length by one edge, so V-1 rounds are enough to propagate the shortest distance along the longest possible simple path.' },
+              { q: 'Describe how you would use one extra (V-th) round of Bellman-Ford to detect a negative-weight cycle, and explain what it means if that round still finds improvements.', diff: 'medium', type: 'Analysis', hint: 'If distances were already final after V-1 rounds, a further improvement is only possible if the "no repeated vertices" assumption was violated.', sol: 'Run one additional relaxation pass after the standard V-1. If any edge can still be relaxed (distance still decreases), it means some path is using more than V-1 edges to get a shorter distance — which is only possible if it\'s looping through a negative-weight cycle repeatedly, decreasing the distance without bound.' },
+              { q: 'You have a grid where certain cells cost 0 to enter (open floor) and others cost 1 (a door to unlock). Design an approach faster than Dijkstra to find the shortest cost path.', diff: 'hard', type: 'Design', hint: 'This is exactly the 0/1 weight scenario — think about a deque instead of a heap.', sol: 'Use 0-1 BFS with a deque: push the start with distance 0. When expanding a cell, if the edge to a neighbor costs 0, push that neighbor to the FRONT of the deque; if it costs 1, push it to the BACK. Pop from the front each iteration. This maintains the same non-decreasing distance order property a heap would give, but runs in O(V + E) instead of O((V + E) log V).' }
+            ],
+            mcqs: [
+              { q: 'Bellman-Ford can handle graphs with:', options: ['Only positive weights', 'Negative weights (but not negative cycles)', 'Only unweighted edges', 'Only DAGs'], answer: 1 },
+              { q: 'Bellman-Ford relaxes all edges how many times in the standard algorithm?', options: ['V times', 'V - 1 times', 'E times', 'log V times'], answer: 1 },
+              { q: 'A negative-weight cycle is detected when:', options: ['The first relaxation pass fails', 'An extra (V-th) relaxation pass still finds an improvement', 'All distances are zero', 'The graph is disconnected'], answer: 1 },
+              { q: '0-1 BFS is efficient specifically because:', options: ['All weights are equal', 'Weights are only 0 or 1, letting a deque replace a heap', 'It ignores weights entirely', 'It only works on trees'], answer: 1 },
+              { q: 'Multi-source BFS finds shortest distances from multiple sources by:', options: ['Running BFS separately for each source', 'Initializing the queue with all sources at distance 0 simultaneously', 'Only working with weighted graphs', 'Ignoring some sources'], answer: 1 }
+            ]
+          },
+          {
+            title: 'Floyd-Warshall & Johnson\'s Algorithm (All-Pairs Shortest Paths)',
+            tag: 'Comparison',
+            body: `<p>Sometimes you need the shortest path between <strong>every pair</strong> of vertices, not just from one source.</p><h3>Floyd-Warshall</h3><pre><code>for k in range(V):
+    for i in range(V):
+        for j in range(V):
+            if dist[i][k] + dist[k][j] < dist[i][j]:
+                dist[i][j] = dist[i][k] + dist[k][j]</code></pre><p>This dynamic programming approach considers each vertex k as a possible intermediate stop on the path from i to j, and keeps the shortest option found so far. It handles negative weights (but not negative cycles) and runs in O(V³) — fine for small-to-medium dense graphs.</p><h3>Johnson's Algorithm</h3><p>For large sparse graphs, Johnson's algorithm reweights all edges (using a Bellman-Ford pass to eliminate negative weights without changing which paths are shortest) and then runs Dijkstra from every vertex — giving O(V² log V + VE), which beats Floyd-Warshall's O(V³) when the graph is sparse.</p>`,
+            exercises: [
+              { q: 'What does the "k" loop represent in Floyd-Warshall, and why must it be the outermost loop?', diff: 'easy', type: 'Conceptual', hint: 'k represents an intermediate vertex being considered — the algorithm builds up correctness by allowing more and more possible intermediate stops.', sol: 'k represents the intermediate vertex allowed on the path from i to j. It must be outermost because the algorithm\'s correctness relies on having already finalized "shortest path using only vertices 1..k-1 as intermediates" before considering paths that may route through k.' },
+              { q: 'For a graph with V=1000, sparse (E ≈ 2000), compare roughly how many operations Floyd-Warshall (O(V³)) takes versus Johnson\'s algorithm (O(V² log V + VE)).', diff: 'medium', type: 'Analysis', hint: 'Plug the numbers directly into both formulas.', sol: 'Floyd-Warshall: 1000³ = 10⁹ operations. Johnson\'s: V² log V + VE ≈ 10⁶ × 10 + 1000×2000 ≈ 10⁷ + 2×10⁶ ≈ 1.2×10⁷ operations. Johnson\'s is roughly 80x faster here because the graph is sparse — this gap grows even larger as V increases while E stays proportionally small.' },
+              { q: 'Explain the reweighting trick Johnson\'s algorithm uses to remove negative edges without changing which path is shortest, and why plain Dijkstra couldn\'t just be run on the original negative-weighted graph.', diff: 'hard', type: 'Analysis', hint: 'Johnson\'s adds a virtual vertex connected to everything with 0-weight edges, then uses the Bellman-Ford distances from that vertex to adjust every edge weight.', sol: 'Johnson\'s adds a new vertex connected to all others by 0-weight edges, runs Bellman-Ford from it to get potential values h(v) for every vertex, then reweights each edge (u,v) as w\'(u,v) = w(u,v) + h(u) − h(v). This reweighting is proven to keep all weights non-negative while preserving which path between any two vertices is shortest (the added/subtracted h values telescope and cancel along any path). Plain Dijkstra can\'t run directly on negative weights because its greedy finalize-and-never-revisit strategy assumes distances only increase as you explore further, which negative edges violate.' }
+            ],
+            mcqs: [
+              { q: 'Floyd-Warshall solves which problem?', options: ['Single-source shortest path', 'All-pairs shortest paths', 'Minimum spanning tree', 'Maximum flow'], answer: 1 },
+              { q: 'Floyd-Warshall runs in time complexity:', options: ['O(V + E)', 'O(V log V)', 'O(V³)', 'O(V²)'], answer: 2 },
+              { q: 'Johnson\'s algorithm is preferred over Floyd-Warshall when the graph is:', options: ['Dense and small', 'Large and sparse', 'A tree', 'Unweighted'], answer: 1 },
+              { q: 'Johnson\'s algorithm reweights edges using distances computed by:', options: ['Dijkstra', 'BFS', 'Bellman-Ford from an added virtual vertex', 'Floyd-Warshall'], answer: 2 },
+              { q: 'Floyd-Warshall can correctly handle:', options: ['Only positive weights', 'Negative weights, but not negative cycles', 'Only unweighted graphs', 'Only trees'], answer: 1 }
+            ]
+          }
+        ]
+      },
+      {
+        module: 'Module 4',
+        title: 'Minimum Spanning Trees (MST)',
+        topics: [
+          {
+            title: "Introduction to MST & Prim's Algorithm",
+            tag: 'Core',
+            body: `<p>A <strong>minimum spanning tree</strong> connects all vertices of a weighted, undirected, connected graph using the minimum possible total edge weight, with no cycles — exactly V−1 edges for V vertices.</p><p><strong>Prim's algorithm</strong> grows the MST one vertex at a time: starting from any vertex, it repeatedly adds the cheapest edge that connects a vertex already in the tree to one that isn't.</p><pre><code>import heapq
+def prim(graph, start):
+    visited = {start}
+    edges = [(w, start, v) for v, w in graph[start]]
+    heapq.heapify(edges)
+    mst_weight = 0
+    while edges:
+        w, u, v = heapq.heappop(edges)
+        if v not in visited:
+            visited.add(v)
+            mst_weight += w
+            for to, weight in graph[v]:
+                if to not in visited:
+                    heapq.heappush(edges, (weight, v, to))
+    return mst_weight</code></pre><p>This is structurally very similar to Dijkstra — both use a priority queue to greedily pick "next cheapest" — but Prim's picks the cheapest edge overall, while Dijkstra picks the cheapest cumulative distance from the source.</p>`,
+            exercises: [
+              { q: 'A connected graph has 6 vertices. How many edges will its minimum spanning tree contain?', diff: 'easy', type: 'Conceptual', hint: 'An MST is a tree connecting all vertices — recall the edge count for a tree.', sol: '5 edges — an MST always has exactly V-1 edges for V vertices (a spanning tree property).' },
+              { q: 'Explain the key difference between how Prim\'s algorithm picks the next edge versus how Dijkstra\'s algorithm picks the next vertex.', diff: 'medium', type: 'Analysis', hint: 'One minimizes a single edge weight; the other minimizes a cumulative path distance.', sol: "Prim's picks the single cheapest edge connecting the growing tree to any new vertex, regardless of total distance from the start. Dijkstra picks the vertex with the smallest cumulative distance from the source, summing edge weights along the way. Prim's ignores the path history; Dijkstra depends entirely on it." },
+              { q: 'Prove that Prim\'s greedy choice (always adding the cheapest connecting edge) never creates a cycle.', diff: 'hard', type: 'Analysis', hint: "Think about what set of vertices Prim's always connects a new edge to — a vertex INSIDE the tree, or one OUTSIDE it.", sol: "At every step, Prim's only adds an edge connecting a vertex already in the tree to a vertex NOT yet in the tree. Since the new vertex has no prior edges in the tree, adding this edge can't complete a cycle (a cycle requires connecting two vertices that are already both in the tree). This invariant — one endpoint always new — guarantees the result stays a tree throughout." }
+            ],
+            mcqs: [
+              { q: 'An MST for V vertices always has:', options: ['V edges', 'V - 1 edges', 'V + 1 edges', '2V edges'], answer: 1 },
+              { q: "Prim's algorithm grows the MST by:", options: ['Sorting all edges globally first', 'Always adding the cheapest edge connecting the tree to a new vertex', 'Removing the most expensive edges', 'Random edge selection'], answer: 1 },
+              { q: "Prim's algorithm is structurally most similar to:", options: ['Bellman-Ford', "Dijkstra's algorithm", 'Kahn\'s algorithm', 'DFS'], answer: 1 },
+              { q: 'An MST requires the graph to be:', options: ['Directed', 'Connected', 'Unweighted', 'A DAG'], answer: 1 },
+              { q: "Prim's algorithm never creates a cycle because:", options: ['It sorts edges first', 'Every added edge connects a tree vertex to a non-tree vertex', 'It uses Union-Find', 'It ignores edge weights'], answer: 1 }
+            ]
+          },
+          {
+            title: "Kruskal's Algorithm",
+            tag: 'Core',
+            body: `<p><strong>Kruskal's algorithm</strong> builds the MST differently from Prim's: instead of growing one connected tree, it sorts <em>all</em> edges by weight and greedily adds the cheapest edge that doesn't form a cycle — regardless of which existing tree fragment it connects to.</p><pre><code>def kruskal(V, edges):
+    edges.sort(key=lambda e: e[2])  # sort by weight
+    parent = list(range(V))
+    def find(x):
+        while parent[x] != x:
+            x = parent[x]
+        return x
+    mst_weight = 0
+    for u, v, w in edges:
+        ru, rv = find(u), find(v)
+        if ru != rv:
+            parent[ru] = rv
+            mst_weight += w
+    return mst_weight</code></pre><p>The "doesn't form a cycle" check is what makes Union-Find essential here — without an efficient way to ask "are u and v already connected?", this check would be far slower. Kruskal's runs in O(E log E) dominated by the sort.</p>`,
+            exercises: [
+              { q: 'Edges (weight): A-B(1), B-C(2), A-C(3). Trace Kruskal\'s algorithm and state which edges end up in the MST.', diff: 'easy', type: 'Coding', hint: 'Process edges in increasing weight order, skipping any that would form a cycle.', sol: 'Sorted: A-B(1), B-C(2), A-C(3). Add A-B (connects two separate components). Add B-C (connects two separate components). A-C is skipped — A and C are already connected via A-B-C, so adding it would form a cycle. Final MST: A-B and B-C, total weight 3.' },
+              { q: 'Explain why Kruskal\'s algorithm needs a cycle-check (like Union-Find) but Prim\'s algorithm does not need one explicitly.', diff: 'medium', type: 'Analysis', hint: 'Consider how each algorithm restricts which edges it even considers adding.', sol: "Kruskal's considers edges globally, from anywhere in the graph, so it might pick two edges that connect vertices already indirectly linked — hence needing an explicit check. Prim's only ever considers edges from vertices already inside the growing tree to vertices outside it, so a cycle is structurally impossible by construction, with no separate check needed." },
+              { q: 'For a dense graph (E close to V²), would you prefer Kruskal\'s or Prim\'s algorithm? Justify using complexity.', diff: 'hard', type: 'Analysis', hint: 'Kruskal\'s cost is dominated by sorting E edges; Prim\'s with a heap is dominated by (V+E) log V — compare how each scales as E approaches V².', sol: "Prim's is usually preferred for dense graphs. Kruskal's O(E log E) becomes O(V² log V²) = O(V² · 2 log V) when E ≈ V², which is comparable to but often edged out by Prim's O((V+E) log V) ≈ O(V² log V) using a heap, or even O(V²) using a simple array-based Prim's without a heap at all — since dense graphs don't benefit from heap overhead the way sparse graphs do." }
+            ],
+            mcqs: [
+              { q: "Kruskal's algorithm processes edges in what order?", options: ['Random order', 'Increasing weight order', 'Decreasing weight order', 'By vertex index'], answer: 1 },
+              { q: "Kruskal's algorithm relies on which structure to detect cycles efficiently?", options: ['A queue', 'Union-Find (Disjoint Set Union)', 'A stack', 'A binary search tree'], answer: 1 },
+              { q: "Kruskal's algorithm's time complexity is dominated by:", options: ['The Union-Find operations', 'Sorting the edges — O(E log E)', 'Building the adjacency list', 'BFS traversal'], answer: 1 },
+              { q: 'An edge is skipped in Kruskal\'s algorithm when:', options: ['It has the highest weight', 'Its two endpoints are already in the same component', 'It is the first edge processed', 'The graph is directed'], answer: 1 },
+              { q: "For sparse graphs, Kruskal's is often preferred over Prim's because:", options: ['It never needs sorting', 'Sorting E edges is cheap when E is small', 'It works on directed graphs', 'It ignores weights'], answer: 1 }
+            ]
+          },
+          {
+            title: 'Disjoint Set Union (Union-Find), Path Compression & MST Applications',
+            tag: 'Structure',
+            body: `<p>The <strong>Disjoint Set Union</strong> (DSU / Union-Find) structure tracks a collection of non-overlapping sets and supports two operations extremely efficiently: <code>find(x)</code> (which set does x belong to?) and <code>union(x, y)</code> (merge the sets containing x and y).</p><pre><code>def find(x):
+    if parent[x] != x:
+        parent[x] = find(parent[x])  # path compression
+    return parent[x]
+ 
+def union(x, y):
+    rx, ry = find(x), find(y)
+    if rx == ry: return
+    if rank[rx] < rank[ry]: rx, ry = ry, rx
+    parent[ry] = rx
+    if rank[rx] == rank[ry]: rank[rx] += 1</code></pre><ul><li><strong>Path compression:</strong> during <code>find</code>, every visited node is re-pointed directly to the root, flattening the tree for future calls.</li><li><strong>Union by rank:</strong> when merging, the shorter tree is attached under the taller one's root, preventing the structure from becoming a long chain.</li></ul><p>Combined, these two optimizations give a nearly O(1) amortized time per operation (technically O(α(V)), the inverse Ackermann function — effectively constant for any realistic input size).</p><h3>Applications of MST</h3><p>Beyond Kruskal's cycle detection, MSTs power network design (laying minimum cable to connect all offices), clustering (removing the most expensive MST edges splits data into natural clusters), and approximation algorithms for harder problems like the Traveling Salesman Problem.</p>`,
+            exercises: [
+              { q: 'What does path compression actually change in the DSU structure, and why does it speed up future find() calls?', diff: 'easy', type: 'Conceptual', hint: 'Look at what happens to every node visited on the way to the root during a find() call.', sol: 'Path compression re-points every node visited along the path to a root directly to that root, instead of leaving a long chain. Future find() calls on those same nodes then take O(1) steps instead of retracing the whole chain.' },
+              { q: 'Trace Union-Find with union by rank on: union(A,B), union(C,D), union(B,C). Describe the resulting tree structure assuming ranks start equal.', diff: 'medium', type: 'Coding', hint: 'When ranks tie, one root becomes the parent of the other and its rank increases by 1.', sol: 'union(A,B): A becomes root of B (rank of A → 1). union(C,D): C becomes root of D (rank of C → 1). union(B,C): find(B)=A, find(C)=C, ranks tie (both 1) so one becomes parent of the other, say A becomes parent of C, and A\'s rank increases to 2. Final structure: A is root, with B and C as direct children, and D under C.' },
+              { q: 'Explain how you would use MST edge removal to split a set of data points into k natural clusters, and why removing the k-1 MOST expensive MST edges (not the cheapest) is the correct approach.', diff: 'hard', type: 'Design', hint: 'The most expensive edges in an MST represent the "weakest links" bridging otherwise distant/dissimilar groups.', sol: 'Build an MST over the data points (with edge weight = distance/dissimilarity). The most expensive edges in the MST represent the longest necessary connections — typically bridges between naturally separate groups that only got connected because the MST must connect everything. Removing the k-1 most expensive edges splits the MST into exactly k connected components, each representing a natural cluster, since removing the cheapest edges instead would just fragment tightly-related points that clearly belong together.' }
+            ],
+            mcqs: [
+              { q: 'Union-Find\'s find() operation answers the question:', options: ['Is the graph connected overall?', 'Which set does this element belong to?', 'What is the shortest path?', 'Is this a cycle?'], answer: 1 },
+              { q: 'Path compression works by:', options: ['Deleting unused nodes', 'Re-pointing visited nodes directly to the root during find()', 'Sorting all elements', 'Merging by weight instead of rank'], answer: 1 },
+              { q: 'Union by rank prevents:', options: ['Cycles in the original graph', 'The DSU tree from becoming a long inefficient chain', 'Duplicate edges', 'Negative weights'], answer: 1 },
+              { q: 'With both optimizations, Union-Find operations run in approximately:', options: ['O(log V)', 'O(V)', 'O(α(V)) — near constant time', 'O(V²)'], answer: 2 },
+              { q: 'To split data into clusters using an MST, you should remove the:', options: ['Cheapest edges', 'Most expensive (k-1) edges', 'Edges in the middle', 'All edges'], answer: 1 }
+            ]
+          }
+        ]
+      },
+      {
+        module: 'Module 5',
+        title: 'Directed Acyclic Graphs (DAG)',
+        topics: [
+          {
+            title: 'DAG Basics & Topological Sorting (DFS-based)',
+            tag: 'Concept',
+            body: `<p>A <strong>Directed Acyclic Graph</strong> (DAG) is a directed graph with no cycles — meaning there's no way to start at a vertex and follow directed edges back to itself. DAGs naturally model "must happen before" relationships: course prerequisites, build dependencies, task scheduling.</p><p>A <strong>topological sort</strong> orders all vertices such that for every directed edge u → v, u appears before v in the ordering. Topological sort only exists for DAGs — any cycle would create a contradiction (u must come before v, but v must also come before u).</p><pre><code>def topo_sort_dfs(graph, V):
+    visited = [False] * V
+    stack = []
+    def dfs(node):
+        visited[node] = True
+        for neighbor in graph[node]:
+            if not visited[neighbor]:
+                dfs(neighbor)
+        stack.append(node)  # push AFTER exploring all neighbors
+    for v in range(V):
+        if not visited[v]:
+            dfs(v)
+    return stack[::-1]  # reverse finish order</code></pre><p>The key insight: a vertex is only pushed onto the stack after every vertex reachable from it has already finished — so reversing that finish order guarantees dependencies come first.</p>`,
+            exercises: [
+              { q: 'Explain why a graph with a cycle cannot have a valid topological ordering.', diff: 'easy', type: 'Conceptual', hint: 'Follow the cycle around and see what contradiction arises for ordering two of its vertices.', sol: 'If A → B → C → A forms a cycle, a valid ordering would need A before B, B before C, and C before A simultaneously — an impossible, contradictory requirement. Hence topological order only exists for acyclic graphs.' },
+              { q: 'Given edges A→B, A→C, B→D, C→D, run DFS-based topological sort starting from A and give one valid resulting order.', diff: 'medium', type: 'Coding', hint: 'D finishes first (no outgoing edges), then B and C, then A — reverse that finish order.', sol: 'DFS from A visits B first: B→D, D finishes (pushed), B finishes (pushed). Back to A, visits C: C→D already visited, C finishes (pushed). A finishes (pushed) last. Stack (finish order): [D, B, C, A]. Reversed: A, C, B, D — a valid topological order (A before B and C; B and C before D).' },
+              { q: 'Explain why the "push after exploring all neighbors" step is essential for correctness — what would go wrong if you pushed a vertex onto the stack when it is FIRST visited instead?', diff: 'hard', type: 'Analysis', hint: "Consider a vertex A with a dependent B — pushing A immediately on first visit could place A before or after B incorrectly depending on traversal order.", sol: 'If you pushed on first visit, a vertex could be recorded in the ordering before its own dependents (descendants) even started, or interleaved incorrectly with them, since first-visit order does not guarantee all of a vertex\'s outgoing paths have been fully processed. Pushing only after ALL neighbors are finished guarantees every vertex reachable from a node is already correctly placed relative to it, which is exactly the topological property required.' }
+            ],
+            mcqs: [
+              { q: 'A topological sort exists only for graphs that are:', options: ['Undirected', 'Directed and acyclic (DAGs)', 'Weighted', 'Connected'], answer: 1 },
+              { q: 'In DFS-based topological sort, a vertex is pushed onto the result stack:', options: ['When it is first visited', 'After all its neighbors are fully explored', 'Randomly', 'Only if it has no neighbors'], answer: 1 },
+              { q: 'The final topological order is obtained by:', options: ['Reading the stack top to bottom directly', 'Reversing the DFS finish order', 'Sorting vertices alphabetically', 'Running BFS instead'], answer: 1 },
+              { q: 'A course-prerequisite system is best modeled as a:', options: ['Undirected cyclic graph', 'DAG with courses as vertices and prerequisites as directed edges', 'Weighted MST problem', 'Bipartite graph'], answer: 1 },
+              { q: 'If two vertices have no dependency relationship at all in a DAG, their relative topological order is:', options: ['Undefined and causes an error', 'Not fixed — either order is valid', 'Always alphabetical', 'Always by vertex index'], answer: 1 }
+            ]
+          },
+          {
+            title: "Kahn's Algorithm (BFS-based) & Cycle Detection",
+            tag: 'Core',
+            body: `<p><strong>Kahn's algorithm</strong> produces a topological sort using BFS instead of DFS, and — as a side effect — naturally detects cycles.</p><pre><code>from collections import deque
+def kahn(graph, V):
+    indegree = [0] * V
+    for u in graph:
+        for v in graph[u]:
+            indegree[v] += 1
+    queue = deque([v for v in range(V) if indegree[v] == 0])
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            indegree[neighbor] -= 1
+            if indegree[neighbor] == 0:
+                queue.append(neighbor)
+    if len(order) != V:
+        return "Cycle detected"
+    return order</code></pre><p>The idea: repeatedly remove vertices with <strong>in-degree 0</strong> (no remaining unprocessed dependencies), decrementing their neighbors' in-degrees as you go. If every vertex gets processed, the order is a valid topological sort. If some vertices never reach in-degree 0, they must be part of a cycle — nothing "unlocks" them.</p>`,
+            exercises: [
+              { q: 'What does an in-degree of 0 mean for a vertex in a dependency graph, and why is it safe to process such a vertex immediately?', diff: 'easy', type: 'Conceptual', hint: 'In-degree counts unfinished prerequisites pointing INTO the vertex.', sol: 'In-degree 0 means no other vertex has an unprocessed edge pointing into it — all its prerequisites are already satisfied. It\'s safe to process immediately since nothing is still required to come before it.' },
+              { q: "Given edges A→B, B→C, C→A (a pure cycle), trace Kahn's algorithm and explain exactly why the final order comes up short.", diff: 'medium', type: 'Analysis', hint: 'Compute the initial in-degrees of A, B, and C — none of them will be 0.', sol: 'In-degrees: A=1 (from C), B=1 (from A), C=1 (from B). No vertex starts with in-degree 0, so the queue is empty from the start and no vertex is ever processed. order stays empty (length 0 ≠ V=3), correctly signaling a cycle — every vertex is stuck waiting on another.' },
+              { q: 'Compare Kahn\'s algorithm and DFS-based topological sort in terms of how naturally each one detects cycles, and explain which approach you\'d recommend for a system that must also report EXACTLY which vertices are part of the cycle.', diff: 'hard', type: 'Analysis', hint: "Kahn's leaves a residue of un-processed vertices when a cycle exists — that residue directly tells you the cycle's membership.", sol: "Kahn's naturally isolates cycle membership: any vertex left in the graph after the algorithm terminates (never reaching in-degree 0) is provably part of some cycle. DFS-based detection typically only flags THAT a back-edge was found, requiring extra bookkeeping (like tracking the recursion path) to reconstruct the exact cycle. For a system needing to report exact cycle membership, Kahn's algorithm is more directly useful, since the leftover unprocessed vertex set IS the answer with no extra reconstruction needed." }
+            ],
+            mcqs: [
+              { q: "Kahn's algorithm is based on:", options: ['DFS finish order', 'Repeatedly removing vertices with in-degree 0 (BFS-style)', 'Sorting edges by weight', 'Union-Find'], answer: 1 },
+              { q: 'If the final order from Kahn\'s algorithm has fewer than V vertices, it means:', options: ['The graph is a tree', 'A cycle exists', 'The graph is undirected', 'An error in input format'], answer: 1 },
+              { q: 'In-degree of a vertex counts:', options: ['Outgoing edges', 'Incoming edges', 'Total edges', 'Self-loops only'], answer: 1 },
+              { q: "Kahn's algorithm uses which data structure to hold vertices ready to process?", options: ['Stack', 'Queue', 'Priority queue always', 'Union-Find'], answer: 1 },
+              { q: 'Vertices left unprocessed when Kahn\'s algorithm terminates early are:', options: ['Isolated vertices with no edges', 'Guaranteed part of a cycle', 'Always the first vertex added', 'Randomly selected'], answer: 1 }
+            ]
+          },
+          {
+            title: 'Longest Path in DAG & Course Schedule Problems',
+            tag: 'Applications',
+            body: `<p>Unlike general graphs (where longest path is NP-hard), the <strong>longest path in a DAG</strong> can be solved efficiently in O(V + E) using topological order — process vertices in topological order and relax each edge to maximize (rather than minimize) distance.</p><pre><code>def longest_path_dag(graph, topo_order, V, start):
+    dist = [float('-inf')] * V
+    dist[start] = 0
+    for node in topo_order:
+        if dist[node] != float('-inf'):
+            for neighbor, weight in graph[node]:
+                if dist[node] + weight > dist[neighbor]:
+                    dist[neighbor] = dist[node] + weight
+    return dist</code></pre><p>Because topological order guarantees every predecessor of a vertex is processed before it, this single pass is enough — no need to revisit vertices, unlike Bellman-Ford.</p><h3>Course Schedule Problems</h3><p>The classic "Course Schedule" interview problem — given course prerequisites, can you finish all courses? — is exactly a cycle-detection problem on a DAG. "Course Schedule II" (return a valid order) is exactly a topological sort. Recognizing this mapping instantly gives you the algorithm to use.</p>`,
+            exercises: [
+              { q: 'Why is finding the longest path NP-hard in general graphs, but solvable in linear time specifically for DAGs?', diff: 'easy', type: 'Conceptual', hint: "General graphs can have cycles, which make 'longest simple path' ambiguous or require exhaustive search; DAGs have no such ambiguity.", sol: 'In a general graph with cycles, the "longest path" is ill-defined without restricting to simple paths (no repeated vertices), and finding the longest simple path is NP-hard. In a DAG, there are no cycles, so every path is automatically simple, and topological order gives a clean, non-repeating processing sequence that lets one linear pass compute the answer.' },
+              { q: 'You are given course prerequisites: [0 requires 1], [1 requires 2], and asked if you can finish all 3 courses. Explain how you\'d determine the answer and what it would be.', diff: 'medium', type: 'Coding', hint: 'Model courses as vertices and "requires" as a directed edge, then check for a cycle.', sol: 'Build a graph with edges 1→0 (or 0 depends on 1) and 2→1. Run Kahn\'s algorithm or DFS cycle detection. There\'s no cycle here (2→1→0 is a straight chain), so yes, you can finish all courses, in the order 2, 1, 0.' },
+              { q: 'Design an approach to find the LONGEST prerequisite chain length in a course schedule DAG (i.e., the deepest dependency chain), and explain how it maps to the longest-path-in-DAG technique.', diff: 'hard', type: 'Design', hint: "Treat every edge weight as 1 (one step deeper), then find the longest path from any 'no prerequisite' course.", sol: 'Model each prerequisite edge as weight 1. Compute a topological order, then run the longest-path-in-DAG relaxation (maximizing instead of minimizing) starting simultaneously from all vertices with in-degree 0 (courses with no prerequisites) at distance 0. The maximum value found across all vertices after processing is the length of the deepest prerequisite chain — directly reusing the O(V+E) longest-path-in-DAG technique.' }
+            ],
+            mcqs: [
+              { q: 'Longest path in a general graph (with cycles) is:', options: ['Always O(V + E)', 'NP-hard in general', 'The same as shortest path', 'Impossible to define'], answer: 1 },
+              { q: 'Longest path in a DAG can be solved in:', options: ['O(V + E) using topological order', 'O(V³) only', 'Exponential time', 'It cannot be solved'], answer: 0 },
+              { q: '"Course Schedule" (can you finish all courses?) maps to which graph problem?', options: ['Shortest path', 'Cycle detection on a DAG', 'Minimum spanning tree', 'Maximum flow'], answer: 1 },
+              { q: '"Course Schedule II" (return a valid course order) maps to:', options: ['BFS shortest path', 'Topological sort', 'Dijkstra\'s algorithm', 'Union-Find only'], answer: 1 },
+              { q: 'The longest-path-in-DAG algorithm relaxes edges to:', options: ['Minimize distance, like Dijkstra', 'Maximize distance, using topological order', 'Randomly pick a path', 'Only count edges, ignoring weight'], answer: 1 }
+            ]
+          }
+        ]
+      },
+      {
+        module: 'Module 6',
+        title: 'Connectivity Algorithms',
+        topics: [
+          {
+            title: 'Connected Components, Bridges & Articulation Points',
+            tag: 'Concept',
+            body: `<p>A <strong>connected component</strong> is a maximal set of vertices where every pair is reachable from each other. Finding them is a straightforward application of BFS or DFS from every unvisited vertex.</p><p>A <strong>bridge</strong> is an edge whose removal increases the number of connected components (disconnects the graph). An <strong>articulation point</strong> (cut vertex) is a vertex whose removal does the same. Both represent structural weak points in a network.</p><pre><code># DFS with discovery time and low-link value
+def dfs(u, parent, disc, low, time, graph, bridges):
+    disc[u] = low[u] = time[0]
+    time[0] += 1
+    for v in graph[u]:
+        if disc[v] == -1:
+            dfs(v, u, disc, low, time, graph, bridges)
+            low[u] = min(low[u], low[v])
+            if low[v] > disc[u]:
+                bridges.append((u, v))
+        elif v != parent:
+            low[u] = min(low[u], disc[v])</code></pre><p>The <strong>low-link value</strong> of a vertex is the earliest discovery time reachable from its DFS subtree (including via back-edges). If a child's low-link value is strictly greater than the parent's discovery time, that connecting edge is a bridge — the child's subtree has no other way back up.</p>`,
+            exercises: [
+              { q: 'In a graph shaped like a straight line A-B-C-D, identify which edges are bridges.', diff: 'easy', type: 'Conceptual', hint: 'Removing any single edge in a straight chain disconnects it into two pieces — check if that\'s true for all three edges here.', sol: 'All three edges (A-B, B-C, C-D) are bridges. Removing any one splits the chain into two disconnected pieces, since there is no alternate path around any of them.' },
+              { q: 'Explain, in your own words, what a low-link value represents and why comparing it to the parent\'s discovery time reveals a bridge.', diff: 'medium', type: 'Conceptual', hint: 'Low-link answers "how far back up the DFS tree can this subtree reach, including through back-edges?"', sol: "A vertex's low-link value is the earliest (smallest) discovery time reachable from its own DFS subtree, including going through back-edges to ancestors. If a child's low-link is strictly greater than the parent's discovery time, it means the child's subtree has NO back-edge reaching the parent or above — so the only way to reach that subtree is through the parent-child edge, making it a bridge." },
+              { q: 'Design an approach to find all articulation points in a graph using discovery time and low-link values, handling the special case of the DFS root vertex separately.', diff: 'hard', type: 'Design', hint: "A non-root vertex u is an articulation point if some child's low-link value is >= disc[u]. The root needs a different rule based on how many DFS children it has.", sol: "For a non-root vertex u, if ANY child v has low[v] >= disc[u], then u is an articulation point (removing u would disconnect that child's subtree from the rest, since it can't reach back past u). For the root vertex specifically, this discovery-time comparison doesn't apply (it has no parent to reach back to) — instead, the root is an articulation point if and only if it has 2 or more direct DFS children, since removing it would leave those children's subtrees disconnected from each other." }
+            ],
+            mcqs: [
+              { q: 'A bridge is an edge whose removal:', options: ['Has no effect', 'Increases the number of connected components', 'Creates a cycle', 'Only affects directed graphs'], answer: 1 },
+              { q: 'An articulation point is a vertex whose removal:', options: ['Never changes connectivity', 'Disconnects the graph', 'Always creates a cycle', 'Only exists in trees'], answer: 1 },
+              { q: 'Low-link value represents:', options: ['The vertex\'s degree', 'The earliest discovery time reachable from the subtree, including back-edges', 'The vertex\'s index', 'The total edge count'], answer: 1 },
+              { q: 'An edge (u,v) where u is the parent is a bridge when:', options: ['low[v] > disc[u]', 'low[v] < disc[u]', 'disc[v] == disc[u]', 'low[v] == 0'], answer: 0 },
+              { q: 'The DFS root is an articulation point specifically when it has:', options: ['Exactly 1 DFS child', '2 or more DFS children', 'No children', 'An odd degree'], answer: 1 }
+            ]
+          },
+          {
+            title: "Strongly Connected Components — Kosaraju's Algorithm",
+            tag: 'Core',
+            body: `<p>In a directed graph, a <strong>strongly connected component (SCC)</strong> is a maximal group of vertices where every vertex can reach every other vertex within the group via directed paths.</p><p><strong>Kosaraju's algorithm</strong> finds all SCCs in O(V + E) using two DFS passes and a clever trick:</p><ol><li>Run DFS on the original graph, pushing each vertex onto a stack when it finishes (like topological sort).</li><li>Reverse all edges in the graph (transpose it).</li><li>Pop vertices from the stack one at a time; for each unvisited vertex, run DFS on the <strong>transposed</strong> graph — everything reached in this DFS forms one SCC.</li></ol><pre><code># Step 1: finish-order DFS on original graph → stack
+# Step 2: reverse all edges
+# Step 3: DFS on reversed graph in stack-pop order
+#          each DFS tree = one SCC</code></pre><p>Why does reversing the graph work? Processing vertices in decreasing finish-time order (from step 1) guarantees you start each new SCC-DFS from a vertex that cannot reach any previously found SCC — so it stays cleanly contained within its own SCC on the reversed graph.</p>`,
+            exercises: [
+              { q: 'In a directed cycle A→B→C→A, what is the SCC structure? Explain why.', diff: 'easy', type: 'Conceptual', hint: 'Check whether every vertex can reach every other vertex by following the directed edges around.', sol: 'All three vertices form ONE single SCC {A, B, C}, since following the directed cycle lets any vertex reach any other (A→B→C→A means A reaches B and C, and similarly for the others).' },
+              { q: 'Why does Kosaraju\'s algorithm need to reverse the graph in step 2 — what would go wrong if you ran the second DFS on the original (non-reversed) graph instead?', diff: 'medium', type: 'Analysis', hint: 'Running DFS on the original graph in finish-time order could accidentally merge separate SCCs together via forward edges between them.', sol: "If you didn't reverse the graph, the second DFS pass (in decreasing finish-time order) could follow a forward edge from one SCC into a vertex belonging to a DIFFERENT SCC that hasn't been processed yet, incorrectly merging two separate SCCs into one DFS tree. Reversing the graph specifically blocks these forward inter-SCC connections while preserving the property that lets each SCC be discovered cleanly on its own." },
+              { q: 'Explain how the "condensation graph" (where each SCC is collapsed into a single vertex) relates to Kosaraju\'s output, and why this condensation graph is always a DAG.', diff: 'hard', type: 'Analysis', hint: 'If the condensation graph had a cycle between two collapsed SCC-vertices, what would that imply about those two groups actually being separate SCCs?', sol: "After Kosaraju's identifies all SCCs, collapsing each SCC into a single vertex and keeping edges between different SCCs produces the condensation graph. This graph must be a DAG: if there were a cycle between two SCC-vertices in the condensation graph, it would mean you could travel from SCC1 to SCC2 and back to SCC1 via inter-SCC edges — but that would mean every vertex in SCC1 can reach every vertex in SCC2 and vice versa, meaning they should have been merged into ONE larger SCC in the first place, contradicting that they were found as separate maximal SCCs." }
+            ],
+            mcqs: [
+              { q: 'A strongly connected component requires every vertex in the group to:', options: ['Have the same degree', 'Reach every other vertex in the group via directed paths', 'Be directly adjacent to all others', 'Have no outgoing edges'], answer: 1 },
+              { q: "Kosaraju's algorithm uses how many DFS passes?", options: ['One', 'Two', 'Three', 'V passes'], answer: 1 },
+              { q: 'The second DFS pass in Kosaraju\'s algorithm runs on:', options: ['The original graph', 'The transposed (reversed) graph', 'A minimum spanning tree', 'An adjacency matrix only'], answer: 1 },
+              { q: 'Vertices are processed in the second DFS pass in the order:', options: ['Increasing finish time from pass 1', 'Decreasing finish time from pass 1 (stack pop order)', 'Vertex index order', 'Random order'], answer: 1 },
+              { q: 'The condensation graph (SCCs collapsed to single vertices) is always:', options: ['Cyclic', 'A DAG', 'Undirected', 'Disconnected'], answer: 1 }
+            ]
+          },
+          {
+            title: "Tarjan's Algorithm & Biconnected Components",
+            tag: 'Advanced',
+            body: `<p><strong>Tarjan's algorithm</strong> finds all SCCs in a single DFS pass — more elegant than Kosaraju's two-pass approach, using discovery times, low-link values, and an explicit stack to track "currently active" vertices.</p><pre><code>def tarjan(u, disc, low, on_stack, stack, time, graph, sccs):
+    disc[u] = low[u] = time[0]; time[0] += 1
+    stack.append(u); on_stack[u] = True
+    for v in graph[u]:
+        if disc[v] == -1:
+            tarjan(v, disc, low, on_stack, stack, time, graph, sccs)
+            low[u] = min(low[u], low[v])
+        elif on_stack[v]:
+            low[u] = min(low[u], disc[v])
+    if low[u] == disc[u]:  # u is an SCC root
+        scc = []
+        while True:
+            v = stack.pop(); on_stack[v] = False
+            scc.append(v)
+            if v == u: break
+        sccs.append(scc)</code></pre><p>When a vertex's low-link value equals its own discovery time, it means nothing in its subtree can reach further back than itself — it's the "root" of its SCC, and everything still on the stack above it (pushed after it, not yet popped) belongs to that same SCC.</p><h3>Biconnected Components</h3><p>A <strong>biconnected component</strong> is a maximal subgraph with no articulation point — meaning it stays connected even after removing any single vertex. Every edge belongs to exactly one biconnected component, and these components connect to each other only through articulation points, forming a tree-like structure called the "block-cut tree."</p>`,
+            exercises: [
+              { q: 'What condition on a vertex\'s low-link and discovery time signals that it is the root of an SCC in Tarjan\'s algorithm?', diff: 'easy', type: 'Conceptual', hint: 'Compare low[u] directly to disc[u].', sol: 'When low[u] == disc[u], meaning nothing in u\'s DFS subtree can reach back further than u itself — u is the root of its own SCC.' },
+              { q: 'Explain why Tarjan\'s algorithm needs an explicit "on_stack" check (not just "is this vertex visited?") when updating low-link values through back-edges.', diff: 'medium', type: 'Analysis', hint: "A vertex could be 'visited' but already fully resolved into a completed SCC from an earlier subtree — such a vertex shouldn't influence the current subtree's low-link.", sol: 'A vertex can be visited but already popped off the stack because it was assigned to a completed SCC in an earlier part of the DFS. If low-link updates treated any visited vertex as reachable, it could incorrectly merge the current subtree with an already-finished, unrelated SCC. Checking on_stack ensures only vertices still "in play" (part of a not-yet-finalized SCC) are considered for the low-link update.' },
+              { q: 'Explain the relationship between articulation points and biconnected components, and describe what the "block-cut tree" represents.', diff: 'hard', type: 'Analysis', hint: 'Articulation points are exactly the vertices shared between two or more biconnected components.', sol: "Every articulation point is exactly a vertex that is shared by two or more biconnected components — it's the 'hinge' connecting otherwise separate resilient blocks of the graph. The block-cut tree represents this structure abstractly: it has a node for each biconnected component ('block') and a node for each articulation point ('cut' vertex), with an edge between a block-node and a cut-node whenever that articulation point belongs to that block. This tree structure reveals the graph's overall connectivity skeleton — useful for quickly answering 'which vertices, if removed, would disconnect X from Y' style queries." }
+            ],
+            mcqs: [
+              { q: "Tarjan's algorithm finds SCCs using:", options: ['Two DFS passes like Kosaraju\'s', 'A single DFS pass with an explicit stack', 'Only BFS', 'Sorting edges by weight'], answer: 1 },
+              { q: 'A vertex u is the root of its SCC in Tarjan\'s algorithm when:', options: ['low[u] == disc[u]', 'low[u] > disc[u]', 'disc[u] == 0', 'u has no neighbors'], answer: 0 },
+              { q: 'The "on_stack" check in Tarjan\'s algorithm prevents:', options: ['Infinite loops', 'Incorrectly merging with an already-finalized, unrelated SCC', 'Negative weights', 'Disconnection'], answer: 1 },
+              { q: 'A biconnected component is a maximal subgraph that:', options: ['Has no cycles', 'Stays connected after removing any single vertex', 'Has only one edge', 'Is always the whole graph'], answer: 1 },
+              { q: 'The block-cut tree connects biconnected components through:', options: ['Bridges only', 'Articulation points', 'MST edges', 'SCC roots'], answer: 1 }
+            ]
+          }
+        ]
+      }
+    ];
+    const flatTopics = [];
+    course.forEach((mod, mi) => mod.topics.forEach((topic, ti) => flatTopics.push({ mi, ti })));
+    let currentIndex = 0;
+    const completed = new Set();
+    function getVisualMarkup(mi, ti, mod, topic) {
+      if (mi === 0) {
+        return `
+          <div class="visual-block">
+            <div class="visual-head">Graph Anatomy Diagram</div>
+            <div style="text-align: center; margin: 1.5rem 0;">
+              <svg width="100%" height="120" viewBox="0 0 500 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 460px;">
+                <path d="M100 30 L250 60 M100 30 L100 90 M250 60 L100 90 M250 60 L400 40 M250 60 L400 90" stroke="#4d5171" stroke-width="1.5"/>
+                <circle cx="100" cy="30" r="14" fill="#8162ff" fill-opacity="0.2" stroke="#8162ff" stroke-width="1.5"/>
+                <text x="100" y="34" fill="#fff" font-size="10" text-anchor="middle" font-weight="700">A</text>
+                <circle cx="100" cy="90" r="14" fill="#8162ff" fill-opacity="0.2" stroke="#8162ff" stroke-width="1.5"/>
+                <text x="100" y="94" fill="#fff" font-size="10" text-anchor="middle" font-weight="700">B</text>
+                <circle cx="250" cy="60" r="14" fill="#00ffd0" fill-opacity="0.2" stroke="#00ffd0" stroke-width="1.5"/>
+                <text x="250" y="64" fill="#fff" font-size="10" text-anchor="middle" font-weight="700">C</text>
+                <circle cx="400" cy="40" r="14" fill="#ff3b93" fill-opacity="0.2" stroke="#ff3b93" stroke-width="1.5"/>
+                <text x="400" y="44" fill="#fff" font-size="10" text-anchor="middle" font-weight="700">D</text>
+                <circle cx="400" cy="90" r="14" fill="#ff3b93" fill-opacity="0.2" stroke="#ff3b93" stroke-width="1.5"/>
+                <text x="400" y="94" fill="#fff" font-size="10" text-anchor="middle" font-weight="700">E</text>
+              </svg>
+            </div>
+            <div class="compare-grid">
+              <div class="compare-card"><strong>Vertex</strong><span>A single node — a city, a user, a task.</span></div>
+              <div class="compare-card"><strong>Edge</strong><span>A connection between two vertices, directed or undirected.</span></div>
+              <div class="compare-card"><strong>Degree</strong><span>How many edges touch a given vertex.</span></div>
+            </div>
+          </div>`;
+      }
+      if (mi === 1) {
+        return `
+          <div class="visual-block">
+            <div class="visual-head">Traversal Order Trace</div>
+            <div class="flow-grid">
+              <div class="flow-chip">Start Vertex</div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-chip">Visit Neighbors</div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-chip">Mark Visited</div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-chip">Expand Frontier</div>
+            </div>
+            <div class="visual-caption">${topic.title} follows this exploration loop until every reachable vertex has been visited exactly once.</div>
+          </div>`;
+      }
+      if (mi === 3) {
+        return `
+          <div class="visual-block">
+            <div class="visual-head">Spanning Tree Build Order</div>
+            <div style="text-align: center; margin: 1.5rem 0;">
+              <svg width="100%" height="90" viewBox="0 0 400 90" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 380px;">
+                <circle cx="60" cy="45" r="12" fill="#8162ff" fill-opacity="0.25" stroke="#8162ff" stroke-width="1.5"/>
+                <circle cx="180" cy="20" r="12" fill="#00ffd0" fill-opacity="0.25" stroke="#00ffd0" stroke-width="1.5"/>
+                <circle cx="180" cy="70" r="12" fill="#00ffd0" fill-opacity="0.25" stroke="#00ffd0" stroke-width="1.5"/>
+                <circle cx="320" cy="45" r="12" fill="#ff3b93" fill-opacity="0.25" stroke="#ff3b93" stroke-width="1.5"/>
+                <path d="M70 40 L170 22" stroke="#00ffd0" stroke-width="2"/>
+                <path d="M70 50 L170 68" stroke="#00ffd0" stroke-width="2"/>
+                <path d="M192 25 L310 43" stroke="#00ffd0" stroke-width="2"/>
+                <path d="M192 65 L310 47" stroke="#4d5171" stroke-width="1.2" stroke-dasharray="3 3"/>
+              </svg>
+            </div>
+            <div class="visual-caption">Solid edges join the growing minimum spanning tree; dashed edges are rejected because they would form a cycle or cost more.</div>
+          </div>`;
+      }
+      return `
+        <div class="visual-block">
+          <div class="visual-head">Algorithm Pipeline</div>
+          <div class="flow-grid">
+            <div class="flow-chip">Model as Graph</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-chip">Choose Algorithm</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-chip">Trace &amp; Verify</div>
+          </div>
+          <div class="visual-caption">${topic.title} pairs the underlying theory with the exact runtime and correctness guarantees you'll be asked about in interviews.</div>
+        </div>`;
+    }
+    function getExerciseMarkup(mi, ti, mod, topic) {
+      const exercises = topic.exercises || [];
+      if (!exercises.length) return '';
+      const cards = exercises.map((ex, idx) => {
+        const num = String(idx + 1).padStart(2, '0');
+        const hintId = `hint-${mi}-${ti}-${idx}`;
+        const solId = `sol-${mi}-${ti}-${idx}`;
+        return `
+          <div class="challenge-card">
+            <div class="challenge-row">
+              <div class="challenge-index">GRF_${num}</div>
+              <div class="challenge-main">
+                <div class="challenge-meta">
+                  <span class="diff-badge ${ex.diff}">${ex.diff}</span>
+                  <span class="type-badge">${ex.type}</span>
+                </div>
+                <div class="challenge-question">${ex.q}</div>
+                <div class="challenge-btn-row">
+                  <button class="hint-toggle" onclick="toggleHint('${hintId}')">💡 Reveal Hint</button>
+                  <button class="sol-toggle" onclick="toggleHint('${solId}')">✅ Show Solution</button>
+                </div>
+                <div class="hint-panel" id="${hintId}">${ex.hint}</div>
+                <div class="hint-panel sol-panel" id="${solId}"><strong>Solution:</strong> ${ex.sol || 'Solution coming soon.'}</div>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+      const mcqMarkup = getMcqMarkup(mi, ti, mod, topic);
+      return `
+        <div class="challenge-console">
+          <div class="console-header">
+            <div class="console-title">
+              <div class="console-dot"></div>
+              <div><span>Practice_Protocol // ${mod.module}</span><strong>Exercise Set: ${topic.title}</strong></div>
+            </div>
+            <div class="console-count">${exercises.length} Challenges Loaded</div>
+          </div>
+          <div class="console-body">${cards}</div>
+          <div class="console-footer">
+            <p>Work through each challenge, check the hint if stuck, then reveal the solution to compare your approach.</p>
+            <button class="console-cta" onclick="document.getElementById('markBtn').click()">Mark Topic Complete →</button>
+          </div>
+        </div>
+        ${mcqMarkup}`;
+    }
+    function getMcqMarkup(mi, ti, mod, topic) {
+      const mcqs = topic.mcqs || [];
+      if (!mcqs.length) return '';
+      const cards = mcqs.map((mcq, idx) => {
+        const groupName = `mcq-${mi}-${ti}-${idx}`;
+        const optionsHtml = mcq.options.map((opt, oi) => `
+              <label class="mcq-option" data-mcq="${groupName}" data-correct="${oi === mcq.answer ? '1' : '0'}">
+                <input type="radio" name="${groupName}" value="${oi}" onchange="checkMcq(this)" />
+                <span class="mcq-option-letter">${String.fromCharCode(65 + oi)}</span>
+                <span class="mcq-option-text">${opt}</span>
+              </label>`).join('');
+        return `
+          <div class="mcq-card">
+            <div class="mcq-question"><span class="mcq-num">Q${idx + 1}.</span> ${mcq.q}</div>
+            <div class="mcq-options">${optionsHtml}</div>
+          </div>`;
+      }).join('');
+      return `
+        <div class="challenge-console mcq-console">
+          <div class="console-header">
+            <div class="console-title">
+              <div class="console-dot" style="background:var(--neon-magenta); box-shadow:0 0 12px var(--neon-magenta);"></div>
+              <div><span>MCQ_Protocol // ${mod.module}</span><strong>Quick Quiz: ${topic.title}</strong></div>
+            </div>
+            <div class="console-count">${mcqs.length} Questions</div>
+          </div>
+          <div class="console-body">${cards}</div>
+          <div class="console-footer">
+            <p>Pick an answer to instantly reveal whether it's correct — the right answer highlights green either way.</p>
+          </div>
+        </div>`;
+    }
+    function checkMcq(input) {
+      const label = input.closest('.mcq-option');
+      const groupName = label.dataset.mcq;
+      document.querySelectorAll(`label[data-mcq="${groupName}"]`).forEach(opt => {
+        opt.classList.remove('correct', 'wrong');
+        opt.querySelector('input').disabled = true;
+      });
+      document.querySelectorAll(`label[data-mcq="${groupName}"]`).forEach(opt => {
+        if (opt.dataset.correct === '1') opt.classList.add('correct');
+      });
+      if (label.dataset.correct !== '1') label.classList.add('wrong');
+    }
+    function toggleHint(id) {
+      const panel = document.getElementById(id);
+      if (panel) panel.classList.toggle('open');
+    }
+    function buildSidebar() {
+      const list = document.getElementById('moduleList');
+      list.innerHTML = '';
+      course.forEach((mod, mi) => {
+        const block = document.createElement('div');
+        block.className = 'module';
+        block.innerHTML = `<div class="module-head"><span>${mod.module} · ${mod.title}</span><span class="chevron">▸</span></div><div class="module-body"></div>`;
+        const body = block.querySelector('.module-body');
+        mod.topics.forEach((topic, ti) => {
+          const link = document.createElement('div');
+          link.className = 'topic-link';
+          link.textContent = topic.title;
+          link.onclick = () => {
+            currentIndex = flatTopics.findIndex(item => item.mi === mi && item.ti === ti);
+            renderContent(true);
+          };
+          body.appendChild(link);
+        });
+        block.querySelector('.module-head').onclick = () => block.classList.toggle('open');
+        list.appendChild(block);
+      });
+      document.querySelectorAll('.module').forEach((el, index) => { if (index === 0) el.classList.add('open'); });
+    }
+    function updateProgress() {
+      const total = flatTopics.length;
+      const done = completed.size;
+      document.getElementById('progressText').textContent = `${done} / ${total} topics`;
+      document.getElementById('progressFill').style.width = `${(done / total) * 100}%`;
+    }
+    function renderContent(shouldScroll = false) {
+      const { mi, ti } = flatTopics[currentIndex];
+      const mod = course[mi];
+      const topic = mod.topics[ti];
+      const key = `${mi}-${ti}`;
+      const isDone = completed.has(key);
+      document.querySelectorAll('.topic-link').forEach(link => link.classList.remove('active'));
+      const activeLink = document.querySelectorAll('.topic-link')[currentIndex];
+      if (activeLink) activeLink.classList.add('active');
+      const visualMarkup = getVisualMarkup(mi, ti, mod, topic);
+      const exerciseMarkup = getExerciseMarkup(mi, ti, mod, topic);
+      document.getElementById('contentArea').innerHTML = `
+        <div class="content-header">
+          <div class="content-tag">${topic.tag}</div>
+          <h2>${topic.title}</h2>
+          <div class="content-meta">${mod.module} · ${mod.title}</div>
+        </div>
+        <div class="content-hero">
+          <div class="eyebrow">Target Learning Objective</div>
+          <p>By the end of this lesson, you will understand the core logic behind ${topic.title.toLowerCase()} and be able to trace, implement, and reason about its complexity confidently.</p>
+        </div>
+        <div class="learning-grid">
+          <div class="learning-card"><strong>Concept Core</strong><span>Theoretical foundation and intuition</span></div>
+          <div class="learning-card"><strong>Implementation</strong><span>Pseudocode and worked traces</span></div>
+          <div class="learning-card"><strong>Interview Prep</strong><span>Complexity reasoning and edge cases</span></div>
+        </div>
+        <div class="content-body">${visualMarkup}${topic.body}</div>
+        ${exerciseMarkup}
+        <div class="actions-row">
+          <button class="mark-btn ${isDone ? 'done' : ''}" id="markBtn">${isDone ? '✓ Completed' : 'Mark as Complete'}</button>
+        </div>
+        <div class="nav-buttons">
+          <div class="nav-btn ${currentIndex > 0 ? '' : 'disabled'}" id="prevBtn">
+            <strong>← Previous</strong>
+            <span>${currentIndex > 0 ? course[flatTopics[currentIndex - 1].mi].topics[flatTopics[currentIndex - 1].ti].title : 'Origin'}</span>
+          </div>
+          <div class="nav-btn ${currentIndex < flatTopics.length - 1 ? '' : 'disabled'}" id="nextBtn">
+            <strong>Next Topic →</strong>
+            <span>${currentIndex < flatTopics.length - 1 ? course[flatTopics[currentIndex + 1].mi].topics[flatTopics[currentIndex + 1].ti].title : 'Terminus'}</span>
+          </div>
+        </div>`;
+      document.getElementById('markBtn').onclick = () => {
+        if (completed.has(key)) completed.delete(key);
+        else completed.add(key);
+        updateProgress();
+        renderContent(false);
+      };
+      document.getElementById('prevBtn').onclick = () => { currentIndex--; renderContent(true); };
+      document.getElementById('nextBtn').onclick = () => { currentIndex++; renderContent(true); };
+      document.querySelectorAll('.topic-link').forEach((link, idx) => {
+        if (idx === currentIndex) link.classList.add('active');
+        if (completed.has(`${flatTopics[idx].mi}-${flatTopics[idx].ti}`)) link.classList.add('done');
+      });
+      updateProgress();
+      if (shouldScroll) { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    }
+    document.getElementById('topicSearch').addEventListener('input', (event) => {
+      const query = event.target.value.toLowerCase();
+      document.querySelectorAll('.topic-link').forEach(link => {
+        const match = link.textContent.toLowerCase().includes(query);
+        link.style.display = match ? 'flex' : 'none';
+      });
+    });
+    document.getElementById('startLearningBtn').addEventListener('click', () => {
+      document.getElementById('heroShell').classList.add('is-hidden');
+      document.getElementById('interviewShell').classList.remove('active');
+      document.getElementById('curriculumView').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    });
+    function goToTopic(mi, ti) {
+      currentIndex = flatTopics.findIndex(item => item.mi === mi && item.ti === ti);
+      document.getElementById('interviewShell').classList.remove('active');
+      document.getElementById('heroShell').classList.add('is-hidden');
+      document.getElementById('curriculumView').classList.add('active');
+      renderContent(true);
+    }
+    function buildTopicsView() {
+      const container = document.getElementById('interviewContent');
+      document.getElementById('interviewShellLabel').textContent = '18 Topics · Full Curriculum List';
+      const cards = flatTopics.map(({ mi, ti }) => {
+        const mod = course[mi];
+        const topic = mod.topics[ti];
+        return `
+          <div class="browse-card" onclick="goToTopic(${mi}, ${ti})">
+            <div class="browse-card-main"><strong>${topic.title}</strong><span>${mod.module} · ${mod.title} · ${topic.tag}</span></div>
+            <div class="browse-arrow">→</div>
+          </div>`;
+      }).join('');
+      container.innerHTML = `
+        <div class="interview-intro">
+          <div class="content-tag">All Topics</div>
+          <h2>18 Topics Across Modules 1–6</h2>
+          <p>Every live topic in AlgoVerse's Graph Algorithms track so far — Fundamentals through Connectivity. Tap any topic to jump straight into that lesson.</p>
+        </div>
+        <div class="console-body" style="padding:0; display:flex; flex-direction:column; gap:0.9rem;">${cards}</div>
+        <div class="roadmap-note">📍 Modules 7–12 (Advanced Algorithms, Network Flow, LCA &amp; Trees, Competitive Patterns, Real-World Applications, and Capstone Projects) are on the roadmap and will be added next.</div>`;
+    }
+    function buildModulesView() {
+      const container = document.getElementById('interviewContent');
+      document.getElementById('interviewShellLabel').textContent = '6 Modules · Course Roadmap';
+      const cards = course.map((mod, mi) => `
+          <div class="browse-card" onclick="goToTopic(${mi}, 0)">
+            <div class="browse-card-main"><strong>${mod.module} · ${mod.title}</strong><span>${mod.topics.length} topics in this module</span></div>
+            <div style="display:flex; align-items:center; gap:1rem;">
+              <span class="browse-count-pill">${mod.topics.length} topics</span>
+              <div class="browse-arrow">→</div>
+            </div>
+          </div>`).join('');
+      container.innerHTML = `
+        <div class="interview-intro">
+          <div class="content-tag">Modules Live Now</div>
+          <h2>6 Modules · Course Roadmap</h2>
+          <p>Modules 1–6 are live in full depth, covering Graph Fundamentals through Connectivity Algorithms. Tap a module to jump into its first lesson.</p>
+        </div>
+        <div class="console-body" style="padding:0; display:flex; flex-direction:column; gap:0.9rem;">${cards}</div>
+        <div class="roadmap-note">📍 Coming next: Advanced Graph Algorithms, Network Flow, Advanced Topics (LCA/Trees), Competitive Programming Graphs, Real-World Applications, and Capstone Projects.</div>`;
+    }
+    const interviewQuestions = [
+      {
+        module: 'Module 1', title: 'Graph Fundamentals',
+        qas: [
+          { q: 'What is a graph, and how is it different from a tree?', a: 'A graph is a set of vertices connected by edges with no restriction on structure — cycles, multiple connections, and disconnected pieces are all allowed. A tree is a special case: a connected, acyclic graph with exactly one path between any two vertices.', analysis: "Almost always the opening question. Interviewers check if you know a tree is a CONSTRAINED graph, not a separate category — good answers mention 'exactly V-1 edges, no cycles, connected'." },
+          { q: 'Adjacency matrix vs. adjacency list — when would you use each?', a: 'Use an adjacency matrix for dense graphs or when you need O(1) edge-existence checks, accepting O(V²) space. Use an adjacency list for sparse graphs (most real-world graphs), getting O(V + E) space at the cost of O(degree) edge lookups.', analysis: "A near-universal warm-up. Strong answers give a concrete number, e.g. 'a social graph with millions of users would blow up an adjacency matrix.'" },
+          { q: 'What is the difference between a directed and undirected graph, and can you give a real example of each?', a: 'In a directed graph, edges have direction (A→B doesn\'t imply B→A) — e.g. Twitter follows or web page links. In an undirected graph, edges work both ways — e.g. Facebook friendships or a two-way road network.', analysis: 'Conceptual check, often followed by asking how in-degree/out-degree apply only to directed graphs.' }
+        ]
+      },
+      {
+        module: 'Module 2', title: 'Graph Traversal Algorithms',
+        qas: [
+          { q: 'When would you use BFS vs. DFS?', a: 'Use BFS for shortest path in unweighted graphs, level-order problems, and finding the nearest match. Use DFS for cycle detection, topological sorting, connectivity structure (bridges/articulation points), and exhaustive/backtracking search.', analysis: 'The single most repeated graph question. Best answers tie the choice to a concrete guarantee (shortest path) rather than just reciting the algorithms.' },
+          { q: 'How do you detect a cycle in a directed graph vs. an undirected graph?', a: 'In a directed graph, use DFS with a recursion-stack tracking set — a back-edge to a vertex currently in that set means a cycle. In an undirected graph, DFS detects a cycle when you reach an already-visited neighbor that is not the immediate parent.', analysis: 'A very common follow-up to the BFS/DFS question. Interviewers specifically probe whether you know the directed and undirected cases need different logic.' },
+          { q: 'How would you check if a graph is bipartite?', a: 'Run BFS or DFS while 2-coloring vertices as you go — color the start vertex, then alternate colors for each neighbor. If any edge connects two vertices of the same color, the graph is not bipartite.', analysis: 'Common in interviews framed around "can these two groups be separated with no same-group edges" (e.g. scheduling conflicts, matching problems).' },
+          { q: "What's the time and space complexity of BFS and DFS?", a: 'Both run in O(V + E) time using an adjacency list, since every vertex and edge is processed once. Space is O(V) for the visited set/queue/stack, plus O(V) for the recursion stack in recursive DFS.', analysis: 'A quick complexity check — watch for candidates forgetting the O(E) term when the graph is dense.' }
+        ]
+      },
+      {
+        module: 'Module 3', title: 'Shortest Path Algorithms',
+        qas: [
+          { q: 'Compare Dijkstra, Bellman-Ford, and Floyd-Warshall.', a: 'Dijkstra finds single-source shortest paths in O((V+E) log V) but requires non-negative weights. Bellman-Ford handles negative weights (and detects negative cycles) in O(VE), slower but more general. Floyd-Warshall finds all-pairs shortest paths in O(V³), useful for small dense graphs needing every pair\'s distance at once.', analysis: 'The most repeated shortest-path question — expect a live follow-up asking WHY Dijkstra fails with negative weights specifically.' },
+          { q: 'Why does Dijkstra fail with negative edge weights?', a: 'Dijkstra greedily finalizes a vertex\'s shortest distance once popped from the priority queue and never revisits it. A later negative edge could reduce that distance further, but the algorithm has already locked it in as final, producing an incorrect result.', analysis: 'Extremely common — tests whether you understand WHY the algorithm works, not just its steps.' },
+          { q: 'How would you find the shortest path in a graph where all edge weights are either 0 or 1?', a: 'Use 0-1 BFS with a deque: push 0-weight edges to the front and 1-weight edges to the back, popping from the front. This achieves O(V + E), faster than Dijkstra\'s O((V+E) log V), by avoiding the need for a heap.', analysis: 'A great signal question — most candidates jump straight to Dijkstra without recognizing the special-case optimization available.' }
+        ]
+      },
+      {
+        module: 'Module 4', title: 'Minimum Spanning Trees',
+        qas: [
+          { q: "Compare Prim's and Kruskal's algorithms for MST.", a: "Prim's grows a single tree by always adding the cheapest edge connecting the tree to a new vertex — good for dense graphs. Kruskal's sorts all edges globally and adds the cheapest one that doesn't form a cycle (using Union-Find) — good for sparse graphs.", analysis: "One of the most repeated MST questions. Strong answers explain WHEN to prefer each based on graph density, not just describing both algorithms." },
+          { q: 'What is Union-Find (Disjoint Set Union), and why is it needed for MST algorithms?', a: "Union-Find tracks disjoint sets and supports near-O(1) find() and union() operations (with path compression and union by rank). Kruskal's needs it to quickly check whether adding an edge would create a cycle, since it considers edges globally rather than growing one connected tree.", analysis: "Almost always paired with the Prim's vs Kruskal's question — expect to explain path compression specifically." },
+          { q: 'Can a graph have more than one valid minimum spanning tree?', a: 'Yes — if multiple edges share the same weight, different valid choices among them can produce different MSTs, all with the same total minimum weight. The MST is only guaranteed unique if all edge weights are distinct.', analysis: 'A conceptual trap question — many candidates assume MST is always unique.' }
+        ]
+      },
+      {
+        module: 'Module 5', title: 'Directed Acyclic Graphs (DAG)',
+        qas: [
+          { q: 'How do you perform topological sorting, and what are the two main approaches?', a: 'DFS-based: push each vertex onto a stack after all its neighbors finish, then reverse the stack. BFS-based (Kahn\'s algorithm): repeatedly remove vertices with in-degree 0, decrementing neighbors\' in-degrees as you go.', analysis: 'The single most repeated DAG question. Be ready to implement either approach live and explain why it only works on a DAG.' },
+          { q: 'How would you determine if it\'s possible to finish all courses given a list of prerequisites?', a: "Model courses as vertices and prerequisites as directed edges, then check for a cycle — if a cycle exists, it's impossible to satisfy all prerequisites; if not, a valid topological order gives a completable schedule.", analysis: "The classic 'Course Schedule' interview question — recognizing this as a cycle-detection problem is the key insight interviewers look for." },
+          { q: 'Why can you find the longest path in a DAG in linear time, but not in a general graph?', a: 'A DAG has no cycles, so processing vertices in topological order guarantees every predecessor is finalized before its successors — one linear pass suffices. General graphs with cycles make "longest simple path" NP-hard, since there\'s no such safe processing order.', analysis: 'A strong differentiator question — most candidates know Dijkstra/BFS but haven\'t considered DAG-specific optimizations like this.' }
+        ]
+      },
+      {
+        module: 'Module 6', title: 'Connectivity Algorithms',
+        qas: [
+          { q: 'What is a strongly connected component, and how does Kosaraju\'s algorithm find all of them?', a: "An SCC is a maximal group of vertices in a directed graph where every vertex can reach every other. Kosaraju's algorithm runs DFS on the original graph tracking finish order, reverses all edges, then runs DFS again in decreasing finish-time order — each resulting DFS tree is one SCC.", analysis: "A very common advanced question. Be ready to explain WHY reversing the graph is necessary, not just the steps." },
+          { q: 'What is the difference between a bridge and an articulation point?', a: 'A bridge is an edge whose removal disconnects the graph. An articulation point is a vertex whose removal disconnects the graph. Both are found using DFS discovery time and low-link values.', analysis: 'Common in network-reliability framed questions (e.g. "which single link failure would partition this network?").' },
+          { q: "How does Tarjan's algorithm find SCCs in a single DFS pass, unlike Kosaraju's two passes?", a: "Tarjan's tracks discovery time, low-link value, and an explicit stack of 'active' vertices. When a vertex's low-link equals its own discovery time, it's an SCC root, and everything above it on the stack (not yet popped) belongs to that same SCC.", analysis: "A strong differentiator for senior-level interviews — most candidates only know Kosaraju's; knowing Tarjan's single-pass approach signals deeper algorithmic maturity." }
+        ]
+      }
+    ];
+    const rankTable = [
+      ['1', 'BFS vs DFS — when to use each', 'Traversal'],
+      ['2', "Dijkstra's algorithm and why it fails with negative weights", 'Shortest Path'],
+      ['3', 'Detect a cycle in directed vs undirected graphs', 'Traversal'],
+      ['4', 'Topological sort — DFS-based and Kahn\'s algorithm', 'DAGs'],
+      ['5', "Prim's vs Kruskal's for MST", 'MST'],
+      ['6', 'Course Schedule (cycle detection on a DAG)', 'DAGs'],
+      ['7', 'Union-Find with path compression and union by rank', 'MST'],
+      ['8', 'Strongly connected components — Kosaraju\'s algorithm', 'Connectivity'],
+      ['9', 'Bridges and articulation points', 'Connectivity'],
+      ['10', 'Comparing Dijkstra, Bellman-Ford, and Floyd-Warshall', 'Shortest Path']
+    ];
+    function buildInterviewView() {
+      const container = document.getElementById('interviewContent');
+      document.getElementById('interviewShellLabel').textContent = 'Interview Ready · Q&A Bank';
+      let totalQ = 0;
+      interviewQuestions.forEach(m => totalQ += m.qas.length);
+      const modulesHtml = interviewQuestions.map((mod, mi) => {
+        const cards = mod.qas.map((item, qi) => `
+          <div class="iq-card">
+            <div class="iq-q"><span>Q${qi + 1}.</span>${item.q}</div>
+            <div class="iq-a"><strong>Answer:</strong> ${item.a}</div>
+            <div class="iq-analysis"><strong>Why it's asked:</strong> ${item.analysis}</div>
+          </div>`).join('');
+        return `
+          <div class="iq-module ${mi === 0 ? 'open' : ''}">
+            <div class="iq-module-head" onclick="this.parentElement.classList.toggle('open')">
+              <div><strong>${mod.module} · ${mod.title}</strong><span class="iq-sub">${mod.qas.length} interview questions</span></div>
+              <span class="chevron">▸</span>
+            </div>
+            <div class="iq-module-body">${cards}</div>
+          </div>`;
+      }).join('');
+      const rankHtml = rankTable.map(row => `
+          <div class="iq-rank-row"><div class="rank-num">#${row[0]}</div><div>${row[1]}</div><div class="rank-topic">${row[2]}</div></div>`).join('');
+      container.innerHTML = `
+        <div class="interview-intro">
+          <div class="content-tag">Interview Ready</div>
+          <h2>Top Graph Algorithm Interview Questions</h2>
+          <p>${totalQ} most-repeated graph questions across product and service-based company interviews, mapped to Modules 1–6. Each answer comes with an "Analysis" note explaining why interviewers ask it and what they're really listening for.</p>
+        </div>
+        ${modulesHtml}
+        <div class="iq-module">
+          <div class="iq-module-head" onclick="this.parentElement.classList.toggle('open')">
+            <div><strong>Quick Frequency Ranking</strong><span class="iq-sub">Most → less frequently asked</span></div>
+            <span class="chevron">▸</span>
+          </div>
+          <div class="iq-module-body"><div class="iq-rank-table">${rankHtml}</div></div>
+        </div>`;
+    }
+    document.querySelectorAll('.trigger-interview').forEach(card => {
+      card.addEventListener('click', () => {
+        const view = card.dataset.view;
+        if (view === 'modules') buildModulesView();
+        else if (view === 'topics') buildTopicsView();
+        else buildInterviewView();
+        document.getElementById('heroShell').classList.add('is-hidden');
+        document.getElementById('curriculumView').classList.remove('active');
+        document.getElementById('interviewShell').classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      });
+    });
+    document.getElementById('interviewBackBtn').addEventListener('click', () => {
+      document.getElementById('interviewShell').classList.remove('active');
+      document.getElementById('heroShell').classList.remove('is-hidden');
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    });
+    document.getElementById('interviewToCourseBtn').addEventListener('click', () => {
+      document.getElementById('interviewShell').classList.remove('active');
+      document.getElementById('heroShell').classList.add('is-hidden');
+      document.getElementById('curriculumView').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    });
+    buildSidebar();
+    renderContent(true);
+  </script>
+</body>
+</html>

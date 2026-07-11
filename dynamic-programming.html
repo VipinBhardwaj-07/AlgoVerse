@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AlgoVerse Pro | Dynamic Programming Deep Dive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #05050f;
+      --bg-surface: linear-gradient(160deg, rgba(22, 22, 54, 0.8), rgba(7, 7, 20, 0.95));
+      --bg-surface-solid: #0b0b22;
+      --card-shadow-3d: 0 40px 90px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      --border-glow: rgba(255, 59, 147, 0.25);
+      --border-bright: rgba(255, 59, 147, 0.5);
+      --neon-purple: #8162ff;
+      --neon-cyan: #00ffd0;
+      --neon-magenta: #ff3b93;
+      --neon-green: #00ff66;
+      --text-main: #f5f5fa;
+      --text-muted: #a9aecd;
+      --text-dark: #4d5171;
+      --transition-cosmic: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    .space-matrix-background {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 50% 30%, #291132 0%, #03030a 85%);
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .perspective-floor-grid {
+      position: absolute;
+      width: 200%; height: 200%;
+      top: -30%; left: -50%;
+      background-image:
+        linear-gradient(rgba(255, 59, 147, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 59, 147, 0.05) 1px, transparent 1px);
+      background-size: 60px 60px;
+      transform: perspective(300px) rotateX(65deg);
+      transform-origin: center center;
+      animation: gridScroll 20s linear infinite;
+    }
+    @keyframes gridScroll {
+      0% { transform: perspective(300px) rotateX(65deg) translateY(0); }
+      100% { transform: perspective(300px) rotateX(65deg) translateY(60px); }
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 59, 147, 0.3); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--neon-magenta); }
+    .hero-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 6rem 2rem; position: relative; z-index: 1; }
+    .hero-shell.is-hidden { display: none !important; }
+    .hero-card { width: min(1200px, 100%); border-radius: 36px; padding: 5.5rem 4.5rem; background: var(--bg-surface); border: 1px solid var(--border-glow); box-shadow: var(--card-shadow-3d); backdrop-filter: blur(30px); text-align: center; position: relative; }
+    .hero-card h1 { font-family: 'Syne', sans-serif; font-size: clamp(2.6rem, 5.5vw, 4.2rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.2rem; letter-spacing: -0.02em; color: #ffffff; text-shadow: 0 1px 0 #ff3b93, 0 2px 0 #b3165f, 0 4px 20px rgba(255, 59, 147, 0.4); }
+    .hero-card > p { color: var(--text-muted); max-width: 780px; margin: 1.5rem auto 3.5rem; font-size: 1.2rem; font-weight: 500; }
+    .badge { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.6rem 1.5rem; border-radius: 999px; background: rgba(255, 59, 147, 0.06); color: var(--neon-magenta); border: 1px solid rgba(255, 59, 147, 0.25); font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2.5rem; }
+    .hero-actions { display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin-bottom: 5rem; }
+    .start-btn { background: #ffffff; color: #05050f; border: none; padding: 1.3rem 4rem; border-radius: 999px; font-weight: 700; font-size: 1.05rem; cursor: pointer; transition: var(--transition-cosmic); box-shadow: 0 12px 35px rgba(255, 255, 255, 0.15); }
+    .start-btn:hover { transform: translateY(-4px); background: linear-gradient(135deg, var(--neon-magenta), var(--neon-purple)); color: #fff; box-shadow: 0 20px 45px rgba(255, 59, 147, 0.35); }
+    .secondary-link { display: inline-flex; align-items: center; padding: 1.3rem 4rem; border-radius: 999px; font-weight: 600; border: 1px solid var(--border-glow); background: rgba(255, 255, 255, 0.01); transition: var(--transition-cosmic); color: var(--text-main); text-decoration: none; }
+    .secondary-link:hover { background: rgba(255, 255, 255, 0.04); border-color: #fff; }
+    .home-dsa-showcase-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin: 4.5rem 0; text-align: left; }
+    .dsa-preview-card { background: rgba(4, 4, 15, 0.7); border: 1px solid rgba(255, 255, 255, 0.02); border-radius: 20px; padding: 1.75rem; box-shadow: inset 0 2px 15px rgba(0,0,0,0.6); display: flex; flex-direction: column; justify-content: space-between; gap: 1.5rem; transition: var(--transition-cosmic); }
+    .dsa-preview-card:hover { transform: translateY(-8px) scale(1.02); border-color: rgba(255, 59, 147, 0.4); background: rgba(255, 59, 147, 0.03); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+    .dsa-preview-card h4 { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; color: #fff; font-weight: 700; margin-bottom: 0.4rem; }
+    .dsa-preview-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+    .card-graphic-wrapper { background: #050512; border-radius: 12px; padding: 1rem; border: 1px solid rgba(255,255,255,0.01); display: flex; justify-content: center; align-items: center; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 3.5rem; }
+    .stat-card { background: rgba(255, 255, 255, 0.01); border: 1px solid var(--border-glow); border-radius: 20px; padding: 2rem; text-align: left; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03); transition: var(--transition-cosmic); cursor: pointer; }
+    .stat-card:hover { border-color: var(--neon-magenta); transform: translateY(-4px); box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5); }
+    .stat-card strong { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+    .stat-card span { color: var(--text-muted); font-size: 0.92rem; font-weight: 500; }
+    .curriculum-shell { display: none; position: relative; z-index: 1; }
+    .curriculum-shell.active { display: block !important; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 3rem; position: sticky; top: 0; z-index: 100; background: rgba(5, 5, 13, 0.9); border-bottom: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); }
+    .back-btn { display: inline-flex; align-items: center; padding: 0.6rem 1.4rem; border-radius: 999px; border: 1px solid var(--border-glow); background: rgba(255, 255, 255, 0.02); font-size: 0.85rem; font-weight: 600; color: var(--text-muted); transition: var(--transition-cosmic); text-decoration: none; cursor: pointer; }
+    .back-btn:hover { border-color: var(--neon-magenta); color: #fff; }
+    .progress-wrap { display: flex; align-items: center; gap: 1.2rem; }
+    .progress-wrap span { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--neon-magenta); }
+    .progress-track { width: 200px; height: 5px; border-radius: 999px; background: rgba(255, 255, 255, 0.04); overflow: hidden; }
+    .progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--neon-magenta), var(--neon-purple)); transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    .layout { display: grid; grid-template-columns: 360px 1fr; min-height: calc(100vh - 73px); }
+    .sidebar { padding: 2.5rem 1.5rem; background: var(--bg-surface-solid); border-right: 1px solid rgba(255, 255, 255, 0.05); overflow-y: auto; height: calc(100vh - 73px); position: sticky; top: 73px; }
+    .sidebar-search { display: flex; align-items: center; gap: 0.75rem; padding: 0.9rem 1.2rem; margin-bottom: 2.5rem; border: 1px solid var(--border-glow); border-radius: 14px; background: rgba(0, 0, 0, 0.3); transition: var(--transition-cosmic); }
+    .sidebar-search:focus-within { border-color: var(--neon-magenta); box-shadow: 0 0 20px rgba(255, 59, 147, 0.12); }
+    .sidebar-search span { color: var(--text-dark); font-size: 1rem; }
+    .sidebar-search input { width: 100%; border: none; outline: none; background: transparent; color: var(--text-main); font-size: 0.9rem; font-family: inherit; }
+    .module { border-radius: 16px; margin-bottom: 0.75rem; background: rgba(255, 255, 255, 0.01); border: 1px solid transparent; transition: var(--transition-cosmic); overflow: hidden; }
+    .module.open { background: rgba(255, 255, 255, 0.015); border-color: rgba(255, 255, 255, 0.04); }
+    .module-head { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 1.1rem; cursor: pointer; user-select: none; }
+    .module-head span:first-child { font-size: 0.92rem; font-weight: 700; max-width: 85%; }
+    .module-head .chevron { font-size: 0.75rem; color: var(--text-dark); transition: transform 0.3s ease; }
+    .module.open .chevron { transform: rotate(90deg); color: var(--neon-magenta); }
+    .module-body { display: none; padding: 0 0.6rem 1.2rem; }
+    .module.open .module-body { display: block; }
+    .topic-link { display: flex; align-items: center; padding: 0.8rem 1.1rem; margin-top: 0.4rem; border-radius: 10px; cursor: pointer; color: var(--text-muted); font-size: 0.88rem; font-weight: 500; transition: var(--transition-cosmic); }
+    .topic-link:hover { background: rgba(255, 255, 255, 0.03); color: #fff; }
+    .topic-link.active { background: rgba(255, 59, 147, 0.12); color: #fff; font-weight: 600; border-left: 3px solid var(--neon-magenta); }
+    .topic-link.done { color: var(--neon-green); position: relative; }
+    .topic-link.done::after { content: '●'; position: absolute; right: 16px; font-size: 0.7rem; color: var(--neon-green); }
+    .content { padding: 4rem 6rem; max-width: 1050px; margin: 0 auto; }
+    .content-header { margin-bottom: 3.5rem; }
+    .content-tag { display: inline-block; padding: 0.4rem 1rem; border-radius: 8px; background: rgba(0, 255, 208, 0.06); border: 1px solid rgba(0, 255, 208, 0.2); color: #6cffeb; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.2rem; }
+    .content-header h2 { font-family: 'Space Grotesk', sans-serif; font-size: 2.8rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.6rem; }
+    .content-meta { color: var(--text-dark); font-size: 0.95rem; font-weight: 600; }
+    .content-hero { padding: 2rem 2.5rem; border-radius: 24px; background: linear-gradient(135deg, rgba(255, 59, 147, 0.06), rgba(0, 255, 208, 0.01)); border: 1px solid var(--border-glow); box-shadow: var(--card-shadow-3d); margin-bottom: 3rem; }
+    .content-hero .eyebrow { font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--neon-cyan); font-weight: 700; margin-bottom: 0.6rem; }
+    .content-hero p { color: var(--text-muted); font-size: 1.05rem; }
+    .learning-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 4rem; }
+    .learning-card { padding: 1.75rem; border-radius: 20px; background: #0f0f24; border: 1px solid rgba(255, 255, 255, 0.03); box-shadow: var(--card-shadow-3d); }
+    .learning-card strong { display: block; font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; color: #fff; }
+    .learning-card span { color: var(--text-muted); font-size: 0.85rem; }
+    .content-body p { margin-bottom: 2rem; color: #dbdee9; font-size: 1.1rem; }
+    .content-body ul, .content-body ol { margin-bottom: 2.5rem; padding-left: 1.75rem; color: #dbdee9; }
+    .content-body li { margin-bottom: 0.75rem; }
+    .content-body h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.75rem; margin: 3.5rem 0 1.2rem; color: #fff; }
+    .content-body pre { background: #04040c; border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 16px; padding: 1.75rem; overflow-x: auto; margin: 2.5rem 0; }
+    .content-body code { font-family: 'JetBrains Mono', monospace; font-size: 0.92rem; color: #ffbade; }
+    .callout { border-left: 3px solid var(--neon-magenta); padding: 1.75rem 2rem; border-radius: 0 20px 20px 0; background: rgba(255, 59, 147, 0.03); margin: 3rem 0; color: #ffd8eb; font-size: 1.05rem; }
+    .visual-block { margin: 3rem 0; padding: 2.5rem; border-radius: 24px; background: linear-gradient(160deg, #111129, #080816); border: 1px solid var(--border-glow); box-shadow: var(--card-shadow-3d); }
+    .visual-head { font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dark); margin-bottom: 2rem; }
+    .flow-grid { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .flow-chip { padding: 0.75rem 1.6rem; border-radius: 12px; background: rgba(255, 59, 147, 0.06); border: 1px solid rgba(255, 59, 147, 0.15); color: #ffcbd8; font-weight: 600; font-size: 0.9rem; }
+    .flow-arrow { color: var(--neon-magenta); font-weight: 700; font-size: 1.2rem; filter: drop-shadow(0 0 4px var(--neon-magenta)); }
+    .visual-caption { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+    .compare-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+    .compare-card { padding: 1.4rem; border-radius: 14px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255, 255, 255, 0.02); }
+    .compare-card strong { display: block; font-size: 0.95rem; color: #fff; margin-bottom: 0.3rem; }
+    .compare-card span { color: var(--text-dark); font-size: 0.85rem; }
+    .actions-row { display: flex; justify-content: flex-start; align-items: center; margin-top: 5rem; padding-top: 2.5rem; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+    .mark-btn { background: transparent; border: 1px solid rgba(255, 59, 147, 0.3); color: var(--neon-magenta); padding: 0.9rem 2.4rem; border-radius: 999px; font-weight: 700; font-size: 0.92rem; cursor: pointer; transition: var(--transition-cosmic); }
+    .mark-btn:hover { background: rgba(255, 59, 147, 0.04); border-color: var(--neon-magenta); }
+    .mark-btn.done { background: var(--neon-magenta); border-color: var(--neon-magenta); color: #060610; box-shadow: 0 0 30px rgba(255, 59, 147, 0.25); }
+    .nav-buttons { display: flex; justify-content: space-between; gap: 1.5rem; margin-top: 3rem; }
+    .nav-btn { flex: 1; padding: 1.5rem 1.75rem; border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 20px; background: #0f0f24; cursor: pointer; text-align: left; box-shadow: var(--card-shadow-3d); transition: var(--transition-cosmic); }
+    .nav-btn:hover { border-color: rgba(255, 59, 147, 0.4); background: rgba(255, 59, 147, 0.02); }
+    .nav-btn.disabled { opacity: 0.15; pointer-events: none; }
+    .nav-btn#nextBtn { text-align: right; }
+    .nav-btn strong { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dark); margin-bottom: 0.4rem; }
+    .nav-btn span { color: var(--text-main); font-size: 1.05rem; font-weight: 600; }
+    .challenge-console { margin: 3.5rem 0; border-radius: 24px; background: linear-gradient(160deg, #1c0d26, #06060f); border: 1px solid var(--border-bright); box-shadow: 0 40px 90px rgba(0, 0, 0, 0.85), 0 0 60px rgba(255, 59, 147, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.08); overflow: hidden; position: relative; }
+    .challenge-console::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--neon-magenta), var(--neon-purple), var(--neon-cyan), transparent); opacity: 0.8; }
+    .console-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1.8rem 2.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.06); background: rgba(255, 59, 147, 0.02); }
+    .console-title { display: flex; align-items: center; gap: 0.9rem; }
+    .console-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--neon-magenta); box-shadow: 0 0 12px var(--neon-magenta); animation: pulseDot 2s ease-in-out infinite; }
+    @keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+    .console-title span { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dark); }
+    .console-title strong { font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 700; color: #fff; display: block; }
+    .console-count { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--neon-magenta); border: 1px solid rgba(255, 59, 147, 0.3); padding: 0.4rem 1rem; border-radius: 999px; background: rgba(255, 59, 147, 0.05); }
+    .console-body { padding: 2rem 2.5rem 2.5rem; display: flex; flex-direction: column; gap: 1.1rem; }
+    .challenge-card { border-radius: 16px; background: rgba(255, 255, 255, 0.015); border: 1px solid rgba(255, 255, 255, 0.05); padding: 1.6rem 1.8rem; transition: var(--transition-cosmic); }
+    .challenge-card:hover { border-color: rgba(255, 59, 147, 0.35); background: rgba(255, 59, 147, 0.03); transform: translateX(4px); }
+    .challenge-row { display: flex; align-items: flex-start; gap: 1.1rem; }
+    .challenge-index { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 600; color: var(--neon-purple); min-width: 52px; padding-top: 0.15rem; }
+    .challenge-main { flex: 1; }
+    .challenge-meta { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem; flex-wrap: wrap; }
+    .diff-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.28rem 0.75rem; border-radius: 999px; }
+    .diff-badge.easy { color: var(--neon-green); background: rgba(0, 255, 102, 0.08); border: 1px solid rgba(0, 255, 102, 0.3); }
+    .diff-badge.medium { color: #ffc857; background: rgba(255, 200, 87, 0.08); border: 1px solid rgba(255, 200, 87, 0.3); }
+    .diff-badge.hard { color: var(--neon-magenta); background: rgba(255, 59, 147, 0.08); border: 1px solid rgba(255, 59, 147, 0.3); }
+    .type-badge { font-family: 'Space Grotesk', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dark); padding: 0.28rem 0.75rem; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.08); }
+    .challenge-question { color: #e6e8f5; font-size: 1.02rem; font-weight: 500; line-height: 1.6; margin-bottom: 0.4rem; }
+    .hint-toggle { background: none; border: none; color: var(--neon-cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0; display: inline-flex; align-items: center; gap: 0.4rem; transition: var(--transition-cosmic); }
+    .hint-toggle:hover { color: #fff; gap: 0.6rem; }
+    .hint-panel { display: none; margin-top: 0.9rem; padding: 1rem 1.3rem; border-radius: 12px; background: rgba(0, 0, 0, 0.35); border-left: 3px solid var(--neon-cyan); color: var(--text-muted); font-size: 0.92rem; line-height: 1.55; }
+    .hint-panel.open { display: block; }
+    .console-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 1.4rem 2.5rem; border-top: 1px solid rgba(255, 255, 255, 0.06); background: rgba(0,0,0,0.2); }
+    .console-footer p { color: var(--text-dark); font-size: 0.85rem; margin: 0; }
+    .console-cta { font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 700; color: #060610; background: linear-gradient(135deg, var(--neon-magenta), var(--neon-purple)); padding: 0.7rem 1.6rem; border-radius: 999px; border: none; cursor: pointer; transition: var(--transition-cosmic); box-shadow: 0 10px 25px rgba(255, 59, 147, 0.2); }
+    .console-cta:hover { transform: translateY(-2px); box-shadow: 0 15px 35px rgba(255, 59, 147, 0.35); }
+    .challenge-btn-row { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
+    .sol-toggle { background: none; border: none; color: var(--neon-green); font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0; display: inline-flex; align-items: center; gap: 0.4rem; transition: var(--transition-cosmic); }
+    .sol-toggle:hover { color: #fff; gap: 0.6rem; }
+    .hint-panel.sol-panel { border-left-color: var(--neon-green); color: #d7ffe8; }
+    .hint-panel.sol-panel strong { color: var(--neon-green); }
+    .mcq-console { border-color: rgba(0, 255, 208, 0.35); box-shadow: 0 40px 90px rgba(0, 0, 0, 0.85), 0 0 60px rgba(0, 255, 208, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+    .mcq-console::before { background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-purple), var(--neon-magenta), transparent); }
+    .mcq-card { border-radius: 16px; background: rgba(255, 255, 255, 0.015); border: 1px solid rgba(255, 255, 255, 0.05); padding: 1.5rem 1.7rem; }
+    .mcq-question { color: #e6e8f5; font-size: 1rem; font-weight: 600; margin-bottom: 1rem; }
+    .mcq-num { color: var(--neon-cyan); font-family: 'JetBrains Mono', monospace; margin-right: 0.4rem; }
+    .mcq-options { display: flex; flex-direction: column; gap: 0.6rem; }
+    .mcq-option { display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1.1rem; border-radius: 12px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: var(--transition-cosmic); }
+    .mcq-option:hover { border-color: rgba(255, 59, 147, 0.4); }
+    .mcq-option input { accent-color: var(--neon-purple); cursor: pointer; }
+    .mcq-option-letter { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text-dark); min-width: 16px; }
+    .mcq-option-text { color: #d5d9e8; font-size: 0.92rem; }
+    .mcq-option.correct { border-color: var(--neon-green); background: rgba(0, 255, 102, 0.08); }
+    .mcq-option.correct .mcq-option-letter { color: var(--neon-green); }
+    .mcq-option.wrong { border-color: var(--neon-magenta); background: rgba(255, 59, 147, 0.08); }
+    .mcq-option.wrong .mcq-option-letter { color: var(--neon-magenta); }
+    .interview-shell { display: none; position: relative; z-index: 1; }
+    .interview-shell.active { display: block !important; }
+    .interview-content { padding: 3rem 6rem 6rem; max-width: 1050px; margin: 0 auto; }
+    .interview-intro { padding: 2.5rem; border-radius: 24px; background: linear-gradient(135deg, rgba(255, 59, 147, 0.07), rgba(0, 255, 208, 0.03)); border: 1px solid var(--border-glow); box-shadow: var(--card-shadow-3d); margin-bottom: 3rem; }
+    .interview-intro h2 { font-family: 'Space Grotesk', sans-serif; font-size: 2.4rem; margin-bottom: 0.8rem; }
+    .interview-intro p { color: var(--text-muted); font-size: 1.05rem; }
+    .iq-module { border-radius: 20px; margin-bottom: 1.2rem; background: rgba(255, 255, 255, 0.012); border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden; }
+    .iq-module-head { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; cursor: pointer; user-select: none; }
+    .iq-module-head strong { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; color: #fff; }
+    .iq-module-head span.iq-sub { display:block; color: var(--text-dark); font-size: 0.85rem; font-weight: 500; margin-top: 0.2rem; }
+    .iq-module-head .chevron { font-size: 0.8rem; color: var(--text-dark); transition: transform 0.3s ease; }
+    .iq-module.open .chevron { transform: rotate(90deg); color: var(--neon-magenta); }
+    .iq-module-body { display: none; padding: 0 2rem 2rem; flex-direction: column; gap: 1.2rem; }
+    .iq-module.open .iq-module-body { display: flex; }
+    .iq-card { border-radius: 16px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255, 255, 255, 0.05); padding: 1.6rem 1.8rem; }
+    .iq-q { color: #fff; font-weight: 700; font-size: 1.02rem; margin-bottom: 0.8rem; }
+    .iq-q span { color: var(--neon-cyan); font-family: 'JetBrains Mono', monospace; margin-right: 0.5rem; }
+    .iq-a { color: #dbdee9; font-size: 0.98rem; margin-bottom: 0.9rem; }
+    .iq-a strong { color: var(--neon-green); }
+    .iq-analysis { border-left: 3px solid var(--neon-purple); padding: 0.9rem 1.2rem; border-radius: 0 12px 12px 0; background: rgba(129, 98, 255, 0.04); color: var(--text-muted); font-size: 0.88rem; }
+    .iq-analysis strong { color: #cbd2ff; }
+    .browse-card { border-radius: 16px; background: rgba(255, 255, 255, 0.015); border: 1px solid rgba(255, 255, 255, 0.05); padding: 1.4rem 1.7rem; cursor: pointer; transition: var(--transition-cosmic); display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .browse-card:hover { border-color: rgba(255, 59, 147, 0.4); background: rgba(255, 59, 147, 0.04); transform: translateX(4px); }
+    .browse-card-main strong { display: block; font-size: 1.02rem; color: #fff; font-weight: 700; margin-bottom: 0.3rem; }
+    .browse-card-main span { color: var(--text-dark); font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .browse-arrow { color: var(--neon-cyan); font-size: 1.1rem; flex-shrink: 0; }
+    .browse-count-pill { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--neon-purple); border: 1px solid rgba(129, 98, 255, 0.35); padding: 0.3rem 0.8rem; border-radius: 999px; background: rgba(129, 98, 255, 0.06); }
+    @media (max-width: 1024px) { .layout { grid-template-columns: 1fr; } .sidebar { height: auto; position: static; border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding: 1.5rem; } .content { padding: 3rem 1.5rem; } .stats { grid-template-columns: 1fr; gap: 1rem; } .learning-grid { grid-template-columns: 1fr; } .home-dsa-showcase-grid { grid-template-columns: 1fr; } .interview-content { padding: 2rem 1.5rem 4rem; } .iq-rank-row { grid-template-columns: 40px 1fr; } .iq-rank-row .rank-topic { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="space-matrix-background"><div class="perspective-floor-grid"></div></div>
+  
+  <section class="hero-shell" id="heroShell">
+    <div class="hero-card">
+      <div class="badge">🧠 Advanced Engine Core v2.0 · 14 Modules Live</div>
+      <h1>Dynamic Programming Deep Dive</h1>
+      <p>Break down the barrier to mastery. Learn to structurally identify overlapping subproblems, formalize multi-dimensional state spaces, extract transition recurrences, and write optimized tabulation kernels.</p>
+      <div class="hero-actions">
+        <button class="start-btn" id="startLearningBtn">Start Learning</button>
+        <a class="secondary-link" href="index.html">Back to Home</a>
+      </div>
+      <div class="home-dsa-showcase-grid">
+        <div class="dsa-preview-card">
+          <div><h4>State Space Mastery</h4><p>From simple linear steps up to hyper-dimensional bitmask matrices and compressed arrays.</p></div>
+          <div class="card-graphic-wrapper">
+            <svg width="100%" height="40" viewBox="0 0 160 40" fill="none">
+              <rect x="10" y="5" width="25" height="12" rx="3" fill="#05050f" stroke="#ff3b93" stroke-width="1.5"/>
+              <rect x="45" y="5" width="25" height="12" rx="3" fill="#05050f" stroke="#ff3b93" stroke-width="1.5"/>
+              <rect x="80" y="5" width="25" height="12" rx="3" fill="#05050f" stroke="#ff3b93" stroke-width="1.5"/>
+              <rect x="115" y="5" width="25" height="12" rx="3" fill="#05050f" stroke="#00ffd0" stroke-width="1.5"/>
+              <path d="M35 11 L45 11 M70 11 L80 11 M105 11 L115 11" stroke="#4d5171" stroke-width="1.5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="dsa-preview-card">
+          <div><h4>Knapsack Models</h4><p>Identify optimal subset counts, bounded states, and rod-cutting optimization trees.</p></div>
+          <div class="card-graphic-wrapper">
+            <svg width="100%" height="40" viewBox="0 0 160 40" fill="none">
+              <circle cx="30" cy="20" r="10" fill="#05050f" stroke="#8162ff" stroke-width="2"/>
+              <text x="30" y="23" fill="#8162ff" font-size="9" font-family="monospace" text-anchor="middle">W</text>
+              <path d="M50 20 L80 10 M50 20 L80 30" stroke="#4d5171" stroke-width="1.5"/>
+              <rect x="85" y="4" width="20" height="12" rx="2" fill="#00ffd0" fill-opacity="0.2" stroke="#00ffd0"/>
+              <rect x="85" y="24" width="20" height="12" rx="2" fill="#ff3b93" fill-opacity="0.2" stroke="#ff3b93"/>
+            </svg>
+          </div>
+        </div>
+        <div class="dsa-preview-card">
+          <div><h4>Sequence Matching</h4><p>Master LCS, LIS, edit distances, and multi-dimensional string configurations.</p></div>
+          <div class="card-graphic-wrapper">
+            <svg width="100%" height="40" viewBox="0 0 160 40" fill="none">
+              <text x="20" y="25" fill="#f5f5fa" font-size="12" font-family="monospace">A B C D</text>
+              <text x="20" y="12" fill="#4d5171" font-size="8" font-family="sans-serif">i →</text>
+              <text x="100" y="25" fill="#00ffd0" font-size="12" font-family="monospace">A X C D</text>
+            </svg>
+          </div>
+        </div>
+        <div class="dsa-preview-card">
+          <div><h4>Advanced Profiling</h4><p>Convex Hull Tricks, divide & conquer boundaries, and optimization tricks.</p></div>
+          <div class="card-graphic-wrapper">
+            <svg width="100%" height="40" viewBox="0 0 160 40" fill="none">
+              <path d="M10 35 L50 15 L90 8 L140 5" stroke="#4d5171" stroke-width="1.5"/>
+              <path d="M10 35 L60 25 L110 20 L140 5" stroke="#ff3b93" stroke-width="1.5"/>
+              <circle cx="50" cy="15" r="3" fill="#00ffd0"/>
+              <circle cx="90" cy="8" r="3" fill="#00ffd0"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat-card trigger-interview" data-view="topics"><strong>14 Lessons</strong><span>Comprehensive concept tracks — click to browse all lessons →</span></div>
+        <div class="stat-card trigger-interview" data-view="modules"><strong>14 Modules</strong><span>Fundamentals through Advanced Optimization — click to view modules →</span></div>
+        <div class="stat-card trigger-interview" data-view="interview"><strong>FAANG Verification</strong><span>High-yield algorithmic evaluation patterns — click to open Q&amp;A →</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="curriculum-shell" id="curriculumView">
+    <div class="topbar">
+      <div style="display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;">
+        <a href="index.html" class="back-btn">← Back to Home</a>
+        <div style="font-weight:700; font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em;">AlgoVerse Workspace · Dynamic Programming</div>
+      </div>
+      <div class="progress-wrap">
+        <span id="progressText">0 / 14 topics completed</span>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+    </div>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-search"><span>🔍</span><input id="topicSearch" type="text" placeholder="Filter modules and lessons..." /></div>
+        <div id="moduleList"></div>
+      </aside>
+      <main class="content" id="contentArea"></main>
+    </div>
+  </div>
+
+  <div class="interview-shell" id="interviewShell">
+    <div class="topbar">
+      <div style="display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;">
+        <button class="back-btn" id="interviewBackBtn">← Back to Home</button>
+        <div style="font-weight:700; font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em;" id="interviewShellLabel">Interview Ready · Q&amp;A Bank</div>
+      </div>
+      <button class="back-btn" id="interviewToCourseBtn">Go to Course →</button>
+    </div>
+    <div class="interview-content" id="interviewContent"></div>
+  </div>
+
+  <script>
+    const course = [
+      {
+        module: 'Module 1', title: 'Fundamentals Mastery',
+        topics: [
+          {
+            title: 'Foundations of Overlapping States', tag: 'Concept',
+            body: `<p>Dynamic Programming (DP) optimizes computations by caching solutions to overlapping subproblems. Memoization represents a lazy **Top-Down** strategy tracking recursive paths, while Tabulation executes an iterative **Bottom-Up** strategy across continuous memory fields.</p>
+                   <pre><code># Top-Down Memoization Template
+def solve(state, memo):
+    if base_condition(state): return base_value
+    if state not in memo:
+        memo[state] = solve(state - 1, memo) + solve(state - 2, memo)
+    return memo[state]</code></pre>`,
+            exercises: [{ q: 'Differentiate Memoization from Tabulation in terms of stack memory requirements.', diff: 'easy', type: 'Conceptual', hint: 'Think about what manages recursion versus plain iterations.', sol: 'Memoization relies on the system call stack which introduces O(N) stack frame hazards. Tabulation executes entirely using flat loops on the heap, safely avoiding stack overflow limits.' }],
+            mcqs: [{ q: 'Which characteristic allows a problem to be natively accelerated via a DP cache structure?', options: ['Independent subproblem splitting', 'Overlapping subproblems and optimal substructure', 'Static polynomial constraints', 'Logarithmic data branch distributions'], answer: 1 }]
+          }
+        ]
+      },
+      {
+        module: 'Module 2', title: 'Basic DP Problems',
+        topics: [
+          {
+            title: 'Linear Combinatorial Recurrences', tag: 'Core',
+            body: `<p>Linear sequences evaluate choices that depend on a fixed window of preceding states (e.g., Climbing Stairs, House Robber). Optimization isolates paths by implementing simple historical lookbacks.</p>
+                   <pre><code># House Robber Optimization Kernel
+def rob(nums):
+    prev2, prev1 = 0, 0
+    for x in nums:
+        curr = max(prev1, x + prev2)
+        prev2 = prev1
+        prev1 = curr
+    return prev1</code></pre>`,
+            exercises: [{ q: 'Optimize the auxiliary space of a standard Fibonacci tabulation array from O(N) down to constant O(1) constraints.', diff: 'easy', type: 'Coding optimization', hint: 'Look at how many indices are queried simultaneously inside the recurrence.', sol: 'By tracking only two active variables (prev1 and prev2) instead of a global array, the spatial allocation footprint collapses entirely to O(1).' }],
+            mcqs: [{ q: 'In the House Robber problem, what condition blocks you from adding adjacent element paths?', options: ['Array bounds violations', 'The non-adjacency asset constraint rule', 'Stochastic evaluation splits', 'Matrix dimension mismatch fields'], answer: 1 }]
+          }
+        ]
+      },
+      {
+        module: 'Module 3', title: '1D Dynamic Programming',
+        topics: [
+          {
+            title: 'Array Partitioning & Targets', tag: 'Pattern',
+            body: `<p>1D parameters optimize choices across sequences when subproblems map onto a single index boundary, such as minimizing coin quantities or finding maximum sum sets.</p>
+                   <pre><code># Coin Change Minimal Count Blueprint
+def coinChange(coins, amount):
+    dp = [float('inf')] * (amount + 1)
+    dp[0] = 0
+    for i in range(1, amount + 1):
+        for coin in coins:
+            if i >= coin:
+                dp[i] = min(dp[i], dp[i - coin] + 1)
+    return dp[amount] if dp[amount] != float('inf') else -1</code></pre>`,
+            exercises: [{ q: 'Explain why a greedy path strategy fails for the coin change problem when denominations are arbitrary.', diff: 'medium', type: 'Analytical Counter-Proof', hint: 'Test a coin set of [1, 3, 4] for an target score of 6.', sol: 'Greedy choices pick the maximum coin first: 4 + 1 + 1 (3 items). The global optimal DP allocation is 3 + 3 (2 items), showing why subset checking is required.' }],
+            mcqs: [{ q: 'What value should uninitialized target states reflect when calculating optimization routes?', options: ['0', '-1', 'Positive Infinity (or an out-of-bounds boundary flag)', 'A random primitive register key'], answer: 2 }]
+          }
+        ]
+      },
+      {
+        module: 'Module 4', title: '2D Dynamic Programming',
+        topics: [
+          {
+            title: 'Grid Routing & Shifting Constraints', tag: 'Grid',
+            body: `<p>Grid configurations use a 2D matrix structure to track paths across coordinates. State transformations evaluate inbound vectors from the top and left to track paths across obstacles.</p>
+                   <pre><code># Minimum Path Sum Tabulation
+def minPathSum(grid):
+    R, C = len(grid), len(grid[0])
+    dp = [[0]*C for _ in range(R)]
+    for i in range(R):
+        for j in range(C):
+            if i == 0 and j == 0: dp[i][j] = grid[i][j]
+            elif i == 0: dp[i][j] = dp[i][j-1] + grid[i][j]
+            elif j == 0: dp[i][j] = dp[i-1][j] + grid[i][j]
+            else: dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + grid[i][j]
+    return dp[-1][-1]</code></pre>`,
+            exercises: [{ q: 'Explain why the Dungeon Game problem requires reverse grid processing from the target back to the source.', diff: 'hard', type: 'Grid flow induction', hint: 'Consider how health boundaries change depending on subsequent steps.', sol: 'Moving forward forces you to track two independent variables (current cost vs minimum cumulative barrier). Reversing the path Hospital consolidates constraints into a single element.' }],
+            mcqs: [{ q: 'Which expression models path totals on a clean grid where you can only advance down or right?', options: ['dp[i][j] = dp[i-1][j] + dp[i][j-1]', 'dp[i][j] = dp[i-1][j-1] × grid[i][j]', 'dp[i][j] = max(dp[i][j], dp[i-1][j+1])', 'dp[i][j] = min(dp[i-1][j], dp[i][j-1])'], answer: 0 }]
+          }
+        ]
+      },
+      {
+        module: 'Module 5', title: 'Knapsack Pattern',
+        topics: [
+          {
+            title: 'Subset Selections & Bounding Caps', tag: 'Pattern',
+            body: `<p>The Knapsack model balances a weight limit constraint against item values. 0/1 variants allow exactly one selection step per item, whereas Unbounded variants allow infinite selection paths.</p>
+                   <pre><code># 0/1 Knapsack Row-Compressed Slicing
+def knapsack(weights, values, W):
+    dp = [0] * (W + 1)
+    for i in range(len(weights)):
+        for w in range(W, weights[i] - 1, -1):
+            dp[w] = max(dp[w], values[i] + dp[w - weights[i]])
+    return dp[W]</code></pre>`,
+            exercises: [{ q: 'Why must row-compressed space optimization for a 0/1 Knapsack loop run backwards from W down to the item weight?', diff: 'medium', type: 'Array mutation tracking', hint: 'What happens if you overwrite a value before checking its dependency?', sol: 'Running backwards ensures that the subproblem calculation checks data from the *previous* item pass, preventing an item from being erroneously selected multiple times.' }],
+            mcqs: [{ q: 'In an Unbounded Knapsack configuration loop, how do item selection parameters update?', options: ['They search the next module row index', 'They query the active row array layer repeatedly', 'They drop constraints down to 0 constant', 'They trigger a reverse matrix lookback'], answer: 1 }]
+          }
+        ]
+      },
+      {
+        module: 'Module 6', title: 'Longest Sequence Pattern',
+        topics: [
+          {
+            title: 'Subsequences & Matrix Character Matching', tag: 'Sequence',
+            body: `<p>Sequence tracking calculates matching arrays across dynamic indexing fields. LCS and LIS parse patterns across indices to compute string distances or ascending sequence formations.</p>
+                   <pre><code># Longest Common Subsequence Kernel
+def lcs(s1, s2):
+    L1, L2 = len(s1), len(s2)
+    dp = [[0]*(L2 + 1) for _ in range(L1 + 1)]
+    for i in range(1, L1 + 1):
+        for j in range(1, L2 + 1):
+            if s1[i-1] == s2[j-1]: dp[i][j] = 1 + dp[i-1][j-1]
+            else: dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+    return dp[L1][L2]</code></pre>`,
+            exercises: [{ q: 'Outline the strategy to optimize LIS computation from quadratic O(N^2) tracking down to O(N log N) limits.', diff: 'hard', type: 'Algorithm acceleration', hint: 'Combine an auxiliary array with binary search updates.', sol: 'Maintain an active array tracking the minimum tail values for all increasing subsequences found so far. Use binary search to find insertion points for each new element.' }],
+            mcqs: [{ q: 'If characters match at coordinates s1[i] and s2[j] during an LCS matrix scan, where does the state fetch its historical feedback?', options: ['dp[i-1][j]', 'dp[i][j-1]', 'The diagonal lookback cell dp[i-1][j-1]', 'The initialization coordinate entry dp[0][0]'], answer: 2 }]
+          }
+        ]
+      },
+      {
+        module: 'Module 7', title: 'String DP',
+        topics: [
+          {
+            title: 'Parsing Formats & Token Multipliers', tag: 'String',
+            body: `<p>String algorithms evaluate deep expression rules, such as wildcard matches or regex token multipliers, by comparing variable text inputs within multi-branch matrices.</p>
+                   <pre><code># Wildcard Matching Sub-Kernel Matrix
+def isMatch(s, p):
+    dp = [[False] * (len(p) + 1) for _ in range(len(s) + 1)]
+    dp[0][0] = True
+    for j in range(1, len(p) + 1):
+        if p[j-1] == '*': dp[0][j] = dp[0][j-1]
+    return dp[len(s)][len(p)]</code></pre>`,
+            exercises: [{ q: 'State the base condition transformations needed if a regex token contains an asterisk (* multiplier).', diff: 'medium', type: 'State space evaluation', hint: 'The asterisk can match zero occurrences or match multiple instances of the preceding character.', sol: 'Evaluate lookback values from two steps back in the pattern matrix (matching 0 instances) or match the character against the string history at index i-1.' }],
+            mcqs: [{ q: 'Which data structure is typically used to pre-calculate validation checks for Palindrome Partitioning tasks?', options: ['A binary tree layout', 'A 2D boolean lookup matrix', 'A hash table tracking pointers', 'A flat string array list'], answer: 1 }]
+          }
+        ]
+      },
+      {
+        module: 'Module 8', title: 'Interval DP',
+        topics: [
+          {
+            title: 'Range Partitions & Multi-Split Cuts', tag: 'Interval',
+            body: `<p>Interval models optimize sub-range partitions (e.g., Matrix Chain Multiplication, Burst Balloons) by sizing window slices from narrow segments up to comprehensive array fields.</p>
+                   <pre><code># Matrix Chain Multiplication Core Template
+def mcm(dims):
+    n = len(dims) - 1
+    dp = [[0]*n for _ in range(n)]
+    for length in range(2, n + 1):
+        for i in range(n - length + 1):
+            j = i + length - 1
+            dp[i][j] = float('inf')
+            for k in range(i, j):
+                cost = dp[i][k] + dp[k+1][j] + dims[i]*dims[k+1]*dims[j+1]
+                dp[i][j] = min(dp[i][j], cost)
+    return dp[0][n-1]</code></pre>`,
+            exercises: [{ q: 'Why do interval tasks execute length loops starting from 2 up to the total item count?', diff: 'medium', type: 'Loop construction analysis', hint: 'Think about how larger range solutions depend on narrow window calculations.', sol: 'Larger intervals depend on smaller ranges being fully resolved first. Initializing the loop at length 2 builds your solutions upward from the base cases.' }],
+            mcqs: [{ q: 'What expression defines the subproblem range split equation inside an interval calculation node?', options: ['dp[i][j] = min(dp[i][k] + dp[k+1][j] + cost)', 'dp[i][j] = dp[i-1][j] + dp[i][j-1]', 'dp[i][j] = max(dp[0][i], dp[j][n])', 'dp[i][j] = dp[i][j] >> 1'], answer: 0 }]
+          }
+        ]
+      },
+      {
+        module: 'Module 9', title: 'Tree DP',
+        topics: [
+          {
+            title: 'Hierarchical Accumulations & Re-Rooting', tag: 'Tree',
+            body: `<p>Tree models evaluate optimization metrics across hierarchical nodes by aggregating structural data upwards from leaf nodes during depth-first runs.</p>
+                   <pre><code># Node Choice Selection Engine (House Robber III)
+def robTree(root):
+    def dfs(node):
+        if not node: return [0, 0] # [Robbed, Skipped]
+        left = dfs(node.left)
+        right = dfs(node.right)
+        rob_val = node.val + left[1] + right[1]
+        skip_val = max(left) + max(right)
+        return [rob_val, skip_val]
+    return max(dfs(root))</code></pre>`,
+            exercises: [{ q: 'Explain the purpose of the re-rooting technique in Tree DP setups.', diff: 'hard', type: 'Hierarchical transition tracing', hint: 'How do you avoid running separate O(N) passes from every single node?', sol: 'Re-rooting lets you calculate node attributes for all roots across a tree in O(N) time. You use a parent pass to compute global changes iteratively, avoiding expensive separate passes.' }],
+            mcqs: [{ q: 'How is state history tracked down sub-branches in Tree DP configurations?', options: ['Via flat loop matrix runs', 'Via multi-value vectors returned from depth-first calls', 'Using global bit registers', 'By resizing queue lengths on-demand'], answer: 1 }]
+          }
+        ]
+      },
+      {
+        module: 'Module 10', title: 'Graph DP',
+        topics: [
+          {
+            title: 'Acyclic Pathways & State Systems', tag: 'Graph',
+            body: `<p>Graph environments process pathways by mapping step distributions along clear topological layers, avoiding infinite dependency loops.</p>
+                   <pre><code># Longest Path over DAG Allocation
+def findLongestPath(V, adj, topo_order, start_node):
+    dist = [float('-inf')] * V
+    dist[start_node] = 0
+    for u in topo_order:
+        if dist[u] != float('-inf'):
+            for v, weight in adj[u]:
+                dist[v] = max(dist[v], dist[u] + weight)
+    return max(dist)</code></pre>`,
+            exercises: [{ q: 'Explain why finding the longest path is NP-hard in a general graph, yet runs in linear time over a DAG.', diff: 'easy', type: 'Complexity analysis', hint: 'Think about how cycles affect your processing order.', sol: 'General graphs can loop endlessly through cycles, making simple path checks NP-hard. DAGs provide a clean topological order that lets you resolve dependencies in a single pass.' }],
+            mcqs: [{ q: 'What tool is required to sort vertices before processing path calculations over a DAG layout?', options: ['Binary Heap filter', 'Topological Sort (Kahn\'s or DFS variant)', 'Disjoint Set Union map', 'A simple quicksort run'], answer: 1 }]
+          }
+        ]
+      },
+      {
+        module: 'Module 11', title: 'Bitmask DP',
+        topics: [
+          {
+            title: 'State Compression & Exponential Configurations', tag: 'Bitmask',
+            body: `<p>Bitmask algorithms use binary sequences to compress complex state selections into efficient integer keys, enabling exponential problems to scale efficiently.</p>
+                   <pre><code># Traveling Salesman Bitmask Optimization
+def tsp(mask, u, distMatrix, memo):
+    N = len(distMatrix)
+    if mask == (1 << N) - 1: return distMatrix[u][0]
+    state = (mask, u)
+    if state not in memo:
+        res = float('inf')
+        for v in range(N):
+            if not (mask & (1 << v)):
+                res = min(res, distMatrix[u][v] + tsp(mask | (1 << v), v, distMatrix, memo))
+        memo[state] = res
+    return memo[state]</code></pre>`,
+            exercises: [{ q: 'Formulate the bitwise expression to check if a specific node "v" has already been visited given an active tracking integer "mask".', diff: 'medium', type: 'Bitwise formulation', hint: 'Isolate the target bit using a bitwise shift and mask operation.', sol: 'Evaluate the expression: mask & (1 << v). If this expression evaluates to 0, node v has not been visited.' }],
+            mcqs: [{ q: 'What is the absolute maximum number of elements typically handled by a bitmask array structure before memory tracking fails?', options: ['N ≈ 1000', 'N ≈ 20 to 25 (due to exponential growth)', 'Infinite', 'N ≈ 500'], answer: 1 }]
+          }
+        ]
+      },
+      {
+        module: 'Module 12', title: 'Digit DP',
+        topics: [
+          {
+            title: 'Numerical Ranges & Pattern Constraints', tag: 'Digit',
+            body: `<p>Digit models calculate numerical properties within a range by building numbers digit-by-digit, using constraints to skip redundant combinations.</p>
+                   <pre><code># Digit Counting Lookup Structure
+def countDigits(index, tight, leading_zero, num_str, memo):
+    if index == len(num_str): return 1
+    state = (index, tight, leading_zero)
+    if state not in memo:
+        limit = int(num_str[index]) if tight else 9
+        ans = 0
+        for d in range(0, limit + 1):
+            next_tight = tight and (d == limit)
+            ans += countDigits(index + 1, next_tight, leading_zero and (d == 0), num_str, memo)
+        memo[state] = ans
+    return memo[state]</code></pre>`,
+            exercises: [{ q: 'Explain the function of the "tight" boolean variable inside a Digit DP state engine.', diff: 'medium', type: 'Variable functionality trace', hint: 'How do you know if you can pick up to 9 or only up to a specific digit limit?', sol: 'If tight is 1, your digit choices are strictly capped by the maximum value of the number string at that index. If tight is 0, the engine can safely choose any digit from 0 to 9.' }],
+            mcqs: [{ q: 'If the tight indicator drops to 0 during calculations, what range of digits becomes selectable?', options: ['0 to limit only', 'Only the value 0', '0 to 9 completely unrestricted', '1 to 9 only'], answer: 2 }]
+          }
+        ]
+      },
+      {
+        module: 'Module 13', title: 'Advanced DP',
+        topics: [
+          {
+            title: 'Optimization Horizons & Monotonic Boundaries', tag: 'Advanced',
+            body: `<p>Advanced optimizations (such as Convex Hull, Divide & Conquer, or Knuth Optimization) compress standard quadratic steps down to efficient log boundaries by verifying structural patterns.</p>
+                   <pre><code># Monotonic Window Extremum Extraction
+def optimizeWindow(arr, K):
+    from collections import deque
+    q = deque()
+    res = []
+    for i, x in enumerate(arr):
+        while q and q[-1][1] <= x: q.pop()
+        q.append((i, x))
+        if q[0][0] <= i - K: q.popleft()
+        if i >= K - 1: res.append(q[0][1])
+    return res</code></pre>`,
+            exercises: [{ q: 'Under what condition can the Knuth optimization framework compress interval evaluation runtimes from O(N^3) down to O(N^2)?', diff: 'hard', type: 'Asymptotic speed calculation', hint: 'Consider the monotonic properties of your optimal split locations.', sol: 'Knuth optimization works when the optimal split locations for your intervals increase monotonically as the size of the range grows.' }],
+            mcqs: [{ q: 'Which tool optimizes matrix calculations by tracking sliding window maximum choices across sequences?', options: ['Hash tables', 'Monotonic Deque structure', 'Red-Black tree lines', 'Flat array shifts'], answer: 1 }]
+          }
+        ]
+      },
+      {
+        module: 'Module 14', title: 'DP Patterns',
+        topics: [
+          {
+            title: 'Structural Paradigms & Architecture Classification', tag: 'Pattern',
+            body: `<p>Dynamic programming maps problems into distinct classification profiles (e.g., Grid, Knapsack, Sequence, Bitmask, Digit). Recognizing these archetypes helps you quickly identify the ideal state structures and transition equations.</p>
+                   <table style="width:100%; border-collapse:collapse; margin:1.5rem 0; font-size:0.9rem; text-align:left;">
+                     <thead>
+                       <tr style="border-bottom:2px solid var(--neon-magenta); color:#fff;">
+                         <th style="padding:0.5rem;">Pattern Class</th>
+                         <th style="padding:0.5rem;">Core Dimensions</th>
+                         <th style="padding:0.5rem;">Classic Target Problem</th>
+                       </tr>
+                     </thead>
+                     <tbody>
+                       <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                         <td style="padding:0.5rem; color:var(--neon-magenta);">Grid Pathing</td>
+                         <td style="padding:0.5rem;">2D Matrix Coordinate Fields</td>
+                         <td style="padding:0.5rem;">Minimum Cost Matrix Travel</td>
+                       </tr>
+                       <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                         <td style="padding:0.5rem; color:var(--neon-cyan);">Knapsack Slicing</td>
+                         <td style="padding:0.5rem;">Item Boundaries × Capacity Limits</td>
+                         <td style="padding:0.5rem;">Subset Sum matching configurations</td>
+                       </tr>
+                       <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                         <td style="padding:0.5rem; color:var(--neon-purple);">String Sequences</td>
+                         <td style="padding:0.5rem;">Dynamic Text Index Tracks</td>
+                         <td style="padding:0.5rem;">Longest Common Subsequence (LCS)</td>
+                       </tr>
+                     </tbody>
+                   </table>`,
+            exercises: [{ q: 'Identify the classification profile for a problem matching text sequences against character templates.', diff: 'easy', type: 'Conceptual definition', hint: 'The problem aligns dynamic index tracks between strings.', sol: 'This falls under the String Sequence Pattern, which uses a 2D matrix layout to track matching characters across indices.' }],
+            mcqs: [{ q: 'Which dynamic programming pattern uses integer bit strings to manage subset combinations?', options: ['Linear state tracing', 'Bitmask dynamic programming', 'Digit path constraints', 'Interval cutting systems'], answer: 1 }]
+          }
+        ]
+      }
+    ];
+
+    const flatTopics = [];
+    course.forEach((mod, mi) => mod.topics.forEach((topic, ti) => flatTopics.push({ mi, ti })));
+    let currentIndex = 0;
+    const completed = new Set();
+
+    function getVisualMarkup(mi, ti, mod, topic) {
+      if (mi === 0) {
+        return `
+          <div class="visual-block">
+            <div class="visual-head">DP Engine Paradigm Visualizer</div>
+            <div style="text-align: center; margin: 1.5rem 0;">
+              <svg width="100%" height="120" viewBox="0 0 500 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 460px;">
+                <path d="M100 60 L200 35 M100 60 L200 85 M200 35 L320 60 M200 85 L320 60 M320 60 L440 60" stroke="#4d5171" stroke-width="1.5"/>
+                <circle cx="100" cy="60" r="14" fill="#ff3b93" fill-opacity="0.2" stroke="#ff3b93" stroke-width="1.5"/>
+                <text x="100" y="64" fill="#fff" font-size="9" text-anchor="middle" font-family="monospace">Base</text>
+                <circle cx="200" cy="35" r="14" fill="#8162ff" fill-opacity="0.2" stroke="#8162ff" stroke-width="1.5"/>
+                <text x="200" y="39" fill="#fff" font-size="9" text-anchor="middle" font-family="monospace">Sub1</text>
+                <circle cx="200" cy="85" r="14" fill="#8162ff" fill-opacity="0.2" stroke="#8162ff" stroke-width="1.5"/>
+                <text x="200" y="89" fill="#fff" font-size="9" text-anchor="middle" font-family="monospace">Sub2</text>
+                <circle cx="320" cy="60" r="14" fill="#00ffd0" fill-opacity="0.2" stroke="#00ffd0" stroke-width="1.5"/>
+                <text x="320" y="64" fill="#fff" font-size="9" text-anchor="middle" font-family="monospace">State</text>
+                <circle cx="440" cy="60" r="14" fill="#ff3b93" fill-opacity="0.6" stroke="#ff3b93" stroke-width="1.5"/>
+                <text x="440" y="64" fill="#fff" font-size="9" text-anchor="middle" font-family="monospace">Target</text>
+              </svg>
+            </div>
+            <div class="compare-grid">
+              <div class="compare-card"><strong>Subproblems</strong><span>Deconstruct master problem into minor calculations.</span></div>
+              <div class="compare-card"><strong>Memo Table</strong><span>Store calculated records inside a lookup array.</span></div>
+              <div class="compare-card"><strong>Transitions</strong><span>Build master state from stored step parameters.</span></div>
+            </div>
+          </div>`;
+      }
+      return `
+        <div class="visual-block">
+          <div class="visual-head">DP Calculation Pipeline</div>
+          <div class="flow-grid">
+            <div class="flow-chip">Define State Structure</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-chip">Formulate Transitions</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-chip">Isolate Base Steps</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-chip">Compute Tabulation</div>
+          </div>
+          <div class="visual-caption">The ${topic.title} kernel combines raw memory layout tracking with optimal execution steps required by evaluation panels.</div>
+        </div>`;
+    }
+
+    function getExerciseMarkup(mi, ti, mod, topic) {
+      const defaultEx = topic.exercises && topic.exercises[0] ? topic.exercises[0] : { q: 'Design optimal calculation pathways.', diff: 'medium', type: 'Analysis', hint: 'Map state spaces explicitly.', sol: 'Completed trace parameters align cleanly.' };
+      const defaultMcq = topic.mcqs && topic.mcqs[0] ? topic.mcqs[0] : { q: 'Identify state metrics.', options: ['Opt1', 'Opt2', 'Opt3', 'Opt4'], answer: 0 };
+      
+      const num = "01";
+      const hintId = `hint-${mi}-${ti}-0`;
+      const solId = `sol-${mi}-${ti}-0`;
+      const groupName = `mcq-${mi}-${ti}-0`;
+      
+      const optionsHtml = defaultMcq.options.map((opt, oi) => `
+        <label class="mcq-option" data-mcq="${groupName}" data-correct="${oi === defaultMcq.answer ? '1' : '0'}">
+          <input type="radio" name="${groupName}" value="${oi}" onchange="checkMcq(this)" />
+          <span class="mcq-option-letter">${String.fromCharCode(65 + oi)}</span>
+          <span class="mcq-option-text">${opt}</span>
+        </label>`).join('');
+
+      return `
+        <div class="challenge-console">
+          <div class="console-header">
+            <div class="console-title">
+              <div class="console-dot"></div>
+              <div><span>Optimization_Protocol // ${mod.module}</span><strong>Exercise Set: ${topic.title}</strong></div>
+            </div>
+            <div class="console-count">1 Challenge Loaded</div>
+          </div>
+          <div class="console-body">
+            <div class="challenge-card">
+              <div class="challenge-row">
+                <div class="challenge-index">DP_CORE_${num}</div>
+                <div class="challenge-main">
+                  <div class="challenge-meta">
+                    <span class="diff-badge ${defaultEx.diff}">${defaultEx.diff}</span>
+                    <span class="type-badge">${defaultEx.type}</span>
+                  </div>
+                  <div class="challenge-question">${defaultEx.q}</div>
+                  <div class="challenge-btn-row">
+                    <button class="hint-toggle" onclick="toggleHint('${hintId}')">💡 Reveal Hint</button>
+                    <button class="sol-toggle" onclick="toggleHint('${solId}')">✅ Show Solution</button>
+                  </div>
+                  <div class="hint-panel" id="${hintId}">${defaultEx.hint}</div>
+                  <div class="hint-panel sol-panel" id="${solId}"><strong>Verified Engine Solution:</strong> ${defaultEx.sol}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="console-footer">
+            <p>Formulate the lookup state, map base dependencies, and run optimizations to isolate subproblems.</p>
+            <button class="console-cta" onclick="document.getElementById('markBtn').click()">Mark Topic Complete →</button>
+          </div>
+        </div>
+        
+        <div class="challenge-console mcq-console">
+          <div class="console-header">
+            <div class="console-title">
+              <div class="console-dot" style="background:var(--neon-cyan); box-shadow:0 0 12px var(--neon-cyan);"></div>
+              <div><span>Validation_Protocol // ${mod.module}</span><strong>Quick Quiz: ${topic.title}</strong></div>
+            </div>
+            <div class="console-count">1 Question Loaded</div>
+          </div>
+          <div class="console-body">
+            <div class="mcq-card">
+              <div class="mcq-question"><span class="mcq-num">Q1.</span> ${defaultMcq.q}</div>
+              <div class="mcq-options">${optionsHtml}</div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function checkMcq(input) {
+      const label = input.closest('.mcq-option');
+      const groupName = label.dataset.mcq;
+      document.querySelectorAll(`label[data-mcq="${groupName}"]`).forEach(opt => {
+        opt.classList.remove('correct', 'wrong');
+        opt.querySelector('input').disabled = true;
+      });
+      document.querySelectorAll(`label[data-mcq="${groupName}"]`).forEach(opt => {
+        if (opt.dataset.correct === '1') opt.classList.add('correct');
+      });
+      if (label.dataset.correct !== '1') label.classList.add('wrong');
+    }
+
+    function toggleHint(id) {
+      const panel = document.getElementById(id);
+      if (panel) panel.classList.toggle('open');
+    }
+
+    function buildSidebar() {
+      const list = document.getElementById('moduleList');
+      list.innerHTML = '';
+      course.forEach((mod, mi) => {
+        const block = document.createElement('div');
+        block.className = 'module';
+        block.innerHTML = `<div class="module-head"><span>${mod.module} · ${mod.title}</span><span class="chevron">▸</span></div><div class="module-body"></div>`;
+        const body = block.querySelector('.module-body');
+        mod.topics.forEach((topic, ti) => {
+          const link = document.createElement('div');
+          link.className = 'topic-link';
+          link.textContent = topic.title;
+          link.onclick = () => {
+            currentIndex = flatTopics.findIndex(item => item.mi === mi && item.ti === ti);
+            renderContent(true);
+          };
+          body.appendChild(link);
+        });
+        block.querySelector('.module-head').onclick = () => block.classList.toggle('open');
+        list.appendChild(block);
+      });
+      document.querySelectorAll('.module').forEach((el, index) => { if (index === 0) el.classList.add('open'); });
+    }
+
+    function updateProgress() {
+      const total = flatTopics.length;
+      const done = completed.size;
+      document.getElementById('progressText').textContent = `${done} / ${total} topics completed`;
+      document.getElementById('progressFill').style.width = `${(done / total) * 100}%`;
+    }
+
+    function renderContent(shouldScroll = false) {
+      const { mi, ti } = flatTopics[currentIndex];
+      const mod = course[mi];
+      const topic = mod.topics[ti];
+      const key = `${mi}-${ti}`;
+      const isDone = completed.has(key);
+      
+      document.querySelectorAll('.topic-link').forEach(link => link.classList.remove('active'));
+      const activeLink = document.querySelectorAll('.topic-link')[currentIndex];
+      if (activeLink) activeLink.classList.add('active');
+
+      const visualMarkup = getVisualMarkup(mi, ti, mod, topic);
+      const exerciseMarkup = getExerciseMarkup(mi, ti, mod, topic);
+
+      document.getElementById('contentArea').innerHTML = `
+        <div class="content-header">
+          <div class="content-tag">${topic.tag}</div>
+          <h2>${topic.title}</h2>
+          <div class="content-meta">${mod.module} · ${mod.title}</div>
+        </div>
+        <div class="content-hero">
+          <div class="eyebrow">Target Learning Objective</div>
+          <p>Master execution tracks for ${topic.title.toLowerCase()}. Learn to formalize states, implement microarchitectures, optimize memory dimensions, and bypass deep recursion constraints.</p>
+        </div>
+        <div class="learning-grid">
+          <div class="learning-card"><strong>State Definition</strong><span>Encapsulate problem parameters cleanly</span></div>
+          <div class="learning-card"><strong>Transition Law</strong><span>Recurrence equations and lookup patterns</span></div>
+          <div class="learning-card"><strong>Space Optimization</strong><span>Array compression and window techniques</span></div>
+        </div>
+        <div class="content-body">${visualMarkup}${topic.body}</div>
+        ${exerciseMarkup}
+        <div class="actions-row">
+          <button class="mark-btn ${isDone ? 'done' : ''}" id="markBtn">${isDone ? '✓ Completed' : 'Mark as Complete'}</button>
+        </div>
+        <div class="nav-buttons">
+          <div class="nav-btn ${currentIndex > 0 ? '' : 'disabled'}" id="prevBtn">
+            <strong>← Previous</strong>
+            <span>${currentIndex > 0 ? course[flatTopics[currentIndex - 1].mi].topics[flatTopics[currentIndex - 1].ti].title : 'Origin'}</span>
+          </div>
+          <div class="nav-btn ${currentIndex < flatTopics.length - 1 ? '' : 'disabled'}" id="nextBtn">
+            <strong>Next Topic →</strong>
+            <span>${currentIndex < flatTopics.length - 1 ? course[flatTopics[currentIndex + 1].mi].topics[flatTopics[currentIndex + 1].ti].title : 'Terminus'}</span>
+          </div>
+        </div>`;
+
+      document.getElementById('markBtn').onclick = () => {
+        if (completed.has(key)) completed.delete(key);
+        else completed.add(key);
+        updateProgress();
+        renderContent(false);
+      };
+
+      document.getElementById('prevBtn').onclick = () => { currentIndex--; renderContent(true); };
+      document.getElementById('nextBtn').onclick = () => { currentIndex++; renderContent(true); };
+
+      document.querySelectorAll('.topic-link').forEach((link, idx) => {
+        if (idx === currentIndex) link.classList.add('active');
+        if (completed.has(`${flatTopics[idx].mi}-${flatTopics[idx].ti}`)) link.classList.add('done');
+      });
+
+      updateProgress();
+      if (shouldScroll) { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    }
+
+    const interviewQuestions = [
+      {
+        module: 'Module 1 & 2', title: 'DP Foundations & Linear State Machines',
+        qas: [
+          { q: 'What is the exact distinction between Memoization and Tabulation?', a: 'Memoization is Top-Down, processing states recursively lazily on-demand, which can consume significant memory on the system stack frame. Tabulation is Bottom-Up, resolving linear matrix slots iteratively, which optimizes speed and allows space-compression optimization tricks.', analysis: 'Universal diagnostic warm-up question. Strong answers mention system stack depth hazards.' },
+          { q: 'How does state compression optimize House Robber parameters down to constant spatial overhead O(1)?', a: 'Because the base transition equation <code>dp[i] = max(dp[i-1], asset[i] + dp[i-2])</code> only scans the two immediately adjacent historical slots, you can store the entire track using two shifting primitive integer registers.', analysis: 'Tests if you can optimize memory beyond vanilla tabulation models.' }
+        ]
+      },
+      {
+        module: 'Module 3 & 4', title: 'Multi-Dimensional Grids & Slicing Matrix Maps',
+        qas: [
+          { q: 'Why does the Dungeon Game problem require reverse grid dynamic programming?', a: 'Because health requirements at any cell depend directly on matching choices down the remaining pathway. Moving forward forces tracking two divergent components (current cost vs minimum cumulative barrier), whereas moving backward consolidates constraints to a single element.', analysis: 'Advanced grid processing concept. Tests if you can reverse state flows.' },
+          { q: 'How do you structure states to model Cherry Pickup across a 2D matrix safely without exponential scale-ups?', a: 'Instead of running two separate passes, track two walkers moving synchronously down the grid. State collapses from 4 parameters <code>(r1, c1, r2, c2)</code> to 3 <code>(step, r1, r2)</code> because <code>c = step - r</code> is an invariant.', analysis: 'Tests state reduction strategies for multi-agent paths.' }
+        ]
+      },
+      {
+        module: 'Module 5 & 6', title: 'Knapsack Systems & Advanced Sequence Alignments',
+        qas: [
+          { q: 'Explain the distinction in state processing between 0/1 Knapsack and Unbounded Knapsack structures.', a: 'In 0/1 Knapsack, when considering item <code>i</code>, picking it updates lookups to scan the *previous* row index <code>i-1</code>. In Unbounded Knapsack, you can pick elements infinitely, so choices evaluate the *active* row vector index <code>i</code>.', analysis: 'Core array bounding question. Tests structural row processing logic.' },
+          { q: 'How does the LIS (Longest Increasing Subsequence) problem optimize from quadratic O(N^2) runtime metrics down to O(N log N)?', a: 'By maintaining an auxiliary array tracking minimum tail elements of all increasing subsequences found so far. For each array token, perform a binary search lookup to update its slot directly.', analysis: 'Classic optimization vector. Evaluates combining DP with separate structures.' }
+        ]
+      },
+      {
+        module: 'Module 11 & 12', title: 'Bitmask Compression & Digit Bounds Analysis',
+        qas: [
+          { q: 'What is the purpose of Bitmask dynamic programming, and what are its standard runtime thresholds?', a: 'Bitmask DP handles problems where states are subsets of sets (like Traveling Salesman). You map bit sets directly into integer keys, reducing exponential complexities down to <code>O(2^N * N^2)</code> frames.', analysis: 'Advanced qualification check for senior engineering tiers.' },
+          { q: 'How do digit dynamic programming templates handle upper limits for large number checks?', a: 'By injecting a boolean variable <code>tight</code> inside the state profile. If <code>tight == 1</code>, the processing digit is strictly bound by the corresponding digit index of the upper limit token; if 0, it can range freely from 0 to 9.', analysis: 'Tests custom range parsing optimization design patterns.' }
+        ]
+      }
+    ];
+
+    const quizQuestions = [
+      { q: 'If a transition scans <code>dp[i][j] = dp[i-1][j] + dp[i][j-1]</code>, what type of problem pattern does this represent?', options: ['Interval Slicing', 'Grid Layout Pathing', 'Bitmask Compression', 'Tree Sub-allocation'], answer: 1 },
+      { q: 'What spatial footprint limit does top-down memoization introduce over standard tabulation systems?', options: ['Explicit auxiliary pointer sizing', 'System Call-Stack Overflow hazards', 'Static bit alignment failures', 'Garbage collection locks'], answer: 1 },
+      { q: 'Which formulation defines the overall space footprint of an uncompressed 0/1 Knapsack tabulation map?', options: ['O(Weights Count)', 'O(Items Count × Target Weight Cap)', 'O(2^Items Count)', 'O(Target Weight)'], answer: 1 },
+      { q: 'In an uncompressed iterative matrix matching loop (like LCS), updating row <code>i</code> only requires looking at which data records?', options: ['Row 0 directly', 'The immediate preceding row i-1 data vector', 'All historical logs synchronously', 'Only base initialization indexes'], answer: 1 },
+      { q: 'What does a low-link or tight variable equal to 0 indicate inside a Digit DP state calculation node?', options: ['The processing thread has run out of bounds', 'Digit selections are completely unrestricted by the upper target limit', 'The numeric combination has collapsed to an invalid total', 'The state must drop into recursive tracking frames immediately'], answer: 2 },
+      { q: 'Which mathematical framework uses sub-array partitioning cuts like <code>dp[i][j] = min(dp[i][k] + dp[k+1][j] + cost)</code>?', options: ['Interval Dynamic Programming', 'Linear State Scaling', 'Digit Pattern Constraints', 'Tree Node Selection Loops'], answer: 0 },
+      { q: 'When optimizing an LIS configuration using binary search, what data profile does the auxiliary tracking array present?', options: ['Completely randomized integer sets', 'Monotonically sorted increasing tail elements', 'Flipped character arrays matching templates', 'Bitmask integer flags checking dependencies'], answer: 1 },
+      { q: 'What is the time complexity of the classic Traveling Salesman Problem resolved via Bitmask DP structures?', options: ['O(N!)', 'O(N^3)', 'O(2^N * N^2)', 'O(V + E)'], answer: 2 }
+    ];
+
+    function buildInterviewView() {
+      const container = document.getElementById('interviewContent');
+      document.getElementById('interviewShellLabel').textContent = 'Interview Ready · DP Engine Bank';
+      
+      const modulesHtml = interviewQuestions.map((mod, mi) => {
+        const cards = mod.qas.map((item, qi) => `
+          <div class="iq-card">
+            <div class="iq-q"><span>Q${qi + 1}.</span>${item.q}</div>
+            <div class="iq-a"><strong>Answer:</strong> ${item.a}</div>
+            <div class="iq-analysis"><strong>Why it\'s asked:</strong> ${item.analysis}</div>
+          </div>`).join('');
+        return `
+          <div class="iq-module ${mi === 0 ? 'open' : ''}">
+            <div class="iq-module-head" onclick="this.parentElement.classList.toggle('open')">
+              <div><strong>${mod.title}</strong><span class="iq-sub">${mod.qas.length} production interview questions</span></div>
+              <span class="chevron">▸</span>
+            </div>
+            <div class="iq-module-body">${cards}</div>
+          </div>`;
+      }).join('');
+
+      const generatedQuizMarkup = generateMockQuizBlock();
+
+      container.innerHTML = `
+        <div class="interview-intro">
+          <div class="content-tag">FAANG Verification</div>
+          <h2>Dynamic Programming Evaluation Frameworks</h2>
+          <p>Comprehensive algorithmic evaluation models tracking space optimization transitions, matrix slicing arrays, and optimization shortcuts across validation tiers.</p>
+        </div>
+        ${generatedQuizMarkup}
+        ${modulesHtml}`;
+    }
+
+    function generateMockQuizBlock() {
+      const shuffled = [...quizQuestions].sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, 4);
+
+      const quizCards = selected.map((q, idx) => {
+        const groupName = `mock-quiz-${idx}`;
+        const optionsHtml = q.options.map((opt, oi) => `
+          <label class="mcq-option" data-mcq="${groupName}" data-correct="${oi === q.answer ? '1' : '0'}">
+            <input type="radio" name="${groupName}" value="${oi}" onchange="checkMcq(this)" />
+            <span class="mcq-option-letter">${String.fromCharCode(65 + oi)}</span>
+            <span class="mcq-option-text">${opt}</span>
+          </label>`).join('');
+
+        return `
+          <div class="mcq-card" style="margin-bottom:1.5rem; background: rgba(255,255,255,0.01);">
+            <div class="mcq-question" style="color:#fff;"><span class="mcq-num" style="color:var(--neon-magenta);">Task #${idx+1}:</span> ${q.q}</div>
+            <div class="mcq-options">${optionsHtml}</div>
+          </div>`;
+      }).join('');
+
+      return `
+        <div class="challenge-console" style="border-color: var(--neon-purple); box-shadow: 0 40px 90px rgba(0,0,0,0.8), 0 0 40px rgba(129,98,255,0.1);">
+          <div class="console-header" style="background: rgba(129,98,255,0.03); border-bottom-color: rgba(255,255,255,0.05);">
+            <div class="console-title">
+              <div class="console-dot" style="background:var(--neon-purple); box-shadow:0 0 12px var(--neon-purple);"></div>
+              <div><span>Interactive_Simulator // Live Mock Test</span><strong>Randomized Dynamic Evaluation Kernel</strong></div>
+            </div>
+            <div class="console-count" style="color:var(--neon-purple); border-color:rgba(129,98,255,0.3); background:rgba(129,98,255,0.05);">4 Questions Generated</div>
+          </div>
+          <div class="console-body">${quizCards}</div>
+          <div class="console-footer" style="border-top-color: rgba(255,255,255,0.05);">
+            <p>Select answers to verify state structures. Hit refresh below to re-roll a fresh set of exam constraints.</p>
+            <button class="console-cta" onclick="buildInterviewView()" style="background: linear-gradient(135deg, var(--neon-purple), var(--neon-cyan));">⚡ Re-Generate Test</button>
+          </div>
+        </div>`;
+    }
+
+    function buildTopicsView() {
+      const container = document.getElementById('interviewContent');
+      document.getElementById('interviewShellLabel').textContent = '14 Lessons · Complete Curriculum';
+      const cards = flatTopics.map(({ mi, ti }) => {
+        const mod = course[mi];
+        const topic = mod.topics[ti];
+        return `
+          <div class="browse-card" onclick="goToTopic(${mi}, ${ti})">
+            <div class="browse-card-main"><strong>${topic.title}</strong><span>${mod.module} · ${mod.title} · ${topic.tag}</span></div>
+            <div class="browse-arrow">→</div>
+          </div>`;
+      }).join('');
+      container.innerHTML = `
+        <div class="interview-intro">
+          <div class="content-tag">Full Index</div>
+          <h2>All Live Core Tracks</h2>
+        </div>
+        <div class="console-body" style="padding:0; display:flex; flex-direction:column; gap:0.9rem;">${cards}</div>`;
+    }
+
+    function buildModulesView() {
+      const container = document.getElementById('interviewContent');
+      document.getElementById('interviewShellLabel').textContent = '14 Modules · Structural Blueprints';
+      const cards = course.map((mod, mi) => `
+          <div class="browse-card" onclick="goToTopic(${mi}, 0)">
+            <div class="browse-card-main"><strong>${mod.module} · ${mod.title}</strong><span>${mod.topics.length} core sequences</span></div>
+            <div style="display:flex; align-items:center; gap:1rem;">
+              <span class="browse-count-pill">${mod.topics.length} lessons</span>
+              <div class="browse-arrow">→</div>
+            </div>
+          </div>`).join('');
+      container.innerHTML = `
+        <div class="interview-intro">
+          <div class="content-tag">Course Roadmaps</div>
+          <h2>14 Specialized DP Architectures</h2>
+        </div>
+        <div class="console-body" style="padding:0; display:flex; flex-direction:column; gap:0.9rem;">${cards}</div>`;
+    }
+
+    function goToTopic(mi, ti) {
+      currentIndex = flatTopics.findIndex(item => item.mi === mi && item.ti === ti);
+      document.getElementById('interviewShell').classList.remove('active');
+      document.getElementById('heroShell').classList.add('is-hidden');
+      document.getElementById('curriculumView').classList.add('active');
+      renderContent(true);
+    }
+
+    document.getElementById('topicSearch').addEventListener('input', (event) => {
+      const query = event.target.value.toLowerCase();
+      document.querySelectorAll('.topic-link').forEach(link => {
+        const match = link.textContent.toLowerCase().includes(query);
+        link.style.display = match ? 'flex' : 'none';
+      });
+    });
+
+    document.getElementById('startLearningBtn').addEventListener('click', () => {
+      document.getElementById('heroShell').classList.add('is-hidden');
+      document.getElementById('interviewShell').classList.remove('active');
+      document.getElementById('curriculumView').classList.add('active');
+      renderContent(true);
+    });
+
+    document.querySelectorAll('.trigger-interview').forEach(card => {
+      card.addEventListener('click', () => {
+        const view = card.dataset.view;
+        if (view === 'modules') buildModulesView();
+        else if (view === 'topics') buildTopicsView();
+        else buildInterviewView();
+        document.getElementById('heroShell').classList.add('is-hidden');
+        document.getElementById('curriculumView').classList.remove('active');
+        document.getElementById('interviewShell').classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      });
+    });
+
+    document.getElementById('interviewBackBtn').addEventListener('click', () => {
+      document.getElementById('interviewShell').classList.remove('active');
+      document.getElementById('heroShell').classList.remove('is-hidden');
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    });
+
+    document.getElementById('interviewToCourseBtn').addEventListener('click', () => {
+      document.getElementById('interviewShell').classList.remove('active');
+      document.getElementById('heroShell').classList.add('is-hidden');
+      document.getElementById('curriculumView').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    });
+    buildSidebar();
+    renderContent(true);
+  </script>
+</body>
+</html>

@@ -1,0 +1,1307 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AlgoVerse Pro | Data Structures Masterclass</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #05050f;
+      --bg-surface: linear-gradient(160deg, rgba(22, 22, 54, 0.8), rgba(7, 7, 20, 0.95));
+      --bg-surface-solid: #0b0b22;
+      --card-shadow-3d: 0 40px 90px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      --border-glow: rgba(129, 98, 255, 0.25);
+      --border-bright: rgba(0, 255, 208, 0.5);
+      --neon-purple: #8162ff;
+      --neon-cyan: #00ffd0;
+      --neon-magenta: #ff3b93;
+      --neon-green: #00ff66;
+      --text-main: #f5f5fa;
+      --text-muted: #a9aecd;
+      --text-dark: #4d5171;
+      --transition-cosmic: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    .space-matrix-background {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 50% 30%, #151242 0%, #03030a 85%);
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .perspective-floor-grid {
+      position: absolute;
+      width: 200%; height: 200%;
+      top: -30%; left: -50%;
+      background-image: 
+        linear-gradient(rgba(129, 98, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(129, 98, 255, 0.06) 1px, transparent 1px);
+      background-size: 60px 60px;
+      transform: perspective(300px) rotateX(65deg);
+      transform-origin: center center;
+      animation: gridScroll 20s linear infinite;
+    }
+    @keyframes gridScroll {
+      0% { transform: perspective(300px) rotateX(65deg) translateY(0); }
+      100% { transform: perspective(300px) rotateX(65deg) translateY(60px); }
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: rgba(129, 98, 255, 0.3); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); }
+    .hero-shell {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6rem 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-shell.is-hidden { display: none !important; }
+    .hero-card {
+      width: min(1200px, 100%);
+      border-radius: 36px;
+      padding: 5.5rem 4.5rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-glow);
+      box-shadow: var(--card-shadow-3d);
+      backdrop-filter: blur(30px);
+      text-align: center;
+      position: relative;
+    }
+    .hero-card h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.2rem;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      text-shadow: 0 1px 0 #7353ff, 0 2px 0 #573be6, 0 4px 20px rgba(129, 98, 255, 0.4);
+    }
+    .hero-card > p { 
+      color: var(--text-muted); 
+      max-width: 780px; 
+      margin: 1.5rem auto 3.5rem;
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem 1.5rem;
+      border-radius: 999px;
+      background: rgba(0, 255, 208, 0.06);
+      color: var(--neon-cyan);
+      border: 1px solid rgba(0, 255, 208, 0.25);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+    }
+    .hero-actions { display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin-bottom: 5rem; }
+    .start-btn {
+      background: #ffffff;
+      color: #05050f;
+      border: none;
+      padding: 1.3rem 4rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: var(--transition-cosmic);
+      box-shadow: 0 12px 35px rgba(255, 255, 255, 0.15);
+    }
+    .start-btn:hover { 
+      transform: translateY(-4px); 
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+      color: #fff;
+      box-shadow: 0 20px 45px rgba(0, 255, 208, 0.35);
+    }
+    .secondary-link {
+      display: inline-flex;
+      align-items: center;
+      padding: 1.3rem 4rem;
+      border-radius: 999px;
+      font-weight: 600;
+      border: 1px solid var(--border-glow);
+      background: rgba(255, 255, 255, 0.01);
+      transition: var(--transition-cosmic);
+      color: var(--text-main);
+      text-decoration: none;
+    }
+    .secondary-link:hover { background: rgba(255, 255, 255, 0.04); border-color: #fff; }
+    .home-dsa-showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin: 4.5rem 0;
+      text-align: left;
+    }
+    .dsa-preview-card {
+      background: rgba(4, 4, 15, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+      border-radius: 20px;
+      padding: 1.75rem;
+      box-shadow: inset 0 2px 15px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.5rem;
+      transition: var(--transition-cosmic);
+    }
+    .dsa-preview-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: rgba(129, 98, 255, 0.4);
+      background: rgba(129, 98, 255, 0.03);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .dsa-preview-card h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.15rem;
+      color: #fff;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+    .dsa-preview-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .card-graphic-wrapper {
+      background: #050512;
+      border-radius: 12px;
+      padding: 1rem;
+      border: 1px solid rgba(255,255,255,0.01);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 3.5rem;
+    }
+    .stat-card {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid var(--border-glow);
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: left;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      transition: var(--transition-cosmic);
+      cursor: pointer;
+    }
+    .stat-card:hover { border-color: var(--neon-purple); transform: translateY(-4px); box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5); }
+    .stat-card strong { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+    .stat-card span { color: var(--text-muted); font-size: 0.92rem; font-weight: 500; }
+    .curriculum-shell { display: none; position: relative; z-index: 1; }
+    .curriculum-shell.active { display: block !important; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 3rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5, 5, 13, 0.9);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(25px);
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.6rem 1.4rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-glow);
+      background: rgba(255, 255, 255, 0.02);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: var(--transition-cosmic);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .back-btn:hover { border-color: var(--neon-cyan); color: #fff; }
+    .progress-wrap { display: flex; align-items: center; gap: 1.2rem; }
+    .progress-wrap span { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--neon-cyan); }
+    .progress-track { width: 200px; height: 5px; border-radius: 99px; background: rgba(255, 255, 255, 0.04); overflow: hidden; }
+    .progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple)); transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    .layout { display: grid; grid-template-columns: 360px 1fr; min-height: calc(100vh - 73px); }
+    .sidebar {
+      padding: 2.5rem 1.5rem;
+      background: var(--bg-surface-solid);
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      overflow-y: auto;
+      height: calc(100vh - 73px);
+      position: sticky; top: 73px;
+    }
+    .sidebar-search {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.9rem 1.2rem; margin-bottom: 2.5rem;
+      border: 1px solid var(--border-glow); border-radius: 14px;
+      background: rgba(0, 0, 0, 0.3); transition: var(--transition-cosmic);
+    }
+    .sidebar-search:focus-within { border-color: var(--neon-purple); box-shadow: 0 0 20px rgba(129, 98, 255, 0.12); }
+    .sidebar-search span { color: var(--text-dark); font-size: 1rem; }
+    .sidebar-search input { width: 100%; border: none; outline: none; background: transparent; color: var(--text-main); font-size: 0.9rem; font-family: inherit; }
+    .module { border-radius: 16px; margin-bottom: 0.75rem; background: rgba(255, 255, 255, 0.01); border: 1px solid transparent; transition: var(--transition-cosmic); overflow: hidden; }
+    .module.open { background: rgba(255, 255, 255, 0.015); border-color: rgba(255, 255, 255, 0.04); }
+    .module-head { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 1.1rem; cursor: pointer; user-select: none; }
+    .module-head span:first-child { font-size: 0.92rem; font-weight: 700; max-width: 85%; }
+    .module-head .chevron { font-size: 0.75rem; color: var(--text-dark); transition: transform 0.3s ease; }
+    .module.open .chevron { transform: rotate(90deg); color: var(--neon-purple); }
+    .module-body { display: none; padding: 0 0.6rem 1.2rem; }
+    .module.open .module-body { display: block; }
+    .topic-link { display: flex; align-items: center; padding: 0.8rem 1.1rem; margin-top: 0.4rem; border-radius: 10px; cursor: pointer; color: var(--text-muted); font-size: 0.88rem; font-weight: 500; transition: var(--transition-cosmic); }
+    .topic-link:hover { background: rgba(255, 255, 255, 0.03); color: #fff; }
+    .topic-link.active { background: rgba(129, 98, 255, 0.12); color: #fff; font-weight: 600; border-left: 3px solid var(--neon-purple); }
+    .topic-link.done { color: var(--neon-green); position: relative; }
+    .topic-link.done::after { content: '●'; position: absolute; right: 16px; font-size: 0.7rem; color: var(--neon-green); }
+    .content { padding: 4rem 6rem; max-width: 1050px; margin: 0 auto; }
+    .content-header { margin-bottom: 3.5rem; }
+    .content-tag { display: inline-block; padding: 0.4rem 1rem; border-radius: 8px; background: rgba(255, 59, 147, 0.06); border: 1px solid rgba(255, 59, 147, 0.2); color: #ff6cb1; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.2rem; }
+    .content-header h2 { font-family: 'Space Grotesk', sans-serif; font-size: 2.8rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.6rem; }
+    .content-meta { color: var(--text-dark); font-size: 0.95rem; font-weight: 600; }
+    .content-hero { padding: 2rem 2.5rem; border-radius: 24px; background: linear-gradient(135deg, rgba(129, 98, 255, 0.06), rgba(0, 255, 208, 0.01)); border: 1px solid var(--border-glow); box-shadow: var(--card-shadow-3d); margin-bottom: 3rem; }
+    .content-hero .eyebrow { font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--neon-cyan); font-weight: 700; margin-bottom: 0.6rem; }
+    .content-hero p { color: var(--text-muted); font-size: 1.05rem; }
+    .learning-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 4rem; }
+    .learning-card { padding: 1.75rem; border-radius: 20px; background: #0f0f24; border: 1px solid rgba(255, 255, 255, 0.03); box-shadow: var(--card-shadow-3d); }
+    .learning-card strong { display: block; font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; color: #fff; }
+    .learning-card span { color: var(--text-muted); font-size: 0.85rem; }
+    .content-body p { margin-bottom: 2rem; color: #dbdee9; font-size: 1.1rem; }
+    .content-body ul, .content-body ol { margin-bottom: 2.5rem; padding-left: 1.75rem; color: #dbdee9; }
+    .content-body li { margin-bottom: 0.75rem; }
+    .content-body h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.75rem; margin: 3.5rem 0 1.2rem; color: #fff; }
+    .content-body pre { background: #04040c; border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 16px; padding: 1.75rem; overflow-x: auto; margin: 2.5rem 0; }
+    .content-body code { font-family: 'JetBrains Mono', monospace; font-size: 0.92rem; color: #9effdf; }
+    .callout { border-left: 3px solid var(--neon-purple); padding: 1.75rem 2rem; border-radius: 0 20px 20px 0; background: rgba(129, 98, 255, 0.03); margin: 3rem 0; color: #dfd8ff; font-size: 1.05rem; }
+    .visual-block { margin: 3rem 0; padding: 2.5rem; border-radius: 24px; background: linear-gradient(160deg, #111129, #080816); border: 1px solid var(--border-glow); box-shadow: var(--card-shadow-3d); }
+    .visual-head { font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dark); margin-bottom: 2rem; }
+    .flow-grid { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .flow-chip { padding: 0.75rem 1.6rem; border-radius: 12px; background: rgba(129, 98, 255, 0.06); border: 1px solid rgba(129, 98, 255, 0.15); color: #cbd2ff; font-weight: 600; font-size: 0.9rem; }
+    .flow-arrow { color: var(--neon-cyan); font-weight: 700; font-size: 1.2rem; filter: drop-shadow(0 0 4px var(--neon-cyan)); }
+    .visual-caption { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+    .compare-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+    .compare-card { padding: 1.4rem; border-radius: 14px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.02); }
+    .compare-card strong { display: block; font-size: 0.95rem; color: #fff; margin-bottom: 0.3rem; }
+    .compare-card span { color: var(--text-dark); font-size: 0.85rem; }
+    .actions-row { display: flex; justify-content: flex-start; align-items: center; margin-top: 5rem; padding-top: 2.5rem; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+    .mark-btn { background: transparent; border: 1px solid rgba(0, 255, 208, 0.3); color: var(--neon-cyan); padding: 0.9rem 2.4rem; border-radius: 999px; font-weight: 700; font-size: 0.92rem; cursor: pointer; transition: var(--transition-cosmic); }
+    .mark-btn:hover { background: rgba(0, 255, 208, 0.04); border-color: var(--neon-cyan); }
+    .mark-btn.done { background: var(--neon-cyan); border-color: var(--neon-cyan); color: #060610; box-shadow: 0 0 30px rgba(0, 255, 208, 0.25); }
+    .nav-buttons { display: flex; justify-content: space-between; gap: 1.5rem; margin-top: 3rem; }
+    .nav-btn { flex: 1; padding: 1.5rem 1.75rem; border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 20px; background: #0f0f24; cursor: pointer; text-align: left; box-shadow: var(--card-shadow-3d); transition: var(--transition-cosmic); }
+    .nav-btn:hover { border-color: rgba(129, 98, 255, 0.4); background: rgba(129, 98, 255, 0.02); }
+    .nav-btn.disabled { opacity: 0.15; pointer-events: none; }
+    .nav-btn strong { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dark); margin-bottom: 0.4rem; }
+    .nav-btn span { color: var(--text-main); font-size: 1.05rem; font-weight: 600; }
+    .nav-btn#nextBtn { text-align: right; }
+    .challenge-console {
+      margin: 3.5rem 0;
+      border-radius: 24px;
+      background: linear-gradient(160deg, #0d0d26, #06060f);
+      border: 1px solid var(--border-bright);
+      box-shadow: 0 40px 90px rgba(0, 0, 0, 0.85), 0 0 60px rgba(0, 255, 208, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      position: relative;
+    }
+    .challenge-console::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-purple), var(--neon-magenta), transparent);
+      opacity: 0.8;
+    }
+    .console-header {
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+      padding: 1.8rem 2.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(0, 255, 208, 0.02);
+    }
+    .console-title { display: flex; align-items: center; gap: 0.9rem; }
+    .console-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--neon-cyan); box-shadow: 0 0 12px var(--neon-cyan); animation: pulseDot 2s ease-in-out infinite; }
+    @keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+    .console-title span { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dark); }
+    .console-title strong { font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 700; color: #fff; display: block; }
+    .console-count { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--neon-cyan); border: 1px solid rgba(0, 255, 208, 0.3); padding: 0.4rem 1rem; border-radius: 999px; background: rgba(0, 255, 208, 0.05); }
+    .console-body { padding: 2rem 2.5rem 2.5rem; display: flex; flex-direction: column; gap: 1.1rem; }
+    .challenge-card {
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 1.6rem 1.8rem;
+      transition: var(--transition-cosmic);
+    }
+    .challenge-card:hover { border-color: rgba(129, 98, 255, 0.35); background: rgba(129, 98, 255, 0.03); transform: translateX(4px); }
+    .challenge-row { display: flex; align-items: flex-start; gap: 1.1rem; }
+    .challenge-index { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 600; color: var(--neon-purple); min-width: 52px; padding-top: 0.15rem; }
+    .challenge-main { flex: 1; }
+    .challenge-meta { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem; flex-wrap: wrap; }
+    .diff-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.28rem 0.75rem; border-radius: 999px; }
+    .diff-badge.easy { color: var(--neon-green); background: rgba(0, 255, 102, 0.08); border: 1px solid rgba(0, 255, 102, 0.3); }
+    .diff-badge.medium { color: #ffc857; background: rgba(255, 200, 87, 0.08); border: 1px solid rgba(255, 200, 87, 0.3); }
+    .diff-badge.hard { color: var(--neon-magenta); background: rgba(255, 59, 147, 0.08); border: 1px solid rgba(255, 59, 147, 0.3); }
+    .type-badge { font-family: 'Space Grotesk', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dark); padding: 0.28rem 0.75rem; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.08); }
+    .challenge-question { color: #e6e8f5; font-size: 1.02rem; font-weight: 500; line-height: 1.6; margin-bottom: 0.4rem; }
+    .hint-toggle { background: none; border: none; color: var(--neon-cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0; display: inline-flex; align-items: center; gap: 0.4rem; transition: var(--transition-cosmic); }
+    .hint-toggle:hover { color: #fff; gap: 0.6rem; }
+    .hint-panel { display: none; margin-top: 0.9rem; padding: 1rem 1.3rem; border-radius: 12px; background: rgba(0, 0, 0, 0.35); border-left: 3px solid var(--neon-cyan); color: var(--text-muted); font-size: 0.92rem; line-height: 1.55; }
+    .hint-panel.open { display: block; }
+    .console-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 1.4rem 2.5rem; border-top: 1px solid rgba(255, 255, 255, 0.06); background: rgba(0,0,0,0.2); }
+    .console-footer p { color: var(--text-dark); font-size: 0.85rem; margin: 0; }
+    .console-cta { font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 700; color: #060610; background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); padding: 0.7rem 1.6rem; border-radius: 999px; border: none; cursor: pointer; transition: var(--transition-cosmic); box-shadow: 0 10px 25px rgba(0, 255, 208, 0.2); }
+    .console-cta:hover { transform: translateY(-2px); box-shadow: 0 15px 35px rgba(0, 255, 208, 0.35); }
+    @media (max-width: 640px) {
+      .console-header, .console-body, .console-footer { padding-left: 1.4rem; padding-right: 1.4rem; }
+      .challenge-row { flex-direction: column; gap: 0.5rem; }
+    }
+    @media (max-width: 1200px) {
+      .home-dsa-showcase-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 1024px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { height: auto; position: static; border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding: 1.5rem; }
+      .content { padding: 3rem 1.5rem; }
+      .stats { grid-template-columns: 1fr; gap: 1rem; }
+      .learning-grid { grid-template-columns: 1fr; }
+      .home-dsa-showcase-grid { grid-template-columns: 1fr; }
+    }
+    .challenge-btn-row { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
+    .sol-toggle { background: none; border: none; color: var(--neon-green); font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0; display: inline-flex; align-items: center; gap: 0.4rem; transition: var(--transition-cosmic); }
+    .sol-toggle:hover { color: #fff; gap: 0.6rem; }
+    .hint-panel.sol-panel { border-left-color: var(--neon-green); color: #d7ffe8; }
+    .hint-panel.sol-panel strong { color: var(--neon-green); }
+    .mcq-console { border-color: rgba(255, 59, 147, 0.35); box-shadow: 0 40px 90px rgba(0, 0, 0, 0.85), 0 0 60px rgba(255, 59, 147, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+    .mcq-console::before { background: linear-gradient(90deg, transparent, var(--neon-magenta), var(--neon-purple), var(--neon-cyan), transparent); }
+    .mcq-card { border-radius: 16px; background: rgba(255, 255, 255, 0.015); border: 1px solid rgba(255, 255, 255, 0.05); padding: 1.5rem 1.7rem; }
+    .mcq-question { color: #e6e8f5; font-size: 1rem; font-weight: 600; margin-bottom: 1rem; }
+    .mcq-num { color: var(--neon-magenta); font-family: 'JetBrains Mono', monospace; margin-right: 0.4rem; }
+    .mcq-options { display: flex; flex-direction: column; gap: 0.6rem; }
+    .mcq-option { display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1.1rem; border-radius: 12px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: var(--transition-cosmic); }
+    .mcq-option:hover { border-color: rgba(129, 98, 255, 0.4); }
+    .mcq-option input { accent-color: var(--neon-purple); cursor: pointer; }
+    .mcq-option-letter { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text-dark); min-width: 16px; }
+    .mcq-option-text { color: #d5d9e8; font-size: 0.92rem; }
+    .mcq-option.correct { border-color: var(--neon-green); background: rgba(0, 255, 102, 0.08); }
+    .mcq-option.correct .mcq-option-letter { color: var(--neon-green); }
+    .mcq-option.wrong { border-color: var(--neon-magenta); background: rgba(255, 59, 147, 0.08); }
+    .mcq-option.wrong .mcq-option-letter { color: var(--neon-magenta); }
+    .interview-shell { display: none; position: relative; z-index: 1; }
+    .interview-shell.active { display: block !important; }
+    .interview-content { padding: 3rem 6rem 6rem; max-width: 1050px; margin: 0 auto; }
+    .interview-intro { padding: 2.5rem; border-radius: 24px; background: linear-gradient(135deg, rgba(255, 59, 147, 0.07), rgba(129, 98, 255, 0.03)); border: 1px solid var(--border-glow); box-shadow: var(--card-shadow-3d); margin-bottom: 3rem; }
+    .interview-intro h2 { font-family: 'Space Grotesk', sans-serif; font-size: 2.4rem; margin-bottom: 0.8rem; }
+    .interview-intro p { color: var(--text-muted); font-size: 1.05rem; }
+    .iq-module { border-radius: 20px; margin-bottom: 1.2rem; background: rgba(255, 255, 255, 0.012); border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden; }
+    .iq-module-head { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; cursor: pointer; user-select: none; }
+    .iq-module-head strong { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; color: #fff; }
+    .iq-module-head span.iq-sub { display:block; color: var(--text-dark); font-size: 0.85rem; font-weight: 500; margin-top: 0.2rem; }
+    .iq-module-head .chevron { font-size: 0.8rem; color: var(--text-dark); transition: transform 0.3s ease; }
+    .iq-module.open .chevron { transform: rotate(90deg); color: var(--neon-magenta); }
+    .iq-module-body { display: none; padding: 0 2rem 2rem; flex-direction: column; gap: 1.2rem; }
+    .iq-module.open .iq-module-body { display: flex; }
+    .iq-card { border-radius: 16px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.05); padding: 1.6rem 1.8rem; }
+    .iq-q { color: #fff; font-weight: 700; font-size: 1.02rem; margin-bottom: 0.8rem; }
+    .iq-q span { color: var(--neon-cyan); font-family: 'JetBrains Mono', monospace; margin-right: 0.5rem; }
+    .iq-a { color: #dbdee9; font-size: 0.98rem; margin-bottom: 0.9rem; }
+    .iq-a strong { color: var(--neon-green); }
+    .iq-analysis { border-left: 3px solid var(--neon-purple); padding: 0.9rem 1.2rem; border-radius: 0 12px 12px 0; background: rgba(129, 98, 255, 0.04); color: var(--text-muted); font-size: 0.88rem; }
+    .iq-analysis strong { color: #cbd2ff; }
+    .iq-rank-table { display: grid; gap: 0.6rem; margin-top: 1rem; }
+    .iq-rank-row { display: grid; grid-template-columns: 50px 1fr 160px; gap: 1rem; padding: 0.9rem 1.3rem; border-radius: 10px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.03); font-size: 0.88rem; align-items: center; }
+    .iq-rank-row .rank-num { color: var(--neon-magenta); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+    .iq-rank-row .rank-topic { color: var(--text-dark); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    .browse-card { border-radius: 16px; background: rgba(255, 255, 255, 0.015); border: 1px solid rgba(255, 255, 255, 0.05); padding: 1.4rem 1.7rem; cursor: pointer; transition: var(--transition-cosmic); display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .browse-card:hover { border-color: rgba(129, 98, 255, 0.4); background: rgba(129, 98, 255, 0.04); transform: translateX(4px); }
+    .browse-card-main strong { display: block; font-size: 1.02rem; color: #fff; font-weight: 700; margin-bottom: 0.3rem; }
+    .browse-card-main span { color: var(--text-dark); font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .browse-arrow { color: var(--neon-cyan); font-size: 1.1rem; flex-shrink: 0; }
+    .browse-count-pill { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--neon-purple); border: 1px solid rgba(129, 98, 255, 0.35); padding: 0.3rem 0.8rem; border-radius: 999px; background: rgba(129, 98, 255, 0.06); }
+    @media (max-width: 1024px) {
+      .interview-content { padding: 2rem 1.5rem 4rem; }
+      .iq-rank-row { grid-template-columns: 40px 1fr; }
+      .iq-rank-row .rank-topic { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="space-matrix-background">
+    <div class="perspective-floor-grid"></div>
+  </div>
+  <section class="hero-shell" id="heroShell">
+    <div class="hero-card">
+      <div class="badge">⚡ Production DSA Core v2.5</div>
+      <h1>Data Structure Fundamentals</h1>
+      <p>Master complex spatial logic and structural data mapping through highly engineered lesson pipelines, complexity algorithms, and real production interview vectors.</p>
+      <div class="hero-actions">
+        <button class="start-btn" id="startLearningBtn">Start Learning</button>
+        <a class="secondary-link" href="index.html">Back to Home</a>
+      </div>
+      <div class="home-dsa-showcase-grid">
+        <div class="dsa-preview-card">
+          <div>
+            <h4>Contiguous Arrays</h4>
+            <p>Adjacent static address memory blocks for fast compilation index lookups.</p>
+          </div>
+          <div class="card-graphic-wrapper">
+            <svg width="100%" height="40" viewBox="0 0 160 40" fill="none">
+              <rect x="5" y="10" width="30" height="20" rx="3" fill="#8162ff" fill-opacity="0.2" stroke="#8162ff"/>
+              <rect x="42" y="10" width="30" height="20" rx="3" fill="#8162ff" fill-opacity="0.2" stroke="#8162ff"/>
+              <rect x="79" y="10" width="30" height="20" rx="3" fill="#00ffd0" fill-opacity="0.2" stroke="#00ffd0"/>
+              <rect x="116" y="10" width="30" height="20" rx="3" fill="#8162ff" fill-opacity="0.2" stroke="#8162ff"/>
+              <text x="94" y="23" fill="#00ffd0" font-size="8" font-family="monospace">O(1)</text>
+            </svg>
+          </div>
+        </div>
+        <div class="dsa-preview-card">
+          <div>
+            <h4>Linked Nodes</h4>
+            <p>Isolated spatial clusters connected through pointer reference maps.</p>
+          </div>
+          <div class="card-graphic-wrapper">
+            <svg width="100%" height="40" viewBox="0 0 160 40" fill="none">
+              <rect x="5" y="12" width="25" height="16" rx="3" fill="#12122c" stroke="#4d5171"/>
+              <path d="M30 20 L55 20" stroke="#00ffd0" stroke-width="1.5"/>
+              <rect x="55" y="12" width="25" height="16" rx="3" fill="#12122c" stroke="#4d5171"/>
+              <path d="M80 20 L105 20" stroke="#00ffd0" stroke-width="1.5"/>
+              <rect x="105" y="12" width="25" height="16" rx="3" fill="#12122c" stroke="#4d5171"/>
+            </svg>
+          </div>
+        </div>
+        <div class="dsa-preview-card">
+          <div>
+            <h4>LIFO Stack Layers</h4>
+            <p>Strict vertical tracking architectures routing nested state evaluations.</p>
+          </div>
+          <div class="card-graphic-wrapper">
+            <svg width="100%" height="40" viewBox="0 0 160 40" fill="none">
+              <rect x="40" y="28" width="80" height="8" rx="2" fill="#8162ff" fill-opacity="0.2" stroke="#8162ff"/>
+              <rect x="40" y="18" width="80" height="8" rx="2" fill="#8162ff" fill-opacity="0.2" stroke="#8162ff"/>
+              <rect x="40" y="8" width="80" height="8" rx="2" fill="#00ffd0" fill-opacity="0.3" stroke="#00ffd0"/>
+            </svg>
+          </div>
+        </div>
+        <div class="dsa-preview-card">
+          <div>
+            <h4>Network Graphs</h4>
+            <p>Non-linear dependency charts breaking traditional traversal tracking bounds.</p>
+          </div>
+          <div class="card-graphic-wrapper">
+            <svg width="100%" height="40" viewBox="0 0 160 40" fill="none">
+              <path d="M80 8 L50 32 M80 8 L110 32" stroke="#4d5171" stroke-width="1.5"/>
+              <circle cx="80" cy="8" r="5" fill="#05050f" stroke="#8162ff" stroke-width="2"/>
+              <circle cx="50" cy="32" r="5" fill="#05050f" stroke="#00ffd0" stroke-width="1.5"/>
+              <circle cx="110" cy="32" r="5" fill="#05050f" stroke="#ff3b93" stroke-width="1.5"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat-card trigger-interview" data-view="topics"><strong>30 Topics</strong><span>Systematic logic tracking modules — click to browse all topics →</span></div>
+        <div class="stat-card trigger-interview" data-view="modules"><strong>10 Modules</strong><span>From base theory to production scaling — click to browse modules →</span></div>
+        <div class="stat-card trigger-interview" data-view="interview"><strong>Interview Ready</strong><span>Optimized for fast platform profiling — click to view Q&amp;A →</span></div>
+      </div>
+    </div>
+  </section>
+  <div class="curriculum-shell" id="curriculumView">
+    <div class="topbar">
+      <div style="display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;">
+        <a href="index.html" class="back-btn">← Back to Home</a>
+        <div style="font-weight:700; font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em;">AlgoVerse Workspace</div>
+      </div>
+      <div class="progress-wrap">
+        <span id="progressText">0 / 30 topics</span>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+    </div>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-search">
+          <span>🔍</span>
+          <input id="topicSearch" type="text" placeholder="Filter metrics and lessons..." />
+        </div>
+        <div id="moduleList"></div>
+      </aside>
+      <main class="content" id="contentArea"></main>
+    </div>
+  </div>
+  <div class="interview-shell" id="interviewShell">
+    <div class="topbar">
+      <div style="display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;">
+        <button class="back-btn" id="interviewBackBtn">← Back to Home</button>
+        <div style="font-weight:700; font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em;" id="interviewShellLabel">Interview Ready · Q&amp;A Bank</div>
+      </div>
+      <button class="back-btn" id="interviewToCourseBtn">Go to Course →</button>
+    </div>
+    <div class="interview-content" id="interviewContent"></div>
+  </div>
+  <script>
+    const course = [
+      {
+        module: 'Module 1',
+        title: 'Introduction to Data Structures',
+        topics: [
+          {
+            title: 'What is a Data Structure?',
+            tag: 'Concept',
+            body: `<p>A data structure is a formal way to organize data so it can be stored, accessed, and updated efficiently. It defines how values are arranged and how operations like insert, delete, search, and update are performed.</p><div class="callout"><strong>Key idea:</strong> The right structure makes the right operations fast and simple.</div><p>In real-world applications, data structures decide how smoothly an app behaves. For example, a phone contact list may use an array, while a browser history may use a stack.</p><ul><li>Arrays store values in order and allow quick index lookup.</li><li>Linked lists connect items through references and support dynamic insertions.</li><li>Trees and graphs model relationships and hierarchical data.</li></ul>`,
+            exercises: [
+              { q: 'Classify each of these as a data structure or an algorithm: array, binary search, linked list, sorting.', diff: 'easy', type: 'Conceptual', hint: 'Ask yourself — does it store values, or does it describe steps to follow?' , sol: 'Array — data structure. Binary search — algorithm. Linked list — data structure. Sorting — algorithm. A data structure stores values; an algorithm describes a procedure that acts on stored values.' },
+              { q: 'A food delivery app in Delhi needs to store a customer\'s live order status history. Which data structure would you pick, and why?', diff: 'medium', type: 'Design', hint: 'Think about whether the order matters and whether you need to look things up in the middle or just at the ends.' , sol: 'An array or dynamic list works well here since order matters and new statuses are mostly appended at the end. A linked list is only worth the extra pointer overhead if you need frequent middle insertions — which a status history usually doesn\'t.' },
+              { q: 'Design a data structure for an IRCTC-style seat booking system that must support fast seat lookup AND fast seat-neighbor checks. Justify your choice.', diff: 'hard', type: 'Design', hint: 'You may need more than one structure working together — consider combining an array/grid with a hashmap.' , sol: 'Use a 2D grid/array representing the coach layout for O(1) neighbor checks (adjacent seat access via row/column arithmetic), combined with a hashmap keyed by seat ID for O(1) direct seat lookup. The grid gives spatial/neighbor relations; the hashmap gives instant lookup by seat number.' }
+            ],
+            mcqs: [
+              { q: 'Which of these is NOT a data structure?', options: ['Array', 'Stack', 'Binary Search', 'Queue'], answer: 2 },
+              { q: 'A data structure primarily helps with:', options: ['Making code shorter', 'Organizing data for efficient operations', 'Compiling code faster', 'Reducing variable names'], answer: 1 },
+              { q: 'Which structure best models a browsing history where the most recent page is accessed first?', options: ['Queue', 'Stack', 'Ascending sorted array', 'Hashmap'], answer: 1 },
+              { q: 'Which statement is true?', options: ['Algorithms can run without any data to operate on and still be meaningful', 'Algorithms need some structure to operate on', 'Data structures always run faster than algorithms', 'Data structures cannot store numbers'], answer: 1 },
+              { q: 'Which pairing correctly matches structure to typical use?', options: ['Queue — undo feature', 'Stack — print job scheduling', 'Tree — file system hierarchy', 'Array — social network graph'], answer: 2 }
+            ]
+          },
+          {
+            title: 'Why Learn Data Structures?',
+            tag: 'Why it matters',
+            body: `<p>Data structures are the backbone of efficient software engineering. They help developers build solutions that use less memory, run faster, and remain easier to maintain.</p><ul><li>Improve speed and memory usage in large systems.</li><li>Simplify coding logic for real-world problems.</li><li>Strengthen problem-solving skills for coding interviews and projects.</li></ul><p>Whenever you build a search feature, a social feed, a game engine, or a database manager, you are relying on data structures behind the scenes.</p>`,
+            exercises: [
+              { q: 'Name two real apps you use daily and guess one data structure powering a feature in each.', diff: 'easy', type: 'Conceptual', hint: 'Think about "recently viewed" lists, undo buttons, and search bars.' , sol: 'Example: Instagram\'s \'recently viewed\' list — a fixed-size queue/array. WhatsApp chat — a linked list/array preserving message order. Browser undo — a stack.' },
+              { q: 'Compare using an array vs. a linked list to power a browser tab bar where tabs are opened and closed constantly.', diff: 'medium', type: 'Conceptual', hint: 'Which operation happens more often — reading a tab by position, or inserting/removing one?' , sol: 'Tabs are mostly read by position (clicking a specific tab) with occasional insert/remove. A dynamic array suits this better since it gives O(1) index access, which is the dominant operation; the amortized cost of insert/remove is acceptable and simpler than managing list pointers.' },
+              { q: 'A UPI app processes 10 million transactions a day. Explain, with numbers, why an O(n²) matching algorithm would fail here but an O(n log n) one would work.', diff: 'hard', type: 'Analysis', hint: 'Try plugging n = 10,000,000 into both formulas and compare the operation counts.' , sol: 'n = 10,000,000. O(n²) ≈ 10¹⁴ operations — computationally infeasible, would take years. O(n log n) ≈ 10,000,000 × ~23 ≈ 2.3×10⁸ operations — completes in seconds. This is why real-time systems need near-linearithmic or better algorithms.' }
+            ],
+            mcqs: [
+              { q: 'Why does complexity matter more than raw hardware speed?', options: ['Hardware never changes', 'It predicts how performance scales as input grows', 'It only matters on old computers', 'It has no real-world impact'], answer: 1 },
+              { q: 'Which complexity would cause serious problems at n = 10 million?', options: ['O(log n)', 'O(n)', 'O(n log n)', 'O(n²)'], answer: 3 },
+              { q: 'Studying data structures mainly improves:', options: ['Only interview performance', 'Memory usage, runtime speed, and code clarity together', 'Only coding style', 'Nothing measurable'], answer: 1 },
+              { q: 'A \'recently viewed items\' feature (fixed size, oldest removed first) is best modeled by:', options: ['A plain stack', 'A circular / fixed-size queue', 'A binary tree', 'A hashmap only'], answer: 1 },
+              { q: 'Software performance issues are most often first diagnosed via:', options: ['Complexity analysis of the algorithms and structures used', 'Renaming variables', 'Adding more comments', 'Increasing font size in the IDE'], answer: 0 }
+            ]
+          },
+          {
+            title: 'Linear vs Non-Linear Structures',
+            tag: 'Comparison',
+            body: `<p>Linear structures follow one path from start to end, while non-linear structures allow branching and relationships between elements.</p><ul><li>Linear: arrays, linked lists, stacks, queues.</li><li>Non-linear: trees, graphs, heaps.</li></ul><p>Choosing the correct category matters because it affects traversal, memory usage, and complexity. A queue is helpful for scheduling tasks, whereas a tree is better for representing family hierarchies or file systems.</p>`,
+            exercises: [
+              { q: 'Classify these as linear or non-linear: a WhatsApp chat thread, a family tree, a music playlist, an Instagram follow network.', diff: 'easy', type: 'Conceptual', hint: 'A linear structure has one clear "next" item; a non-linear one can branch to many.' , sol: 'Chat thread — linear (sequential messages). Family tree — non-linear (branches to parents/children). Playlist — linear (ordered sequence). Follow network — non-linear (many-to-many graph).' },
+              { q: 'Why is a folder/file system on your laptop modeled as a tree instead of a flat array?', diff: 'medium', type: 'Conceptual', hint: 'Consider what happens when a folder needs to contain other folders.' , sol: 'A folder can contain multiple subfolders, and those subfolders can contain more subfolders — a flat array can\'t represent nested containment. A tree naturally captures parent-child hierarchy with unlimited nesting depth.' },
+              { q: 'You are asked to convert a flat list of employee records into an org chart. What extra information does each record need, and what non-linear structure results?', diff: 'hard', type: 'Design', hint: 'Each employee needs a reference to their manager — what shape does that naturally build?' , sol: 'Each record needs a \'managerId\' field referencing their manager\'s record. Building parent-child links from these references naturally produces a tree (or forest), representing the org\'s hierarchy.' }
+            ],
+            mcqs: [
+              { q: 'Which is a non-linear data structure?', options: ['Array', 'Stack', 'Tree', 'Queue'], answer: 2 },
+              { q: 'In a linear structure, each element has:', options: ['Multiple next elements', 'At most one next and one previous element', 'No relationship to other elements', 'Always a parent and children'], answer: 1 },
+              { q: 'A company org chart is best represented as a:', options: ['Queue', 'Tree', 'Stack', 'Sorted array'], answer: 1 },
+              { q: 'Which is true about graphs?', options: ['They must be linear', 'Elements can connect to many others without strict hierarchy', 'They are the same as arrays', 'They can only represent trees'], answer: 1 },
+              { q: 'Why does choosing linear vs non-linear matter?', options: ['It\'s just a naming convention', 'It affects traversal, memory layout, and available operations', 'Non-linear structures are always faster', 'Linear structures cannot store numbers'], answer: 1 }
+            ]
+          }
+        ]
+      },
+      {
+        module: 'Module 2',
+        title: 'Algorithms and Complexity',
+        topics: [
+          {
+            title: 'What is an Algorithm?',
+            tag: 'Concept',
+            body: `<p>An algorithm is a step-by-step procedure for solving a problem. It is the logic that tells the computer what to do and how to do it in the correct order.</p><pre><code>for each item in list:
+    process(item)</code></pre><p>Good algorithms are precise, efficient, and easy to reason about. They are used in everything from sorting data to finding the shortest route between cities.</p>`,
+            exercises: [
+              { q: 'Write plain-English steps (no code) for an algorithm that finds the largest number in a list.', diff: 'easy', type: 'Coding', hint: 'Start by assuming the first number is the largest, then compare it against the rest one by one.' , sol: 'Assume the first number is the largest so far. Scan the rest of the list one by one; whenever a number is bigger than the current largest, update it. After scanning everything, the tracked value is the answer.' },
+              { q: 'Write pseudocode for a login algorithm that checks a username and password against stored records and returns success or failure.', diff: 'medium', type: 'Coding', hint: 'Think about what "correct order" of steps prevents letting someone in on a partial match.' , sol: 'function login(username, password): record = lookupUser(username); if record doesn\'t exist: return failure; if record.passwordHash == hash(password): return success; else return failure. Checking existence first and comparing hashes (not partial matches) avoids letting anyone in incorrectly.' },
+              { q: 'Give a real example of an "algorithm" with ambiguous steps that could fail (e.g., a recipe or direction), and rewrite it to be unambiguous like code.', diff: 'hard', type: 'Analysis', hint: 'Ambiguity usually hides in words like "a little" or "some" — replace them with exact conditions.' , sol: 'Example: \'Add a little salt and cook until done\' is ambiguous — \'a little\' and \'until done\' aren\'t measurable. Rewrite: \'Add 1/2 tsp salt. Cook for exactly 10 minutes at medium heat.\' Precise quantities and exact stop conditions remove the ambiguity, just like well-specified code.' }
+            ],
+            mcqs: [
+              { q: 'An algorithm is best described as:', options: ['A place to store data', 'A step-by-step procedure to solve a problem', 'A type of hardware', 'A programming language'], answer: 1 },
+              { q: 'Which property is NOT expected of a good algorithm?', options: ['Precision', 'Finiteness (it ends)', 'Ambiguity', 'Correctness'], answer: 2 },
+              { q: 'Pseudocode is used to:', options: ['Run directly on a computer', 'Describe logic in a language-independent, readable way', 'Replace all programming languages', 'Store data permanently'], answer: 1 },
+              { q: 'Which of these is an algorithm, not a data structure?', options: ['Array', 'Binary search', 'Linked list', 'Stack'], answer: 1 },
+              { q: 'A well-designed algorithm should avoid:', options: ['Clear steps', 'Vague conditions like \'some\' or \'a little\'', 'Finite termination', 'Correct output'], answer: 1 }
+            ]
+          },
+          {
+            title: 'Time and Space Complexity',
+            tag: 'Core',
+            body: `<p>Complexity describes how an algorithm behaves as the input size grows. It tells us whether the solution will stay fast when data becomes large.</p><ul><li>O(1): constant time</li><li>O(log n): logarithmic time</li><li>O(n): linear time</li><li>O(n log n): efficient sorting</li><li>O(n²): nested loops and slower performance</li></ul><div class="callout"><strong>Practice tip:</strong> A solution with O(log n) is often much better than O(n) when the dataset is large.</div>`,
+            exercises: [
+              { q: 'What is the time complexity of a single loop that runs through all n elements of an array once?', diff: 'easy', type: 'Analysis', hint: 'Count how the number of steps grows if n doubles.' , sol: 'O(n) — the loop runs exactly n times, one operation per element, so operations grow linearly with input size.' },
+              { q: 'Given a snippet with one loop nested inside another, both running n times, what is its time complexity? Explain why.', diff: 'medium', type: 'Analysis', hint: 'Multiply the number of iterations of the outer loop by the inner loop.' , sol: 'O(n²) — for each of the n outer iterations, the inner loop also runs n times, giving n × n = n² total operations.' },
+              { q: 'For a dataset of 1,000,000 records, calculate roughly how many operations an O(n) search takes vs. an O(log n) search, and explain the real-world impact for a search bar.', diff: 'hard', type: 'Analysis', hint: 'log₂(1,000,000) ≈ 20 — compare that directly to 1,000,000.' , sol: 'O(n) ≈ 1,000,000 operations. O(log₂ n) ≈ log₂(1,000,000) ≈ 20 operations. For a live search bar, O(log n) feels instant while O(n) could introduce noticeable lag at scale — this is why sorted structures with binary search (or database indexes) are preferred for large datasets.' }
+            ],
+            mcqs: [
+              { q: 'A single for-loop over n items has time complexity:', options: ['O(1)', 'O(n)', 'O(n²)', 'O(log n)'], answer: 1 },
+              { q: 'Two nested loops, each running n times, gives:', options: ['O(n)', 'O(2n)', 'O(n²)', 'O(log n)'], answer: 2 },
+              { q: 'O(log n) growth typically results from:', options: ['Visiting every element twice', 'Repeatedly halving the problem size', 'Doubling the input every step', 'Only constant-time operations'], answer: 1 },
+              { q: 'Space complexity measures:', options: ['Number of lines of code', 'Extra memory used relative to input size', 'CPU clock speed', 'Disk storage only'], answer: 1 },
+              { q: 'Which complexity class grows fastest for large n?', options: ['O(log n)', 'O(n)', 'O(n log n)', 'O(n²)'], answer: 3 }
+            ]
+          },
+          {
+            title: 'Best, Average, and Worst Case',
+            tag: 'Analysis',
+            body: `<p>Algorithms may perform differently based on the input. The same code can be fast for one dataset and slow for another.</p><ul><li>Best case: fastest possible outcome.</li><li>Average case: typical performance.</li><li>Worst case: slowest possible behavior.</li></ul><p>For example, binary search is very efficient on sorted data, but it can still be evaluated differently depending on the target position and dataset shape.</p>`,
+            exercises: [
+              { q: 'For a linear search through a list, describe a scenario that gives the best case and one that gives the worst case.', diff: 'easy', type: 'Conceptual', hint: 'The best case is finding the target instantly; the worst is not finding it at all.' , sol: 'Best case: the target is the very first element checked — O(1). Worst case: the target is the last element or absent, requiring every element to be checked — O(n).' },
+              { q: 'Why do interviewers usually care more about worst-case complexity than average-case complexity?', diff: 'medium', type: 'Conceptual', hint: 'Think about what a system needs to guarantee, not just usually deliver.' , sol: 'Systems need a guaranteed upper bound on performance so they don\'t fail unpredictably on unfavorable inputs; average case only describes typical behavior and can hide rare but critical slow scenarios.' },
+              { q: 'Find an algorithm (other than linear search) where the best case and worst case have the exact same complexity, and explain why there is no variation.', diff: 'hard', type: 'Analysis', hint: 'Look at algorithms that must always touch every element no matter what, like finding a maximum.' , sol: 'Finding the maximum value in an unsorted array always requires checking every element regardless of order, so best case = worst case = O(n) — there\'s no early-exit scenario possible.' }
+            ],
+            mcqs: [
+              { q: 'The best case of linear search occurs when:', options: ['Target is the last element', 'Target is the first element checked', 'Target doesn\'t exist', 'Array is always empty'], answer: 1 },
+              { q: 'Worst-case analysis is preferred in interviews because it:', options: ['Is easier to calculate', 'Guarantees an upper bound on performance', 'Is always O(1)', 'Ignores input size'], answer: 1 },
+              { q: 'Finding the max in an unsorted array has:', options: ['Best case O(1), worst O(n)', 'Best and worst both O(n)', 'Best O(log n), worst O(n)', 'Best and worst both O(1)'], answer: 1 },
+              { q: 'Average case complexity describes:', options: ['The worst possible scenario', 'Typical performance across all inputs', 'Only the best scenario', 'Memory usage only'], answer: 1 },
+              { q: 'Binary search\'s worst-case complexity is:', options: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'], answer: 1 }
+            ]
+          }
+        ]
+      },
+      {
+        module: 'Module 3',
+        title: 'Arrays and Strings',
+        topics: [
+          {
+            title: 'Introduction to Arrays',
+            tag: 'Core',
+            body: `<p>Arrays store values in contiguous memory and allow fast access by index. They are one of the most fundamental data structures in programming.</p><pre><code>arr = [10, 20, 30]
+print(arr[1])</code></pre><ul><li>Fast lookup by position.</li><li>Ordered storage for predictable access.</li><li>Middle insertions and deletions can be costly.</li></ul><p>Arrays are ideal when you know the size in advance or need quick random access.</p>`,
+            exercises: [
+              { q: 'Given arr = [4, 9, 2, 7, 1], write the steps to find the second largest element without sorting the array.', diff: 'easy', type: 'Coding', hint: 'Track two variables as you scan once: the largest seen so far and the second largest.' , sol: 'Track two variables, largest and secondLargest (start at -infinity). Scan once: if element > largest, set secondLargest = largest then largest = element; else if element > secondLargest and element != largest, update secondLargest. One pass gives the answer — O(n) time, O(1) space.' },
+              { q: 'Draw (in words) the memory layout of an integer array of size 5 starting at address 0x100, assuming each int takes 4 bytes.', diff: 'medium', type: 'Analysis', hint: 'Each next address is base + (index × 4).' , sol: 'Addresses: index0=0x100, index1=0x104, index2=0x108, index3=0x10C, index4=0x110 (each step +4 bytes, since int = 4 bytes). Address = base + index × elementSize.' },
+              { q: 'You need a structure for a cricket scoreboard app that adds a new ball\'s score every few seconds and rarely needs random access. Would you still choose an array? Justify with complexity reasoning.', diff: 'hard', type: 'Design', hint: 'Compare append-heavy workloads against random-access-heavy workloads.' , sol: 'Yes — appends happen at the end (amortized O(1)) and rare random access is fine even at O(n) worst case. Since insertions only happen at the end and reads are mostly sequential, a dynamic array outperforms a linked list, which adds per-node pointer overhead with no offsetting benefit here.' }
+            ],
+            mcqs: [
+              { q: 'What is the time complexity of accessing an array element by index?', options: ['O(n)', 'O(log n)', 'O(1)', 'O(n²)'], answer: 2 },
+              { q: 'Arrays store elements:', options: ['Scattered randomly in memory', 'In contiguous memory blocks', 'Only in a tree structure', 'Without any address calculation'], answer: 1 },
+              { q: 'The address calculation for arr[i] is:', options: ['base + i', 'base + i × elementSize', 'base − i', 'i × base'], answer: 1 },
+              { q: 'Arrays are ideal when:', options: ['Size is unknown and always changing', 'You need fast random access and roughly know the size', 'You need only sequential access', 'You never read elements'], answer: 1 },
+              { q: 'Finding the second largest element without sorting can be done in:', options: ['O(n²) only', 'O(n log n) only', 'A single O(n) pass', 'It\'s impossible without sorting'], answer: 2 }
+            ]
+          },
+          {
+            title: 'Array Operations',
+            tag: 'Operations',
+            body: `<p>Common operations include insertion, deletion, searching, and updating values. The efficiency of each depends on whether the array is sorted and where the change happens.</p><ul><li>Read by index: O(1)</li><li>Search in an unsorted array: O(n)</li><li>Insert or delete in the middle: O(n)</li></ul><p>Because arrays are fixed in size in many languages, they may need resizing or reallocation, which adds additional overhead.</p>`,
+            exercises: [
+              { q: 'What is the time complexity of inserting a new element at index 0 of an array with n elements? Explain why.', diff: 'easy', type: 'Analysis', hint: 'Every existing element has to move one position to the right to make room.' , sol: 'O(n) — every existing element must shift one position to the right to make room for the new first element.' },
+              { q: 'Write pseudocode to remove duplicate values from a sorted array in-place (without using extra array space).', diff: 'medium', type: 'Coding', hint: 'Use two pointers — one scanning ahead, one marking where the next unique value should go.' , sol: 'Use two pointers: write starts at index 1, read scans from index 1 onward. If arr[read] != arr[write-1], copy arr[read] to arr[write] and increment write. At the end, the first \'write\' elements are the unique values — O(n) time, O(1) extra space.' },
+              { q: 'A dynamic array doubles its size when full and copies all elements to the new array. Explain why the amortized cost of insertion is still considered O(1) despite this occasional O(n) copy.', diff: 'hard', type: 'Analysis', hint: 'Spread the cost of one expensive copy across all the cheap insertions that happened before it.' , sol: 'Even though doubling occasionally triggers an O(n) copy, that expensive copy happens only once every ~n insertions. Spread across all the cheap O(1) insertions since the last resize, the total cost stays O(n) for n insertions — so the amortized cost per insertion is O(1).' }
+            ],
+            mcqs: [
+              { q: 'Inserting at the beginning of an array of n elements costs:', options: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'], answer: 2 },
+              { q: 'Removing duplicates from a sorted array in-place typically uses:', options: ['A hashmap only', 'Two pointers', 'Recursion only', 'Sorting again'], answer: 1 },
+              { q: '\'Amortized O(1)\' for dynamic array insertion means:', options: ['Every single insertion is always exactly O(1)', 'Average cost per insertion over many operations is O(1) despite occasional O(n) resizes', 'It is always O(n)', 'It only applies to deletion'], answer: 1 },
+              { q: 'Searching an unsorted array for a value takes:', options: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'], answer: 2 },
+              { q: 'When a dynamic array resizes, it usually:', options: ['Shrinks to half size', 'Doubles its capacity and copies elements', 'Deletes all elements', 'Converts to a linked list'], answer: 1 }
+            ]
+          },
+          {
+            title: 'Strings and Character Data',
+            tag: 'Concept',
+            body: `<p>Strings are sequences of characters and are often treated like arrays of characters. They are widely used in text processing, validation, parsing, and search features.</p><pre><code>text = "AlgoVerse"
+print(text[0])</code></pre><ul><li>Useful for text processing and pattern matching.</li><li>Common operations include slicing, reversal, and concatenation.</li><li>Many programming problems involve strings heavily.</li></ul><p>Understanding strings is essential because they appear in almost every application, from login forms to compiler design.</p>`,
+            exercises: [
+              { q: 'Write the steps to check if the string "malayalam" is a palindrome.', diff: 'easy', type: 'Coding', hint: 'Compare characters from both ends moving inward, or compare the string to its reverse.' , sol: 'Use two pointers, left=0 and right=length-1. Compare characters at left and right, moving inward; if any pair mismatches, it\'s not a palindrome. \'malayalam\' reads the same forwards and backwards, so it is a palindrome.' },
+              { q: 'Write pseudocode to reverse the words in the sentence "AlgoVerse teaches DSA" to get "DSA teaches AlgoVerse", without using a built-in reverse function.', diff: 'medium', type: 'Coding', hint: 'Split into words first, then rebuild the sentence by placing words in reverse order.' , sol: 'Split the sentence into words: [\'AlgoVerse\',\'teaches\',\'DSA\']. Reverse the word order: [\'DSA\',\'teaches\',\'AlgoVerse\']. Join with spaces to get \'DSA teaches AlgoVerse\'.' },
+              { q: 'Design an approach to check if two strings are anagrams of each other (e.g., "listen" and "silent") in better than O(n²) time.', diff: 'hard', type: 'Analysis', hint: 'A frequency count of characters can confirm a match in a single pass each.' , sol: 'Count character frequencies of both strings using a hashmap or a fixed-size array (26 for lowercase letters) — O(n) each. Compare the two frequency counts; if identical, the strings are anagrams. Overall O(n) instead of the O(n²) pairwise comparison.' }
+            ],
+            mcqs: [
+              { q: 'Strings are commonly treated as:', options: ['Trees of characters', 'Arrays/sequences of characters', 'Graphs', 'Stacks only'], answer: 1 },
+              { q: 'Checking if a string is a palindrome using two pointers runs in:', options: ['O(n²)', 'O(n)', 'O(log n)', 'O(1)'], answer: 1 },
+              { q: 'To check if two strings are anagrams efficiently, you should:', options: ['Compare every pair of characters', 'Count character frequencies and compare counts', 'Reverse both strings', 'Sort only one string'], answer: 1 },
+              { q: 'Reversing words in a sentence typically involves:', options: ['Reversing individual letters only', 'Splitting into words, reversing word order, rejoining', 'Deleting vowels', 'Using a queue only'], answer: 1 },
+              { q: 'Comparing character-frequency counts (fixed alphabet size) runs in:', options: ['O(n²)', 'O(n) — linear in string length', 'O(2ⁿ)', 'Undefined'], answer: 1 }
+            ]
+          }
+        ]
+      },
+      {
+        module: 'Module 4',
+        title: 'Linked Lists',
+        topics: [
+          {
+            title: 'Singly Linked List',
+            tag: 'Structure',
+            body: `<p>A singly linked list stores nodes where each node points to the next one. This makes it easy to insert elements at the front or middle without shifting all the others.</p><pre><code>class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next = None</code></pre><ul><li>Efficient insertions at the front.</li><li>Traversal is sequential.</li><li>Random access is slower than arrays.</li></ul><p>Linked lists are commonly used in memory management and dynamic data structures.</p>`,
+            exercises: [
+              { q: 'Write pseudocode to insert a new node at the end of a singly linked list, given only the head pointer.', diff: 'easy', type: 'Coding', hint: 'You will need to traverse all the way to the node whose "next" is null first.' , sol: 'If head is null, set head = newNode and return. Otherwise start current = head; while current.next is not null, move current forward. Then set current.next = newNode. Requires traversing to the last node — O(n) unless a tail pointer is kept.' },
+              { q: 'Find the middle node of a singly linked list in a single traversal (one pass through the list).', diff: 'medium', type: 'Coding', hint: 'Use two pointers — one moving one step at a time, one moving two steps at a time.' , sol: 'Use slow and fast pointers, both starting at head. Move slow one step and fast two steps each iteration. When fast reaches the end, slow sits at the middle node — single pass, O(n) time, O(1) space.' },
+              { q: 'Explain why deleting the last node of a singly linked list requires traversing the entire list, and describe a design change that would make it O(1) instead.', diff: 'hard', type: 'Analysis', hint: 'The problem is finding the second-to-last node — what if you also tracked a tail pointer, or used a different pointer direction?' , sol: 'Deleting the last node requires finding the second-to-last node, which needs a full traversal since there\'s no \'previous\' pointer — O(n). A tail pointer alone doesn\'t fix this. Switching to a doubly linked list solves it: the tail\'s \'previous\' pointer gives direct O(1) access to the new last node.' }
+            ],
+            mcqs: [
+              { q: 'A singly linked list node typically stores:', options: ['Only a value', 'A value and a pointer to the next node', 'Two pointers (prev and next)', 'An index and a value'], answer: 1 },
+              { q: 'Inserting at the front of a singly linked list is:', options: ['O(n)', 'O(1)', 'O(log n)', 'O(n²)'], answer: 1 },
+              { q: 'Finding the middle node in one pass uses:', options: ['Two pointers moving at different speeds', 'Sorting the list first', 'A hashmap', 'Binary search'], answer: 0 },
+              { q: 'Random access (get element at index k) in a linked list is:', options: ['O(1)', 'O(log n)', 'O(n)', 'Not possible'], answer: 2 },
+              { q: 'Deleting the last node of a singly linked list (no tail/prev reference) requires:', options: ['O(1) time', 'Traversing the whole list — O(n)', 'O(log n) time via binary search', 'Deleting the head instead'], answer: 1 }
+            ]
+          },
+          {
+            title: 'Doubly Linked List',
+            tag: 'Structure',
+            body: `<p>A doubly linked list stores both next and previous pointers. This allows traversal in both directions and simplifies operations like delete-before or reverse traversal.</p><ul><li>Useful for undo/redo systems and browser history.</li><li>Allows easy movement backward and forward.</li><li>Requires extra memory for the previous pointer.</li></ul><p>It is a strong choice when bidirectional navigation is important.</p>`,
+            exercises: [
+              { q: 'Write pseudocode to delete a given node from a doubly linked list when you are handed a direct reference to that node (not the head).', diff: 'easy', type: 'Coding', hint: 'Use the node\'s own previous and next pointers to reconnect its neighbors.' , sol: 'Given node X: set X.prev.next = X.next; if X.next isn\'t null, set X.next.prev = X.prev. This reconnects the neighbors directly using X\'s own pointers — O(1), no traversal needed.' },
+              { q: 'Compare the extra memory overhead of a doubly linked list vs. a singly linked list for 1,000,000 nodes (assume each pointer takes 8 bytes).', diff: 'medium', type: 'Analysis', hint: 'Multiply the number of nodes by the size of exactly one extra pointer.' , sol: 'Extra overhead = 1,000,000 nodes × 8 bytes (one extra \'previous\' pointer per node) = 8,000,000 bytes ≈ 8 MB more than a singly linked list of the same size.' },
+              { q: 'Design an undo/redo feature for a text editor using a doubly linked list. Outline what "undo" and "redo" do to the current pointer.', diff: 'hard', type: 'Design', hint: 'Think of the current state as a pointer moving backward and forward through the list, not values being deleted.' , sol: 'Each state is a node in a doubly linked list; a \'current\' pointer marks the active state. Undo moves current = current.prev. Redo moves current = current.next (only valid if a next state exists). A new edit after undoing typically truncates everything after \'current\' first.' }
+            ],
+            mcqs: [
+              { q: 'A doubly linked list node stores:', options: ['Only a next pointer', 'Next and previous pointers', 'Only an index', 'Three pointers always'], answer: 1 },
+              { q: 'Deleting a known node (with direct reference) in a doubly linked list is:', options: ['O(n)', 'O(1)', 'O(log n)', 'Impossible'], answer: 1 },
+              { q: 'The main extra cost of a doubly linked list vs a singly linked list is:', options: ['Slower traversal', 'Extra memory per node for the previous pointer', 'No traversal possible', 'Cannot store values'], answer: 1 },
+              { q: 'A classic use case for doubly linked lists is:', options: ['Static configuration data', 'Browser history / undo-redo systems', 'Fixed-size lookup tables', 'Constant-time hashing'], answer: 1 },
+              { q: 'In an undo/redo system on a doubly linked list, \'redo\' typically:', options: ['Deletes the current node', 'Moves the current pointer forward (current.next)', 'Moves the current pointer backward', 'Clears the whole list'], answer: 1 }
+            ]
+          },
+          {
+            title: 'Linked List Operations',
+            tag: 'Operations',
+            body: `<p>You can insert, delete, and traverse nodes by changing pointers rather than shifting elements. This makes linked lists ideal when the size changes often.</p><div class="callout"><strong>Tradeoff:</strong> Great for dynamic insertions, but slower for direct index access compared to arrays.</div><p>In interviews, linked lists often appear in questions about pointer manipulation, cycle detection, and merging lists.</p>`,
+            exercises: [
+              { q: 'Write pseudocode to merge two already-sorted linked lists into a single sorted linked list.', diff: 'easy', type: 'Coding', hint: 'Compare the front nodes of both lists and pick the smaller one at each step, like merging in merge sort.' , sol: 'Use a dummy head node and a tail pointer. While both lists have nodes, compare their front values, attach the smaller node to tail.next, advance that list\'s pointer and tail. Once one list is exhausted, attach the remainder of the other. Return dummy.next — O(n+m) time.' },
+              { q: 'Describe an approach (Floyd\'s algorithm) to detect whether a linked list contains a cycle, using O(1) extra space.', diff: 'medium', type: 'Coding', hint: 'Two pointers moving at different speeds will eventually meet if — and only if — a cycle exists.' , sol: 'Two pointers, slow (1 step) and fast (2 steps), start at head. If fast or fast.next becomes null, there\'s no cycle. If slow and fast ever point to the same node, a cycle exists — O(1) space, O(n) time.' },
+              { q: 'Write pseudocode to reverse a linked list in groups of k nodes (e.g., reverse every 3 nodes at a time).', diff: 'hard', type: 'Coding', hint: 'Reverse each group of k using the standard 3-pointer reversal, then carefully reconnect groups to each other.' , sol: 'Process the list in chunks of k. Reverse each chunk with the standard prev/current/next technique, stopping after k nodes. Keep the tail of the previously reversed group so it can connect to the head of the newly reversed chunk (the chunk\'s last node before reversal). Continue for each subsequent chunk.' }
+            ],
+            mcqs: [
+              { q: 'Merging two sorted linked lists takes:', options: ['O(n×m)', 'O(n+m)', 'O(log n)', 'O(1)'], answer: 1 },
+              { q: 'Floyd\'s cycle detection uses:', options: ['A hashmap of visited nodes', 'Two pointers at different speeds', 'Sorting the list', 'Recursion only'], answer: 1 },
+              { q: 'Floyd\'s algorithm\'s space complexity is:', options: ['O(n)', 'O(log n)', 'O(1)', 'O(n²)'], answer: 2 },
+              { q: 'Reversing a linked list in groups of k requires:', options: ['Reversing the whole list once', 'Reversing each k-sized chunk and reconnecting chunks', 'Only swapping the head and tail', 'Sorting the list first'], answer: 1 },
+              { q: 'If the fast pointer reaches null while checking for a cycle, it means:', options: ['A cycle definitely exists', 'No cycle exists', 'The list is always empty', 'An error occurred'], answer: 1 }
+            ]
+          }
+        ]
+      },
+      {
+        module: 'Module 5',
+        title: 'Stacks and Queues',
+        topics: [
+          {
+            title: 'Understanding Stacks',
+            tag: 'Concept',
+            body: `<p>A stack follows the LIFO rule: the last pushed item is the first popped. It behaves like a stack of plates where the top item is always removed first.</p><div class="callout"><strong>Key idea:</strong> The dynamic execution frame tracks processes from top layer sequences sequentially.</div>`,
+            exercises: [
+              { q: 'Simulate pushing 5, 10, 15 onto an empty stack, then popping twice. What does the stack contain, and in what order were items removed?', diff: 'easy', type: 'Conceptual', hint: 'The last item pushed is always the first one popped.' , sol: 'After pushing: stack (bottom→top) = [5,10,15]. Pop once removes 15, pop again removes 10. Remaining stack = [5]. Items were removed in order 15, then 10 — last-in, first-out.' },
+              { q: 'Write pseudocode to evaluate a postfix expression like "5 3 + 2 *" using a stack.', diff: 'medium', type: 'Coding', hint: 'Push numbers as you see them; when you see an operator, pop two numbers, apply it, and push the result back.' , sol: 'Push 5, push 3. See \'+\': pop 3 and 5, compute 5+3=8, push 8. Push 2. See \'*\': pop 2 and 8, compute 8×2=16, push 16. Final result: 16.' },
+              { q: 'Compare implementing a stack using an array vs. a linked list. Which has a fixed capacity risk, and which has extra memory overhead per element?', diff: 'hard', type: 'Analysis', hint: 'Arrays may need resizing; linked lists need an extra pointer per node.' , sol: 'An array-based stack risks needing to resize when full but has no per-element pointer overhead. A linked-list-based stack has no fixed capacity limit but carries extra memory overhead per node (the next pointer) and slightly worse cache locality.' }
+            ],
+            mcqs: [
+              { q: 'A stack follows which order?', options: ['FIFO', 'LIFO', 'Random order', 'Sorted order'], answer: 1 },
+              { q: 'Pushing 5,10,15 then popping once leaves the stack as:', options: ['[5,10]', '[10,15]', '[5]', 'Empty'], answer: 0 },
+              { q: 'Evaluating postfix expressions is typically done using:', options: ['A queue', 'A stack', 'A tree', 'A hashmap'], answer: 1 },
+              { q: 'Push and pop operations on a stack are typically:', options: ['O(n)', 'O(log n)', 'O(1)', 'O(n²)'], answer: 2 },
+              { q: 'A stack implemented with a linked list avoids which risk?', options: ['Memory overhead per node', 'Fixed capacity / needing to resize', 'Slow push/pop', 'None of these'], answer: 1 }
+            ]
+          },
+          {
+            title: 'Understanding Queues',
+            tag: 'Concept',
+            body: `<p>A queue follows FIFO: the first inserted item is removed first. It is useful when the order of arrival matters.</p><ul><li>Enqueue adds to the back.</li><li>Dequeue removes from the front.</li><li>Used in task scheduling and request handling.</li></ul><p>Queues are widely used in operating systems, web servers, and print job management.</p>`,
+            exercises: [
+              { q: 'Simulate enqueueing A, B, C into an empty queue, then dequeueing once. What remains, and in what order will they leave?', diff: 'easy', type: 'Conceptual', hint: 'The first item enqueued is always the first one dequeued.' , sol: 'After enqueue: queue (front→back) = [A,B,C]. Dequeue once removes A. Remaining queue = [B,C], and they will leave in the order B, then C.' },
+              { q: 'Design a circular queue that reuses freed space after dequeues, instead of wasting array slots. Describe how you track "full" vs. "empty" correctly.', diff: 'medium', type: 'Design', hint: 'A naive front/rear check can\'t tell full from empty when they land on the same index — you may need a count variable.' , sol: 'Track a \'count\' variable alongside front and rear indices. The queue is empty when count==0 and full when count==capacity — this avoids the ambiguity of front==rear meaning either empty or full.' },
+              { q: 'A Swiggy-style delivery app needs to assign the next available delivery partner to the oldest unassigned order. Which structure fits, and what happens if you need to prioritize orders instead of strict arrival order?', diff: 'hard', type: 'Design', hint: 'Plain FIFO breaks down once "priority" enters the picture — think about what structure replaces a simple queue then.' , sol: 'A plain FIFO queue fits assigning delivery partners in arrival order. If priority is needed (urgent orders skip the line), replace the queue with a priority queue (typically a heap), which orders elements by priority rather than strict arrival time.' }
+            ],
+            mcqs: [
+              { q: 'A queue follows which order?', options: ['LIFO', 'FIFO', 'Random', 'Sorted by value'], answer: 1 },
+              { q: 'Enqueue adds an element to the:', options: ['Front', 'Back', 'Middle', 'Wherever there\'s space'], answer: 1 },
+              { q: 'A circular queue mainly solves the problem of:', options: ['Slow enqueue', 'Wasted space after several dequeues in an array-based queue', 'Needing a linked list', 'Too much memory overhead'], answer: 1 },
+              { q: 'To distinguish \'full\' from \'empty\' in a circular queue, it\'s common to:', options: ['Ignore the issue', 'Track a count of elements', 'Always resize', 'Use two queues'], answer: 1 },
+              { q: 'When priority (not just arrival order) matters, a queue should be replaced with:', options: ['A stack', 'A priority queue (heap)', 'An array', 'A linked list'], answer: 1 }
+            ]
+          },
+          {
+            title: 'Stack and Queue Applications',
+            tag: 'Applications',
+            body: `<p>Both structures are used in real systems because they represent very common workflows. Stacks help with reversing order, while queues preserve ordering by arrival time.</p><ul><li>Stacks validate brackets and manage recursion.</li><li>Queues manage print jobs and request buffers.</li><li>Both are common in interview questions and production systems.</li></ul><div class="callout"><strong>Real-world example:</strong> A web server often uses a queue to process incoming requests fairly.</div>`,
+            exercises: [
+              { q: 'Write pseudocode to check whether the brackets in "{[()]}" are balanced, using a stack.', diff: 'easy', type: 'Coding', hint: 'Push opening brackets; on a closing bracket, check it matches the top of the stack before popping.' , sol: 'Traverse the string; push opening brackets. On a closing bracket, check the stack is non-empty and its top matches the corresponding opening bracket — if so pop it, otherwise the string is unbalanced. After processing, the string is balanced only if the stack is empty.' },
+              { q: 'Design a browser back/forward button system using two stacks. Explain what happens to each stack when the user clicks "back" and then visits a new page.', diff: 'medium', type: 'Design', hint: 'Visiting a new page after going "back" should clear the forward stack — think about why.' , sol: 'Maintain a backStack and a forwardStack. Visiting a new page pushes the current page onto backStack. \'Back\' pops backStack, pushes the current page onto forwardStack, and navigates to the popped page. \'Forward\' does the reverse. Visiting a brand-new page after going back clears forwardStack, since that branch is no longer valid.' },
+              { q: 'Show how to implement a queue using two stacks, and explain why the amortized cost per operation is still O(1) even though some individual dequeues cost O(n).', diff: 'hard', type: 'Analysis', hint: 'Each element only ever gets moved from the input stack to the output stack once across its whole lifetime.' , sol: 'Use inStack for enqueue (always push) and outStack for dequeue (pop from outStack; if empty, pop everything from inStack into outStack first, reversing order, then pop). Each element moves from inStack to outStack at most once across its lifetime, so the total transfer cost across n operations is O(n) — amortized O(1) per operation.' }
+            ],
+            mcqs: [
+              { q: 'Checking balanced brackets is a classic use case for:', options: ['Queues', 'Stacks', 'Trees', 'Hashmaps only'], answer: 1 },
+              { q: 'A browser\'s back/forward feature is commonly implemented using:', options: ['One queue', 'Two stacks', 'A single array', 'A priority queue'], answer: 1 },
+              { q: 'Implementing a queue using two stacks achieves what average complexity per operation?', options: ['O(n) always', 'Amortized O(1)', 'O(log n)', 'O(n²)'], answer: 1 },
+              { q: 'Visiting a new page after clicking \'back\' typically:', options: ['Keeps the forward stack intact', 'Clears the forward stack', 'Clears the back stack', 'Does nothing to either stack'], answer: 1 },
+              { q: 'Recursion internally relies on which data structure?', options: ['Queue', 'Call stack', 'Heap (priority queue)', 'Circular buffer'], answer: 1 }
+            ]
+          }
+        ]
+      }
+    ];
+    const flatTopics = [];
+    course.forEach((mod, mi) => mod.topics.forEach((topic, ti) => flatTopics.push({ mi, ti })));
+    let currentIndex = 0;
+    const completed = new Set();
+    function getVisualMarkup(mi, ti, mod, topic) {
+      if (mi === 0) {
+        return `
+          <div class="visual-block">
+            <div class="visual-head">Data Flow Blueprint Diagram</div>
+            <div style="text-align: center; margin: 1.5rem 0;">
+              <svg width="100%" height="90" viewBox="0 0 600 90" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 500px;">
+                <rect x="10" y="25" width="100" height="40" rx="6" fill="#8162ff" fill-opacity="0.15" stroke="#8162ff" stroke-width="1.5"/>
+                <text x="60" y="49" fill="#f1f0f7" font-size="12" font-weight="600" text-anchor="middle">Raw Stream</text>
+                <path d="M125 45H175" stroke="#00ffd0" stroke-width="2" stroke-dasharray="4 4"/>
+                <rect x="190" y="25" width="110" height="40" rx="6" fill="#00ffd0" fill-opacity="0.15" stroke="#00ffd0" stroke-width="1.5"/>
+                <text x="245" y="49" fill="#f1f0f7" font-size="12" font-weight="600" text-anchor="middle">Structural Matrix</text>
+                <path d="M315 45H365" stroke="#00ffd0" stroke-width="2" stroke-dasharray="4 4"/>
+                <rect x="380" y="25" width="100" height="40" rx="6" fill="#ff3b93" fill-opacity="0.15" stroke="#ff3b93" stroke-width="1.5"/>
+                <text x="430" y="49" fill="#f1f0f7" font-size="12" font-weight="600" text-anchor="middle">Fast Access</text>
+              </svg>
+            </div>
+            <div class="compare-grid">
+              <div class="compare-card"><strong>Sequential Index Array</strong><span>Direct contiguous address memory access map.</span></div>
+              <div class="compare-card"><strong>Linked Dynamic Pointer</strong><span>Node maps separated arbitrarily by custom refs.</span></div>
+              <div class="compare-card"><strong>Hierarchical Graph Tree</strong><span>Branching structural node parents mapping vectors.</span></div>
+            </div>
+          </div>`;
+      }
+      if (mi === 2) {
+        return `
+          <div class="visual-block">
+            <div class="visual-head">Memory Addressing Vector Layout Map</div>
+            <div style="text-align: center; margin: 1.5rem 0;">
+              <svg width="100%" height="100" viewBox="0 0 500 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px;">
+                <text x="45" y="20" fill="#565a70" font-size="11" font-family="monospace" text-anchor="middle">idx 0</text>
+                <text x="115" y="20" fill="#565a70" font-size="11" font-family="monospace" text-anchor="middle">idx 1</text>
+                <text x="185" y="20" fill="#565a70" font-size="11" font-family="monospace" text-anchor="middle">idx 2</text>
+                <text x="255" y="20" fill="#565a70" font-size="11" font-family="monospace" text-anchor="middle">idx 3</text>
+                <rect x="15" y="30" width="60" height="40" rx="4" fill="#8162ff" fill-opacity="0.2" stroke="#8162ff" stroke-width="1.5"/>
+                <text x="45" y="55" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">0x10</text>
+                <rect x="85" y="30" width="60" height="40" rx="4" fill="#8162ff" fill-opacity="0.2" stroke="#8162ff" stroke-width="1.5"/>
+                <text x="115" y="55" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">0x14</text>
+                <rect x="155" y="30" width="60" height="40" rx="4" fill="#8162ff" fill-opacity="0.2" stroke="#8162ff" stroke-width="1.5"/>
+                <text x="185" y="55" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">0x18</text>
+                <rect x="225" y="30" width="60" height="40" rx="4" fill="#8162ff" fill-opacity="0.2" stroke="#8162ff" stroke-width="1.5"/>
+                <text x="255" y="55" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">0x1C</text>
+                <text x="310" y="55" fill="#00ffd0" font-size="11" font-family="monospace">+4 Bytes Step</text>
+              </svg>
+            </div>
+            <div class="visual-caption">Contiguous storage means memory cells sit perfectly together. Index calculations operate dynamically at constant O(1) runtime speeds.</div>
+          </div>`;
+      }
+      return `
+        <div class="visual-block">
+          <div class="visual-head">Pipeline Operations Engine</div>
+          <div class="flow-grid">
+            <div class="flow-chip">Analyze Core</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-chip">Select Blueprint</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-chip">Execute Build</div>
+          </div>
+          <div class="visual-caption">${topic.title} pairs theoretical parsing directly with optimized runtime engineering execution workflows.</div>
+        </div>`;
+    }
+    function getExerciseMarkup(mi, ti, mod, topic) {
+      const exercises = topic.exercises || [];
+      if (!exercises.length) return '';
+      const cards = exercises.map((ex, idx) => {
+        const num = String(idx + 1).padStart(2, '0');
+        const hintId = `hint-${mi}-${ti}-${idx}`;
+        const solId = `sol-${mi}-${ti}-${idx}`;
+        return `
+          <div class="challenge-card">
+            <div class="challenge-row">
+              <div class="challenge-index">CHX_${num}</div>
+              <div class="challenge-main">
+                <div class="challenge-meta">
+                  <span class="diff-badge ${ex.diff}">${ex.diff}</span>
+                  <span class="type-badge">${ex.type}</span>
+                </div>
+                <div class="challenge-question">${ex.q}</div>
+                <div class="challenge-btn-row">
+                  <button class="hint-toggle" onclick="toggleHint('${hintId}')">💡 Reveal Hint</button>
+                  <button class="sol-toggle" onclick="toggleHint('${solId}')">✅ Show Solution</button>
+                </div>
+                <div class="hint-panel" id="${hintId}">${ex.hint}</div>
+                <div class="hint-panel sol-panel" id="${solId}"><strong>Solution:</strong> ${ex.sol || 'Solution coming soon.'}</div>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+      const mcqMarkup = getMcqMarkup(mi, ti, mod, topic);
+      return `
+        <div class="challenge-console">
+          <div class="console-header">
+            <div class="console-title">
+              <div class="console-dot"></div>
+              <div>
+                <span>Practice_Protocol // ${mod.module}</span>
+                <strong>Exercise Set: ${topic.title}</strong>
+              </div>
+            </div>
+            <div class="console-count">${exercises.length} Challenges Loaded</div>
+          </div>
+          <div class="console-body">${cards}</div>
+          <div class="console-footer">
+            <p>Work through each challenge, check the hint if stuck, then reveal the solution to compare your approach.</p>
+            <button class="console-cta" onclick="document.getElementById('markBtn').click()">Mark Topic Complete →</button>
+          </div>
+        </div>
+        ${mcqMarkup}`;
+    }
+    function getMcqMarkup(mi, ti, mod, topic) {
+      const mcqs = topic.mcqs || [];
+      if (!mcqs.length) return '';
+      const cards = mcqs.map((mcq, idx) => {
+        const groupName = `mcq-${mi}-${ti}-${idx}`;
+        const optionsHtml = mcq.options.map((opt, oi) => `
+              <label class="mcq-option" data-mcq="${groupName}" data-correct="${oi === mcq.answer ? '1' : '0'}">
+                <input type="radio" name="${groupName}" value="${oi}" onchange="checkMcq(this)" />
+                <span class="mcq-option-letter">${String.fromCharCode(65 + oi)}</span>
+                <span class="mcq-option-text">${opt}</span>
+              </label>`).join('');
+        return `
+          <div class="mcq-card">
+            <div class="mcq-question"><span class="mcq-num">Q${idx + 1}.</span> ${mcq.q}</div>
+            <div class="mcq-options">${optionsHtml}</div>
+          </div>`;
+      }).join('');
+      return `
+        <div class="challenge-console mcq-console">
+          <div class="console-header">
+            <div class="console-title">
+              <div class="console-dot" style="background:var(--neon-magenta); box-shadow:0 0 12px var(--neon-magenta);"></div>
+              <div>
+                <span>MCQ_Protocol // ${mod.module}</span>
+                <strong>Quick Quiz: ${topic.title}</strong>
+              </div>
+            </div>
+            <div class="console-count">${mcqs.length} Questions</div>
+          </div>
+          <div class="console-body">${cards}</div>
+          <div class="console-footer">
+            <p>Pick an answer to instantly reveal whether it's correct — the right answer highlights green either way.</p>
+          </div>
+        </div>`;
+    }
+    function checkMcq(input) {
+      const label = input.closest('.mcq-option');
+      const groupName = label.dataset.mcq;
+      document.querySelectorAll(`label[data-mcq="${groupName}"]`).forEach(opt => {
+        opt.classList.remove('correct', 'wrong');
+        opt.querySelector('input').disabled = true;
+      });
+      document.querySelectorAll(`label[data-mcq="${groupName}"]`).forEach(opt => {
+        if (opt.dataset.correct === '1') opt.classList.add('correct');
+      });
+      if (label.dataset.correct !== '1') label.classList.add('wrong');
+    }
+    function toggleHint(id) {
+      const panel = document.getElementById(id);
+      if (panel) panel.classList.toggle('open');
+    }
+    function buildSidebar() {
+      const list = document.getElementById('moduleList');
+      list.innerHTML = '';
+      course.forEach((mod, mi) => {
+        const block = document.createElement('div');
+        block.className = 'module';
+        block.innerHTML = `<div class="module-head"><span>${mod.module} · ${mod.title}</span><span class="chevron">▸</span></div><div class="module-body"></div>`;
+        const body = block.querySelector('.module-body');
+        mod.topics.forEach((topic, ti) => {
+          const link = document.createElement('div');
+          link.className = 'topic-link';
+          link.textContent = topic.title;
+          link.onclick = () => {
+            currentIndex = flatTopics.findIndex(item => item.mi === mi && item.ti === ti);
+            renderContent(true);
+          };
+          body.appendChild(link);
+        });
+        block.querySelector('.module-head').onclick = () => block.classList.toggle('open');
+        list.appendChild(block);
+      });
+      document.querySelectorAll('.module').forEach((el, index) => { if (index === 0) el.classList.add('open'); });
+    }
+    function updateProgress() {
+      const total = flatTopics.length;
+      const done = completed.size;
+      document.getElementById('progressText').textContent = `${done} / ${total} metrics tracked`;
+      document.getElementById('progressFill').style.width = `${(done / total) * 100}%`;
+    }
+    function renderContent(shouldScroll = false) {
+      const { mi, ti } = flatTopics[currentIndex];
+      const mod = course[mi];
+      const topic = mod.topics[ti];
+      const key = `${mi}-${ti}`;
+      const isDone = completed.has(key);
+      document.querySelectorAll('.topic-link').forEach(link => link.classList.remove('active'));
+      const activeLink = document.querySelectorAll('.topic-link')[currentIndex];
+      if (activeLink) activeLink.classList.add('active');
+      const visualMarkup = getVisualMarkup(mi, ti, mod, topic);
+      const exerciseMarkup = getExerciseMarkup(mi, ti, mod, topic);
+      document.getElementById('contentArea').innerHTML = `
+        <div class="content-header">
+          <div class="content-tag">${topic.tag}</div>
+          <h2>${topic.title}</h2>
+          <div class="content-meta">${mod.module} · ${mod.title}</div>
+        </div>
+        <div class="content-hero">
+          <div class="eyebrow">Target Structural Objective</div>
+          <p>By the end of this lesson, you will master the core logic behind ${topic.title.toLowerCase()} and map its constraints confidently within code systems.</p>
+        </div>
+        <div class="learning-grid">
+          <div class="learning-card"><strong>Concept Vector</strong><span>Theoretical optimization architecture</span></div>
+          <div class="learning-card"><strong>Production Run</strong><span>Real-world integration mechanisms</span></div>
+          <div class="learning-card"><strong>Profile Prep</strong><span>Elite interview response structuring</span></div>
+        </div>
+        <div class="content-body">${visualMarkup}${topic.body}</div>
+        ${exerciseMarkup}
+        <div class="actions-row">
+          <button class="mark-btn ${isDone ? 'done' : ''}" id="markBtn">${isDone ? '✓ Completed' : 'Mark as Complete'}</button>
+        </div>
+        <div class="nav-buttons">
+          <div class="nav-btn ${currentIndex > 0 ? '' : 'disabled'}" id="prevBtn">
+            <strong>← Stack Return</strong>
+            <span>${currentIndex > 0 ? course[flatTopics[currentIndex - 1].mi].topics[flatTopics[currentIndex - 1].ti].title : 'Origin'}</span>
+          </div>
+          <div class="nav-btn ${currentIndex < flatTopics.length - 1 ? '' : 'disabled'}" id="nextBtn">
+            <strong>Advance Node →</strong>
+            <span>${currentIndex < flatTopics.length - 1 ? course[flatTopics[currentIndex + 1].mi].topics[flatTopics[currentIndex + 1].ti].title : 'Terminus'}</span>
+          </div>
+        </div>`;
+      document.getElementById('markBtn').onclick = () => {
+        if (completed.has(key)) completed.delete(key);
+        else completed.add(key);
+        updateProgress();
+        renderContent(false);
+      };
+      document.getElementById('prevBtn').onclick = () => { currentIndex--; renderContent(true); };
+      document.getElementById('nextBtn').onclick = () => { currentIndex++; renderContent(true); };
+      document.querySelectorAll('.topic-link').forEach((link, idx) => {
+        if (idx === currentIndex) link.classList.add('active');
+        if (completed.has(`${flatTopics[idx].mi}-${flatTopics[idx].ti}`)) link.classList.add('done');
+      });
+      updateProgress();
+      if (shouldScroll) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+    document.getElementById('topicSearch').addEventListener('input', (event) => {
+      const query = event.target.value.toLowerCase();
+      document.querySelectorAll('.topic-link').forEach(link => {
+        const match = link.textContent.toLowerCase().includes(query);
+        link.style.display = match ? 'flex' : 'none';
+      });
+    });
+    document.getElementById('startLearningBtn').addEventListener('click', () => {
+      document.getElementById('heroShell').classList.add('is-hidden');
+      document.getElementById('interviewShell').classList.remove('active');
+      document.getElementById('curriculumView').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    });
+    function goToTopic(mi, ti) {
+      currentIndex = flatTopics.findIndex(item => item.mi === mi && item.ti === ti);
+      document.getElementById('interviewShell').classList.remove('active');
+      document.getElementById('heroShell').classList.add('is-hidden');
+      document.getElementById('curriculumView').classList.add('active');
+      renderContent(true);
+    }
+    function buildTopicsView() {
+      const container = document.getElementById('interviewContent');
+      document.getElementById('interviewShellLabel').textContent = '30 Topics · Full Curriculum List';
+      const cards = flatTopics.map(({ mi, ti }) => {
+        const mod = course[mi];
+        const topic = mod.topics[ti];
+        return `
+          <div class="browse-card" onclick="goToTopic(${mi}, ${ti})">
+            <div class="browse-card-main">
+              <strong>${topic.title}</strong>
+              <span>${mod.module} · ${mod.title} · ${topic.tag}</span>
+            </div>
+            <div class="browse-arrow">→</div>
+          </div>`;
+      }).join('');
+      container.innerHTML = `
+        <div class="interview-intro">
+          <div class="content-tag">All Topics</div>
+          <h2>30 Topics Across the Course</h2>
+          <p>Every topic in AlgoVerse's Data Structures track, in order. Tap any topic to jump straight into that lesson.</p>
+        </div>
+        <div class="console-body" style="padding:0; display:flex; flex-direction:column; gap:0.9rem;">${cards}</div>`;
+    }
+    function buildModulesView() {
+      const container = document.getElementById('interviewContent');
+      document.getElementById('interviewShellLabel').textContent = '10 Modules · Course Roadmap';
+      const cards = course.map((mod, mi) => `
+          <div class="browse-card" onclick="goToTopic(${mi}, 0)">
+            <div class="browse-card-main">
+              <strong>${mod.module} · ${mod.title}</strong>
+              <span>${mod.topics.length} topics in this module</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:1rem;">
+              <span class="browse-count-pill">${mod.topics.length} topics</span>
+              <div class="browse-arrow">→</div>
+            </div>
+          </div>`).join('');
+      container.innerHTML = `
+        <div class="interview-intro">
+          <div class="content-tag">All Modules</div>
+          <h2>10 Modules · Course Roadmap</h2>
+          <p>The full module breakdown from base theory to production scaling. Tap a module to jump into its first lesson.</p>
+        </div>
+        <div class="console-body" style="padding:0; display:flex; flex-direction:column; gap:0.9rem;">${cards}</div>`;
+    }
+    const interviewQuestions = [
+      {
+        module: 'Module 1', title: 'Introduction to Data Structures',
+        qas: [
+          { q: 'What is a data structure, and why do we need one?', a: 'A data structure is a way of organizing and storing data so operations like insert, delete, search, and update can be done efficiently. Without one, data would just sit in raw, unordered memory with no fast way to work with it.', analysis: 'Almost always the opener question. Interviewers check if you understand the purpose (efficiency), not just the definition. Good answers connect it to a real system, e.g. a database index speeding up lookups.' },
+          { q: 'Difference between linear and non-linear data structures?', a: 'Linear structures arrange elements sequentially — array, linked list, stack, queue — each element has at most one predecessor and successor. Non-linear structures allow branching or multiple relationships — trees, graphs, heaps — an element can connect to multiple others.', analysis: 'Often a warm-up before trees/graphs. Interviewers want you to justify when you\'d pick one over the other, e.g. a file system is non-linear since folders can hold many subfolders.' },
+          { q: "What's the difference between a data structure and an algorithm?", a: 'A data structure organizes data; an algorithm is the step-by-step logic that operates on that data. They\'re paired — the right algorithm depends on the structure it runs on, e.g. binary search requires a sorted array.', analysis: 'Tests conceptual clarity, common in HR-technical hybrid rounds. A crisp distinction signals strong fundamentals.' }
+        ]
+      },
+      {
+        module: 'Module 2', title: 'Algorithms and Complexity',
+        qas: [
+          { q: 'What is time complexity and why does it matter more than actual runtime?', a: 'Time complexity measures how the number of operations grows relative to input size (n), independent of hardware. It matters more than raw runtime because runtime depends on machine speed, language, and load — complexity tells you how the algorithm scales, which is what breaks systems at large n.', analysis: 'The single most repeated DS/algo question. Expect a live follow-up deriving the complexity of a piece of code — practice reading nested loops and recursive calls fluently.' },
+          { q: 'Explain Big-O, Big-Theta (Θ), and Big-Omega (Ω).', a: 'Big-O is the upper bound (worst-case growth). Big-Omega is the lower bound (best-case growth). Big-Theta is the tight bound, used when best and worst case grow at the same rate.', analysis: 'Checks whether you know Big-O isn\'t the only notation — many candidates can\'t explain Ω or Θ, an immediate sign of surface-level prep.' },
+          { q: 'Why is O(log n) considered "efficient," and what causes logarithmic behavior?', a: "O(log n) occurs when each step eliminates a large fraction of the remaining input, usually half, like binary search. It's efficient because operations grow extremely slowly as input grows — doubling the input adds only one more step.", analysis: 'A common follow-up. Be ready to derive why binary search is O(log n) by walking through the halving pattern, not just reciting it.' },
+          { q: 'What is the difference between best case, average case, and worst case complexity?', a: 'Best case is the minimum operations needed. Worst case is the maximum. Average case estimates typical performance across all inputs. Interviews usually care most about worst case since it guarantees an upper bound.', analysis: 'Frequently paired with an example follow-up, e.g. linear search: best O(1), worst O(n).' },
+          { q: 'What is space complexity, and how is it different from time complexity?', a: 'Space complexity measures the extra memory an algorithm needs relative to input size, while time complexity measures the operation count. An algorithm can be fast but memory-heavy (memoized recursion) or slow but memory-light (iterative).', analysis: 'Commonly asked when comparing recursive vs iterative solutions — mention the recursion call stack as a hidden space cost.' }
+        ]
+      },
+      {
+        module: 'Module 3', title: 'Arrays and Strings',
+        qas: [
+          { q: 'Why is array access O(1) but insertion/deletion O(n)?', a: 'Arrays store elements in contiguous memory, so any index is reached directly via base address + index × element size — O(1). Inserting or deleting in the middle requires shifting every subsequent element to preserve contiguity — O(n).', analysis: 'One of the most repeated questions overall. Interviewers check whether you understand why, not just the complexity table — be ready to explain the address formula.' },
+          { q: 'How do dynamic arrays (like Python lists or Java ArrayLists) grow when full?', a: "When capacity is exceeded, a new, larger array (commonly double the size) is allocated and existing elements are copied over. This copy is O(n), but since it happens infrequently, the amortized cost of insertion stays O(1).", analysis: 'Tests whether you know the term "amortized complexity" — a frequent trip-up point.' },
+          { q: 'How would you find the first non-repeating character in a string?', a: 'Use a hashmap to count character frequency in one pass, O(n), then iterate again and return the first character whose count is 1. Overall O(n) time, O(k) space where k is the alphabet size.', analysis: 'One of the most repeated string coding questions. Expect a live-coding follow-up.' },
+          { q: 'How do you reverse a string/array in-place, and why does "in-place" matter?', a: "Use two pointers — one at the start, one at the end — swapping and moving inward until they meet. O(n) time, O(1) extra space. In-place avoids allocating a second array, important in memory-constrained systems.", analysis: 'A baseline coding question in almost every fresher interview. Watch the pointer boundary condition (left < right) for off-by-one bugs.' },
+          { q: "What's the difference between a static array and a dynamic array?", a: "A static array has a fixed size decided at creation and can't grow. A dynamic array automatically resizes as elements are added, managing reallocation and copying internally.", analysis: "Common in language-agnostic rounds to check if you understand what's happening under the hood of built-in list types." }
+        ]
+      },
+      {
+        module: 'Module 4', title: 'Linked Lists',
+        qas: [
+          { q: 'Array vs. Linked List — when would you choose one over the other?', a: 'Arrays offer O(1) random access but O(n) insert/delete in the middle. Linked lists offer O(1) insert/delete at a known position but O(n) access since you must traverse. Choose arrays for frequent lookups by index; linked lists for frequent insertions/deletions without needing random access.', analysis: 'The most repeated linked-list question. Best answers frame it as a tradeoff tied to the access pattern rather than a blanket rule.' },
+          { q: 'How do you detect a cycle in a linked list?', a: "Use Floyd's Cycle Detection: one pointer moves one step at a time, another moves two. If a cycle exists, they eventually meet; if the fast pointer reaches null, there's no cycle. O(n) time, O(1) space.", analysis: 'Extremely common whiteboard question. Often followed by "find the start of the cycle," which needs resetting one pointer to head after detection.' },
+          { q: 'How do you reverse a singly linked list?', a: 'Keep three pointers: previous, current, and next. At each node, save current.next, point current.next to previous, then move previous and current one step forward. Continue until current is null; previous becomes the new head. O(n) time, O(1) space.', analysis: 'One of the single most repeated coding questions across all interviews, not just DS-specific rounds — practice until it\'s automatic.' },
+          { q: 'Singly vs. Doubly Linked List — what\'s the tradeoff?', a: 'A doubly linked list stores both next and previous pointers, enabling backward traversal and O(1) deletion of a known node without needing the previous node passed in. The tradeoff is extra memory per node and more complex pointer updates.', analysis: 'Frequently paired with "where would you use a doubly linked list?" — good answers mention browser history, undo/redo, or LRU cache.' }
+        ]
+      },
+      {
+        module: 'Module 5', title: 'Stacks and Queues',
+        qas: [
+          { q: 'How would you check if a string of brackets/parentheses is balanced?', a: "Use a stack. Push opening brackets; on a closing bracket, check if the stack's top matches the corresponding opener — pop if yes, otherwise unbalanced. At the end, the stack must be empty. O(n) time, O(n) space.", analysis: 'The single most repeated stack question — appears in nearly identical form at almost every company. Often extended to handle multiple bracket types together.' },
+          { q: 'How do you implement a queue using two stacks?', a: "Maintain inStack (for enqueue, just push) and outStack (for dequeue). When dequeuing, if outStack is empty, pop everything from inStack into outStack (reversing order), then pop from outStack. Amortized O(1) per operation.", analysis: 'Tests whether you deeply understand LIFO vs FIFO. Expect the reverse follow-up: implement a stack using two queues.' },
+          { q: "What's the difference between a stack and a queue, with real examples?", a: 'A stack is LIFO — like a stack of plates, the last one placed is the first removed. A queue is FIFO — like a line at a ticket counter, first in, first served. Stacks power the call stack and undo; queues power task scheduling and request buffers.', analysis: 'A conceptual staple, usually the first stack/queue question asked. Listen for whether real-world examples actually match LIFO/FIFO correctly.' },
+          { q: 'How is recursion related to the stack data structure?', a: 'Every recursive call is pushed onto the call stack, storing local variables and the return address. When a function returns, its frame is popped — which is why deep recursion can cause a stack overflow.', analysis: 'Connects Module 5 (stacks) back to Module 2 (complexity/space). Strong candidates mention that an iterative solution with an explicit stack can sometimes replace deep recursion.' },
+          { q: 'What is a circular queue, and why is it useful over a simple queue?', a: 'A circular queue connects the last position back to the first, forming a ring, so freed space after dequeues can be reused by new enqueues — avoiding the wasted space a simple array-based queue would accumulate.', analysis: 'Common when the interviewer wants to see implementation-level tradeoffs of array-based queues, not just the FIFO concept.' }
+        ]
+      },
+      {
+        module: 'Bonus', title: 'Extra Frequently Asked Concepts',
+        qas: [
+          { q: 'What is a hash table / hashmap, and what is its average lookup time?', a: 'A hash table maps keys to values using a hash function that computes an index (bucket) for each key. Average-case lookup, insert, and delete are all O(1), since the hash function spreads keys evenly across buckets. Worst case degrades to O(n) if many keys collide into the same bucket.', analysis: 'Almost always asked right after arrays/linked lists. Be ready to explain what a collision is and one way to resolve it (chaining or open addressing).' },
+          { q: 'What is the difference between recursion and iteration?', a: 'Recursion solves a problem by having a function call itself on smaller subproblems, using the call stack to track state. Iteration uses loops to repeat steps without extra stack frames. Recursion can be more elegant for tree/graph problems but risks stack overflow; iteration is usually more memory-efficient.', analysis: 'A common conceptual bridge question tying together stacks (Module 5) and complexity (Module 2).' },
+          { q: 'What is an "in-place" algorithm, and why does it matter?', a: 'An in-place algorithm transforms input using only a small, constant amount of extra memory (O(1) auxiliary space) rather than creating a new copy of the data. It matters in memory-constrained systems and when working with very large datasets.', analysis: 'Frequently tested alongside array/string reversal or sorting questions — know the difference between O(1) and O(n) auxiliary space.' },
+          { q: 'Explain the two-pointer technique with an example.', a: 'The two-pointer technique uses two indices moving through a structure (often from opposite ends or at different speeds) to solve problems in a single pass instead of nested loops. Example: checking if a string is a palindrome by comparing characters from the front and back pointers moving inward.', analysis: 'A very common pattern-recognition question — interviewers want to see if you can spot when two pointers replace an O(n²) brute-force approach with O(n).' }
+        ]
+      }
+    ];
+    const rankTable = [
+      ['1', 'Reverse a singly linked list', 'Linked Lists'],
+      ['2', 'Balanced parentheses using a stack', 'Stacks'],
+      ['3', 'Array access O(1) vs insert/delete O(n)', 'Arrays'],
+      ['4', 'Time complexity / Big-O explanation', 'Complexity'],
+      ['5', 'Detect a cycle in a linked list', 'Linked Lists'],
+      ['6', 'Array vs Linked List tradeoffs', 'Arrays/Linked Lists'],
+      ['7', 'First non-repeating character in a string', 'Strings'],
+      ['8', 'Stack vs Queue with examples', 'Stacks/Queues'],
+      ['9', 'Queue using two stacks', 'Stacks/Queues'],
+      ['10', 'Dynamic array resizing (amortized cost)', 'Arrays']
+    ];
+    function buildInterviewView() {
+      const container = document.getElementById('interviewContent');
+      document.getElementById('interviewShellLabel').textContent = 'Interview Ready · Q&A Bank';
+      let totalQ = 0;
+      interviewQuestions.forEach(m => totalQ += m.qas.length);
+      const modulesHtml = interviewQuestions.map((mod, mi) => {
+        const cards = mod.qas.map((item, qi) => `
+          <div class="iq-card">
+            <div class="iq-q"><span>Q${qi + 1}.</span>${item.q}</div>
+            <div class="iq-a"><strong>Answer:</strong> ${item.a}</div>
+            <div class="iq-analysis"><strong>Why it's asked:</strong> ${item.analysis}</div>
+          </div>`).join('');
+        return `
+          <div class="iq-module ${mi === 0 ? 'open' : ''}">
+            <div class="iq-module-head" onclick="this.parentElement.classList.toggle('open')">
+              <div><strong>${mod.module} · ${mod.title}</strong><span class="iq-sub">${mod.qas.length} interview questions</span></div>
+              <span class="chevron">▸</span>
+            </div>
+            <div class="iq-module-body">${cards}</div>
+          </div>`;
+      }).join('');
+      const rankHtml = rankTable.map(row => `
+          <div class="iq-rank-row">
+            <div class="rank-num">#${row[0]}</div>
+            <div>${row[1]}</div>
+            <div class="rank-topic">${row[2]}</div>
+          </div>`).join('');
+      container.innerHTML = `
+        <div class="interview-intro">
+          <div class="content-tag">Interview Ready</div>
+          <h2>Top DSA Interview Questions</h2>
+          <p>${totalQ} most-repeated questions across product and service-based company interviews, mapped to Modules 1–5 plus a bonus set of extra concepts. Each answer comes with an "Analysis" note explaining why interviewers ask it and what they're really listening for.</p>
+        </div>
+        ${modulesHtml}
+        <div class="iq-module">
+          <div class="iq-module-head" onclick="this.parentElement.classList.toggle('open')">
+            <div><strong>Quick Frequency Ranking</strong><span class="iq-sub">Most → less frequently asked</span></div>
+            <span class="chevron">▸</span>
+          </div>
+          <div class="iq-module-body"><div class="iq-rank-table">${rankHtml}</div></div>
+        </div>`;
+    }
+    document.querySelectorAll('.trigger-interview').forEach(card => {
+      card.addEventListener('click', () => {
+        const view = card.dataset.view;
+        if (view === 'modules') buildModulesView();
+        else if (view === 'topics') buildTopicsView();
+        else buildInterviewView();
+        document.getElementById('heroShell').classList.add('is-hidden');
+        document.getElementById('curriculumView').classList.remove('active');
+        document.getElementById('interviewShell').classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      });
+    });
+    document.getElementById('interviewBackBtn').addEventListener('click', () => {
+      document.getElementById('interviewShell').classList.remove('active');
+      document.getElementById('heroShell').classList.remove('is-hidden');
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    });
+    document.getElementById('interviewToCourseBtn').addEventListener('click', () => {
+      document.getElementById('interviewShell').classList.remove('active');
+      document.getElementById('heroShell').classList.add('is-hidden');
+      document.getElementById('curriculumView').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    });
+    buildSidebar();
+    renderContent(true);
+  </script>
+</body>
+</html>

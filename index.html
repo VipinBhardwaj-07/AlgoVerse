@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AlgoVerse – Master the Art of Algorithms</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght=0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+</head><body><nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <img src="logo.png" alt="AlgoVerse logo" class="logo-img" />
+      Algo<span>Verse</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#courses">Courses</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#blog">Blog</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-auth">
+      <div class="user-badge" id="userBadge" style="display:none;">
+        <span id="userStatus">Hi, User</span>
+        <button type="button" class="logout-btn" id="logoutBtn" onclick="logoutUser()">Logout</button>
+      </div>
+      <button type="button" class="login-btn" id="loginBtn" onclick="openAuthModal('login')">Login</button>
+      <button type="button" class="signup-btn" id="signupBtn" onclick="openAuthModal('signup')">Sign Up</button>
+    </div>
+    <button class="hamburger" id="ham" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#features">Features</a>
+    <a href="#courses">Courses</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#about">About</a>
+    <a href="#blog">Blog</a>
+    <a href="#contact">Contact</a>
+    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 1rem 0; width: 100%;" />
+    <button type="button" class="login-btn" onclick="openAuthModal('login')">Login</button>
+    <button type="button" class="mob-cta" onclick="openAuthModal('signup')" style="width: 100%; text-align: center;">Get Started Free →</button>
+  </div>
+</nav>
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-inner">
+    <div class="hero-text fade-in">
+      <span class="tag">Trusted by 50k+ developers</span>
+      <h1>Master the <span class="grad">Art of Algorithms</span> & Data Structures</h1>
+      <p>AlgoVerse is your universe of algorithmic knowledge — learn, visualize, and conquer complex problems with interactive lessons and real-world challenges.</p>
+      <div class="hero-btns">
+        <a href="#courses" class="btn-primary">Start Learning →</a>
+        <a href="#" class="btn-secondary" onclick="openVideoDemo(); return false;">▷ Watch Demo</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item"><div class="stat-num">200+</div><div class="stat-label">Courses</div></div>
+        <div class="stat-item"><div class="stat-num">50k+</div><div class="stat-label">Students</div></div>
+        <div class="stat-item"><div class="stat-num">98%</div><div class="stat-label">Pass Rate</div></div>
+      </div>
+    </div>
+    <div class="hero-visual fade-in">
+      <div class="code-window">
+        <div class="window-bar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="window-title">quicksort.py</span>
+        </div>
+        <div class="code-body">
+          <br/>
+          <span class="kw">def</span> <span class="fn">quick_sort</span>(arr):<br/>
+          &nbsp;&nbsp;<span class="kw">if</span> <span class="fn">len</span>(arr) &lt;= <span class="nm">1</span>:<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> arr<br/>
+          &nbsp;&nbsp;pivot = arr[<span class="fn">len</span>(arr) // <span class="nm">2</span>]<br/>
+          &nbsp;&nbsp;left = [x <span class="kw">for</span> x <span class="kw">in</span> arr<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> x &lt; pivot]<br/>
+          &nbsp;&nbsp;mid = [x <span class="kw">for</span> x <span class="kw">in</span> arr<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> x == pivot]<br/>
+          &nbsp;&nbsp;right = [x <span class="kw">for</span> x <span class="kw">in</span> arr<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> x &gt; pivot]<br/>
+          &nbsp;&nbsp;<span class="kw">return</span> (<span class="fn">quick_sort</span>(left)<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ mid +<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">quick_sort</span>(right))
+        </div>
+      </div>
+      <div class="badge-float b1"><span class="badge-dot"></span> O(n log n) — avg complexity</div>
+      <div class="badge-float b2">⚡ 2,400+ problems solved today</div>
+    </div>
+  </div>
+</section>
+<section id="learning-paths">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Learning Paths</span>
+      <h2>Curated Roadmaps — No Guesswork</h2>
+      <p>Linear, mentor-designed tracks to reach interview-ready competence.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🔥</div>
+        <h3>Interview Crucible</h3>
+        <p>Arrays → Sliding Window → Graphs → DP — optimized for interviews.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🤖</div>
+        <h3>AI Architect</h3>
+        <p>Matrix math, feature engineering, and RAG pipelines.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">☁️</div>
+        <h3>Distributed Systems</h3>
+        <p>Sharding, replication, and global-scale patterns.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="practice-problems">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Practice</span>
+      <h2>The Algoverse Arena</h2>
+      <p>High-yield problem sets and company-filtered tracks to build pattern recognition.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">⚔️</div>
+        <h3>Pattern-First</h3>
+        <p>Filter by Two-Pointers, Sliding Window, Backtracking, Bit Hacks.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🧪</div>
+        <h3>Stress Tests</h3>
+        <p>Edge-case and large-input matrices for real-world validation.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🏢</div>
+        <h3>Company Sets</h3>
+        <p>Curated problems keyed to Microsoft, Meta, Amazon hiring patterns.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="visualizer">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Visualizer</span>
+      <h2>Code in Motion</h2>
+      <p>Step-execution, multi-language highlights, and a custom test playground.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">▶️</div>
+        <h3>Step Execution</h3>
+        <p>Pause, rewind, and slow down to inspect behavior.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🌐</div>
+        <h3>Synced Highlights</h3>
+        <p>See matching lines in C++, Java, and Python as the visual map updates.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🧩</div>
+        <h3>Playground</h3>
+        <p>Run your own arrays, matrices, and graphs for instant visualization.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="marquee-section">
+  <div class="marquee-track" id="marquee"></div>
+</div>
+<section id="features">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Features</span>
+      <h2>Everything you need to<br/>think algorithmically</h2>
+      <p>From beginner-friendly visualizations to advanced competitive programming — we have it all.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card featured fade-in">
+        <div class="feature-icon">🧠</div>
+        <h3>AI-Powered Code Review</h3>
+        <p>Submit your solution and get instant, context-aware feedback. Our AI identifies inefficiencies, suggests optimizations, and explains the intuition behind better approaches — like having a senior engineer in your pocket.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🎯</div>
+        <h3>Visual Algorithm Tracer</h3>
+        <p>Watch sorting, graph traversal, and tree operations animate step-by-step in real time.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🏆</div>
+        <h3>Weekly Contests</h3>
+        <p>Compete globally, climb leaderboards, and earn badges that signal your mastery to employers.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">📚</div>
+        <h3>Curated Learning Paths</h3>
+        <p>From arrays & strings to dynamic programming — structured paths that adapt to your speed.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">💬</div>
+        <h3>Community Discussion</h3>
+        <p>Peer review, explain your approach, and learn from thousands of creative solutions.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">📊</div>
+        <h3>Progress Analytics</h3>
+        <p>Track topic mastery, time complexity improvement, and interview readiness at a glance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="how">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">How It Works</span>
+      <h2>Four steps to algorithmic fluency</h2>
+      <p>A clear, proven path from complete beginner to confident problem solver.</p>
+    </div>
+    <div class="steps">
+      <div class="step fade-in">
+        <div class="step-num">1</div>
+        <h4>Pick Your Path</h4>
+        <p>Choose a curated learning track based on your goals — FAANG prep, competitive, or fundamentals.</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-num">2</div>
+        <h4>Learn & Visualize</h4>
+        <p>Interactive lessons with animated visualizers make every concept click instantly.</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-num">3</div>
+        <h4>Practice Daily</h4>
+        <p>Solve curated problems, get AI feedback, and build a streak to reinforce your knowledge.</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-num">4</div>
+        <h4>Earn & Advance</h4>
+        <p>Collect certificates, rank up, and showcase your profile to top companies worldwide.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="about">
+  <div class="container">
+    <div class="about-inner">
+      <div class="about-visual fade-in">
+        <div class="about-card"><div class="num">98%</div><div class="lbl">Interview Pass Rate</div></div>
+        <div class="about-card"><div class="num">200+</div><div class="lbl">Expert Courses</div></div>
+        <div class="about-card"><div class="num">50k+</div><div class="lbl">Active Learners</div></div>
+        <div class="about-card"><div class="num">4.9★</div><div class="lbl">Average Rating</div></div>
+        <div style="grid-column: span 2; background: var(--c-bg3); border: 1px solid rgba(0,229,192,.2); border-radius: 12px; padding: 1.2rem; text-align: center;">
+          <div style="font-size: 1.8rem; margin-bottom: .4rem;">🚀</div>
+          <div style="font-size: .85rem; color: var(--c-muted);">Students at Google, Meta, Apple, Amazon & more</div>
+        </div>
+      </div>
+      <div class="about-text fade-in">
+        <span class="tag">About AlgoVerse</span>
+        <h2>Built by engineers, for engineers</h2>
+        <p>We started AlgoVerse because we struggled ourselves. Hours spent on scattered resources, unclear explanations, and zero feedback loops — we knew there had to be a better way.</p>
+        <p>Today, AlgoVerse is the go-to platform for developers who want to level up seriously. We combine pedagogy with interactivity and real-world relevance.</p>
+        <ul class="about-list">
+          <li>Lesson content written by FAANG engineers</li>
+          <li>Problems mapped to real interview formats</li>
+          <li>Multi-language support: Python, Java, C++, JS</li>
+          <li>Live doubt sessions every week</li>
+          <li>Lifetime access with one-time purchase</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="careers">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Careers</span>
+      <h2>Build the Ecosystem You Wish You Had</h2>
+      <p>Remote-first, fast-moving team focused on product and performance.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🚢</div>
+        <h3>Ships Over Meetings</h3>
+        <p>Deliver production-grade code; decisions move quickly.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">⚡</div>
+        <h3>Speed Obsessed</h3>
+        <p>UX and execution optimized for performance.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🛡️</div>
+        <h3>Extreme Ownership</h3>
+        <p>End-to-end responsibility for shipped features.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="press">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Press</span>
+      <h2>News & Releases</h2>
+      <p>Product updates and community milestones.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🚀</div>
+        <h3>June 2026</h3>
+        <p>Launched v2.0 Algorithm Visualizer with multi-language sync.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">📈</div>
+        <h3>April 2026</h3>
+        <p>Global active developer community milestone reached.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="courses">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">All Courses</span>
+      <h2>Advanced Engineering Modules. Zero Fluff.</h2>
+      <p>Go beyond syntax. Master structural blueprints, core design patterns, and low-level compiler optimizations that separate junior developers from elite tech leads.</p>
+    </div>
+    
+    <div class="courses-grid">
+      <a href="dsa-course.html" class="course-card fade-in" style="display:block; color:inherit; text-decoration:none;">
+        <div class="course-thumb purple">🌳</div>
+        <div class="course-body">
+          <span class="course-level level-beg">Beginner</span>
+          <h3>Data Structures Fundamentals</h3>
+          <p>Arrays, linked lists, stacks, queues, and trees — built from the ground up.</p>
+          <div class="course-meta">
+            <span>📖 42 lessons</span>
+            <span>⏱ 18 hrs</span>
+            <span>⭐ 4.9</span>
+          </div>
+        </div>
+      </a>
+    <a href="graph-algorithms.html" class="course-card fade-in" style="display:block; color:inherit; text-decoration:none;">
+  <div class="course-thumb teal">⚡</div>
+  <div class="course-body">
+    <span class="course-level level-int">Intermediate</span>
+    <h3>Graph Algorithms Mastery</h3>
+    <p>BFS, DFS, Dijkstra, Bellman-Ford, MST and everything in between.</p>
+    <div class="course-meta">
+      <span>📖 55 lessons</span>
+      <span>⏱ 24 hrs</span>
+      <span>⭐ 4.8</span>
+    </div>
+  </div>
+</a>
+     <a href="dynamic-programming.html" class="course-card fade-in" style="display:block; color:inherit; text-decoration:none;">
+  <div class="course-thumb coral">🧩</div>
+  <div class="course-body">
+    <span class="course-level level-adv">Advanced</span>
+    <h3>Dynamic Programming Deep Dive</h3>
+    <p>Memoization, tabulation, optimization patterns and competitive DP tricks.</p>
+    <div class="course-meta">
+      <span>📖 68 lessons</span>
+      <span>⏱ 30 hrs</span>
+      <span>⭐ 4.9</span>
+    </div>
+  </div>
+</a>
+    <div style="text-align:center; margin-top:2.5rem;">
+      <a href="#" class="btn-secondary">🚀 Explore All Courses →</a>
+    </div>
+  </div>
+</section>
+<section id="pricing">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Pricing</span>
+      <h2>Invest in your future</h2>
+      <p>Flexible plans tailored to your engineering journey. No surprise fees.</p>
+    </div>
+    <div class="pricing-grid" style="max-width: 840px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+      <div class="price-card fade-in">
+        <div class="price-name">Free Plan</div>
+        <div class="price-amount"><sup>$</sup>0</div>
+        <div class="price-per">forever</div>
+        <hr class="price-divider"/>
+        <ul class="price-features">
+  <li>25 Beginner Practice Problems</li>
+  <li>5 Core DSA Courses</li>
+  <li>Basic Algorithm Visualizer</li>
+  <li>Community Discussion Access</li>
+  <li>Progress Tracking Dashboard</li>
+  <li class="off">Daily Coding Challenges</li>
+  <li class="off">AI Code Review</li>
+  <li class="off">Interview Question Bank</li>
+  <li class="off">HR Round Preparation</li>
+  <li class="off">Zero to Hero Roadmap</li>
+  <li class="off">Certificates</li>
+  <li class="off">Premium Contests</li>
+</ul>
+        <button type="button" class="btn-plan btn-plan-outline" onclick="openAuthModal('signup')">Get Started Free</button>
+      </div>
+      <div class="price-card popular fade-in">
+        <div class="popular-badge">Complete Access</div>
+        <div class="price-name">Pro Version</div>
+        <div class="price-amount"><sup>$</sup>19</div>
+        <div class="price-per">one-time lifetime access</div>
+        <hr class="price-divider"/>
+        <ul class="price-features">
+          <li style="font-weight: 600; color: #00e5c0;">⚡ Daily Practice of Code Modules</li>
+          <li style="font-weight: 600; color: #00e5c0;">🔥 Real-World Interview Questions</li>
+          <li style="font-weight: 600; color: #00e5c0;">💼 Complete HR Round Crack Guide</li>
+          <li style="font-weight: 600; color: #00e5c0;">🚀 From Zero to Hero Learning Paths</li>
+          <li>All 200+ Interactive Courses</li>
+          <li>Unlimited AI Code Reviews</li>
+          <li>Verifiable Digital Certificates</li>
+        </ul>
+        <button type="button" class="btn-plan btn-plan-filled" onclick="openPaymentModal('Pro Version', '$19 lifetime')">Start Pro Trial</button>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="testimonials">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Testimonials</span>
+      <h2>Words from our community</h2>
+      <p>Thousands of developers have changed their careers with AlgoVerse.</p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testi-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>AlgoVerse's visual tracer finally made BFS click for me after months of confusion. Got my Google offer two weeks after finishing the graph course.</blockquote>
+        <div class="testi-author"><div class="avatar av1">AK</div><div><div class="author-name">Aanya Krishnan</div><div class="author-role">SWE @ Google</div></div></div>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>The AI code review is unlike anything else. It doesn't just say "wrong" — it explains *why* my O(n²) approach fails and guides me to the optimal one.</blockquote>
+        <div class="testi-author"><div class="avatar av2">ML</div><div><div class="author-name">Marcus Li</div><div class="author-role">Staff Engineer @ Meta</div></div></div>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>I went from zero CS background to clearing Amazon's system design round. The structured learning paths made it feel achievable, not overwhelming.</blockquote>
+        <div class="testi-author"><div class="avatar av3">PR</div><div><div class="author-name">Priya Rao</div><div class="author-role">Engineer @ Amazon</div></div></div>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>The weekly contests keep me sharp. It's addictive in the best way — I've improved my ranking every single month for six months straight.</blockquote>
+        <div class="testi-author"><div class="avatar av4">JT</div><div><div class="author-name">James Thornton</div><div class="author-role">Competitive Programmer</div></div></div>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>Our entire engineering team uses AlgoVerse Team edition for onboarding. The analytics show us exactly where new hires need extra support. Worth every penny.</blockquote>
+        <div class="testi-author"><div class="avatar av5">SN</div><div><div class="author-name">Sofia Nguyen</div><div class="author-role">Engineering Lead @ Stripe</div></div></div>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>I love that it's not just about memorizing patterns. The "why" behind every algorithm is explained so intuitively. Best investment I made this year.</blockquote>
+        <div class="testi-author"><div class="avatar av6">RM</div><div><div class="author-name">Rohan Mehta</div><div class="author-role">Freelance Dev → Apple</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="community">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Community</span>
+      <h2>Code Together — Compete Better</h2>
+      <p>Weekly contests, leaderboards, forums, and study cohorts to accelerate progress.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">⏱️</div>
+        <h3>Weekly Contests</h3>
+        <p>90-minute sprints with 4 curated problems.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🏆</div>
+        <h3>Leaderboards</h3>
+        <p>Rank by streaks, speed, and quality — climb tiers to Grandmaster.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">💬</div>
+        <h3>Forums</h3>
+        <p>Tagged threads for focused help: #Optimization, #SystemDesign, #LeetCodeHard.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🤝</div>
+        <h3>Study Groups</h3>
+        <p>Small cohorts, synchronized 30-day grinds, and weekly reviews.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🟣</div>
+        <h3>Discord</h3>
+        <p>Real-time channels for announcements, code help, and career growth.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="blog">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Journal</span>
+      <h2>Curated Tech & Interview Deep Dives</h2>
+      <p>Master technical logic, unlock performance patterns, and ace complex behavioral rounds.</p>
+    </div>
+    <div class="blog-grid">
+      <article class="blog-card fade-in">
+        <div class="blog-img b1">🧊</div>
+        <div class="blog-body">
+          <div class="blog-category">Code Mastery</div>
+          <h3>Mastering Sliding Window Patterns for Fast Execution</h3>
+          <p>How converting sub-array loops into linear-time checks optimizes complex operations from O(n²) to O(n).</p>
+          <div class="blog-footer"><span>Jun 6, 2026</span><span>7 min read →</span></div>
+        </div>
+      </article>
+      <article class="blog-card fade-in">
+        <div class="blog-img b2">🎯</div>
+        <div class="blog-body">
+          <div class="blog-category">Interview Prep</div>
+          <h3>Cracking the Behavioral & HR Round: The STAR Approach</h3>
+          <p>Don't let tech-skills carry you alone. Learn how top tech leads score communication, teamwork, and cultural alignment.</p>
+          <div class="blog-footer"><span>Jun 2, 2026</span><span>10 min read →</span></div>
+        </div>
+      </article>
+      <article class="blog-card fade-in">
+        <div class="blog-img b3">🔥</div>
+        <div class="blog-body">
+          <div class="blog-category">Career Blueprint</div>
+          <h3>From Scratch to FAANG: The Ultimate Zero-to-Hero Strategy</h3>
+          <p>A structured roadmap covering crucial fundamentals, rigorous problem sets, and portfolio builds to jumpstart engineering careers.</p>
+          <div class="blog-footer"><span>May 29, 2026</span><span>14 min read →</span></div>
+        </div>
+      </article>
+    </div>
+    <div style="text-align:center; margin-top:2.5rem;">
+      <a href="#articles-extra" class="btn-secondary">Read All Articles →</a>
+    </div>
+    <div style="text-align:center; margin-top:1rem; color:var(--c-muted); font-size:0.95rem;">
+      <div style="margin-bottom:.6rem;">Included articles:</div>
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
+        <span class="inline-article-link">Decoding Graph Algorithms</span>
+        <span class="inline-article-link">Memory Locality</span>
+        <span class="inline-article-link">OAuth 2.0 & JWTs</span>
+        <span class="inline-article-link">Quantization</span>
+        <span class="inline-article-link">Hydration & SSR</span>
+        <span class="inline-article-link">The Art of Code Review</span>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="articles-extra">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Featured</span>
+      <h2>More Articles & Deep Dives</h2>
+      <p>Expert articles ready to read — browse the topics below.</p>
+    </div>
+    <div class="blog-grid">
+      <article class="blog-card fade-in">
+        <div class="blog-img">🔗</div>
+        <div class="blog-body">
+          <div class="blog-category">Interview Prep</div>
+          <h3>Decoding Graph Algorithms: When to Use BFS vs. DFS</h3>
+          <p>How to decide between BFS and DFS in interviews — shortest paths, cycle detection, and topological sorts.</p>
+          <div class="blog-footer"><span>Jun 8, 2026</span><span>9 min read →</span></div>
+        </div>
+      </article>
+      <article class="blog-card fade-in">
+        <div class="blog-img">🏎️</div>
+        <div class="blog-body">
+          <div class="blog-category">Code Mastery</div>
+          <h3>Memory Locality: Writing Code That Plays Nice with the CPU Cache</h3>
+          <p>Small changes in loop order and data layout can dramatically affect performance. Learn why.</p>
+          <div class="blog-footer"><span>Jun 10, 2026</span><span>7 min read →</span></div>
+        </div>
+      </article>
+      <article class="blog-card fade-in">
+        <div class="blog-img">🔒</div>
+        <div class="blog-body">
+          <div class="blog-category">System Design</div>
+          <h3>The Blueprint of Web Security: Understanding OAuth 2.0 and JWTs</h3>
+          <p>Stateless authentication patterns for microservices: when to use JWTs and how OAuth 2.0 fits in.</p>
+          <div class="blog-footer"><span>Jun 11, 2026</span><span>9 min read →</span></div>
+        </div>
+      </article>
+      <article class="blog-card fade-in">
+        <div class="blog-img">🤖</div>
+        <div class="blog-body">
+          <div class="blog-category">Next-Gen Tech</div>
+          <h3>Quantization: How to Fit an LLM on Your Smartphone</h3>
+          <p>Compressing massive neural networks to run locally — the tradeoffs and techniques that make it possible.</p>
+          <div class="blog-footer"><span>Jun 12, 2026</span><span>10 min read →</span></div>
+        </div>
+      </article>
+      <article class="blog-card fade-in">
+        <div class="blog-img">🏗️</div>
+        <div class="blog-body">
+          <div class="blog-category">Full-Stack Craft</div>
+          <h3>Hydration Horrors: Mastering React Server-Side Rendering</h3>
+          <p>Why components blink and how to prevent hydration mismatches between server and client.</p>
+          <div class="blog-footer"><span>Jun 13, 2026</span><span>8 min read →</span></div>
+        </div>
+      </article>
+      <article class="blog-card fade-in">
+        <div class="blog-img">🛠️</div>
+        <div class="blog-body">
+          <div class="blog-category">Career Blueprint</div>
+          <h3>The Art of the Code Review: How Senior Engineers Read PRs</h3>
+          <p>Move beyond superficial reviews — learn the framework seniors use to evaluate architecture, edge cases, and maintainability.</p>
+          <div class="blog-footer"><span>Jun 14, 2026</span><span>6 min read →</span></div>
+        </div>
+      </article>
+    </div>
+    <div style="text-align:center; margin-top:2rem;">
+      <a href="#blog" class="btn-secondary">Back to Journal →</a>
+    </div>
+  </div>
+</section>
+<section id="faq">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">FAQ</span>
+      <h2>Questions? We've got answers.</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q">Do I need prior coding experience to start? <span class="faq-chevron">▾</span></button>
+        <div class="faq-a">No! Our Beginner track starts from scratch. We assume zero prior CS knowledge and build your intuition systematically through interactive lessons.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Which programming languages are supported? <span class="faq-chevron">▾</span></button>
+        <div class="faq-a">We support Python, Java, C++, JavaScript, and Go. You can switch languages mid-course, and our AI reviews code in all supported languages.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Is there a free trial for the Pro plan? <span class="faq-chevron">▾</span></button>
+        <div class="faq-a">Yes — 14 days free, no credit card required. Cancel anytime. You get full Pro access during the trial period.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How are the weekly contests structured? <span class="faq-chevron">▾</span></button>
+        <div class="faq-a">Contests run every Saturday for 90 minutes with 4 problems of varying difficulty. Rankings are global and contribute to your AlgoVerse rating.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Can I get a certificate for completing courses? <span class="faq-chevron">▾</span></button>
+        <div class="faq-a">Pro and Team members receive a verifiable digital certificate upon course completion. Certificates include a unique link you can add to LinkedIn or your resume.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Do you offer student or group discounts? <span class="faq-chevron">▾</span></button>
+        <div class="faq-a">Yes! Students get 50% off Pro with a valid .edu email. Teams of 5+ receive volume pricing — reach out via the contact form for a custom quote.</div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="contact">
+  <div class="container">
+    <div class="contact-inner">
+      <div class="contact-info fade-in">
+        <span class="tag">Contact Us</span>
+        <h2>Let's talk algorithms — or anything else</h2>
+        <p>Have a question, feedback, or want to explore an enterprise plan? We read every message.</p>
+        <div class="contact-detail">
+          <div class="contact-icon">📧</div>
+          <div><div class="contact-label">Email</div><div class="contact-val">officialalgoverse@gmail.com</div></div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-icon">💬</div>
+          <div><div class="contact-label">Discord</div><div class="contact-val">discord.gg/algoverse</div></div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-icon">📍</div>
+          <div><div class="contact-label">Headquarters</div><div class="contact-val">San Francisco, CA</div></div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-icon">🕐</div>
+          <div><div class="contact-label">Support Hours</div><div class="contact-val">Mon–Fri, 9am–6pm PST</div></div>
+        </div>
+      </div>
+      <div class="contact-form fade-in">
+        <div class="form-row">
+          <div class="form-group"><label for="contactFirstName">First Name</label><input id="contactFirstName" name="firstName" type="text" placeholder="First Name"/></div>
+          <div class="form-group"><label for="contactLastName">Last Name</label><input id="contactLastName" name="lastName" type="text" placeholder="Last Name"/></div>
+        </div>
+        <div class="form-group"><label for="contactEmail">Email</label><input id="contactEmail" name="email" type="email" placeholder="you@example.com"/></div>
+        <div class="form-group">
+          <label>Topic</label>
+          <select>
+            <option>General Inquiry</option>
+            <option>Technical Support</option>
+            <option>Enterprise / Team Plan</option>
+            <option>Partnership</option>
+            <option>Press & Media</option>
+          </select>
+        </div>
+        <div class="form-group"><label for="contactMessage">Message</label><textarea id="contactMessage" name="message" placeholder="Tell us what's on your mind…"></textarea></div>
+        <button class="btn-primary" style="width:100%; justify-content:center;" onclick="sendContactForm()">
+Send Message →
+</button>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="newsletter-section">
+  <div class="container">
+    <div class="newsletter-inner fade-in">
+      <span class="tag">Newsletter</span>
+      <h2>Get weekly algorithm insights</h2>
+      <p>One email a week. No fluff. Deep dives, contest recaps, and curated problem sets.</p>
+      <div class="newsletter-form">
+        <input type="email" placeholder="your@email.com"/>
+        <button class="btn-primary" onclick="alert('Subscribed! Check your inbox.')">Subscribe →</button>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="#" class="logo" style="margin-bottom:.5rem; display:inline-flex;">
+          <img src="logo.png" alt="AlgoVerse logo" class="logo-img" />
+          Algo<span>Verse</span>
+        </a>
+        <p>The universe of algorithmic knowledge. Learn, visualize, and master DSA with the world's most interactive platform.</p>
+        <div class="social-links">
+          <a href="#" class="social-btn" aria-label="Twitter">𝕏</a>
+          <a href="#" class="social-btn" aria-label="GitHub">⌥</a>
+          <a href="#" class="social-btn" aria-label="LinkedIn">in</a>
+          <a href="#" class="social-btn" aria-label="YouTube">▷</a>
+          <a href="#" class="social-btn" aria-label="Discord">⬡</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Learn</h4>
+        <ul>
+          <li><a href="#">All Courses</a></li>
+          <li><a href="#">Learning Paths</a></li>
+          <li><a href="#">Practice Problems</a></li>
+          <li><a href="#">Algorithm Visualizer</a></li>
+          <li><a href="#">Cheat Sheets</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Community</h4>
+        <ul>
+          <li><a href="#">Weekly Contests</a></li>
+          <li><a href="#">Leaderboards</a></li>
+          <li><a href="#">Discussion Forums</a></li>
+          <li><a href="#">Study Groups</a></li>
+          <li><a href="#">Discord Server</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 AlgoVerse Inc. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Settings</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<button id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+<div id="authModal" class="modal-overlay">
+  <div class="modal-box">
+    <button type="button" class="modal-close" onclick="closeAuthModal()">&times;</button>
+    <div class="modal-header">
+      <h2 id="modalTitle">Welcome back to Algo<span>Verse</span></h2>
+      <p id="modalSubtitle">Master your algorithmic skills</p>
+    </div>
+    <div id="authMessage" class="auth-message" aria-live="polite"></div>
+    <form id="authForm" class="modal-form">
+      <div class="form-group" id="nameFieldGroup" style="display: none; margin-bottom: 1rem;">
+        <label style="color:#94a3b8; display:block; margin-bottom:0.4rem; font-size:0.9rem;">Full Name</label>
+        <input type="text" id="authName" placeholder="Aanya Krishnan" style="width:100%; padding:0.75rem; background:#1e293b; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff; font-family:'DM Sans',sans-serif;" />
+      </div>
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label style="color:#94a3b8; display:block; margin-bottom:0.4rem; font-size:0.9rem;">Email Address</label>
+        <input type="email" id="authEmail" required placeholder="you@example.com" style="width:100%; padding:0.75rem; background:#1e293b; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff; font-family:'DM Sans',sans-serif;" />
+      </div>
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label style="color:#94a3b8; display:block; margin-bottom:0.4rem; font-size:0.9rem;">Password</label>
+        <input type="password" id="authPassword" required placeholder="••••••••" style="width:100%; padding:0.75rem; background:#1e293b; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff; font-family:'DM Sans',sans-serif;" />
+      </div>
+      <button type="submit" id="modalSubmitBtn" class="btn-primary" style="width:100%; justify-content:center; margin-top:1.5rem;">
+        Sign In →
+      </button>
+    </form>
+  </div>
+</div>
+<div id="paymentModal" class="modal-overlay" aria-modal="true" role="dialog" hidden>
+  <div class="modal-box payment-modal-box">
+    <button type="button" class="modal-close" onclick="closePaymentModal()">&times;</button>
+    <div class="modal-header">
+      <h2 id="paymentModalTitle">Secure Checkout</h2>
+      <p id="paymentModalSubtitle">Complete your purchase safely</p>
+    </div>
+    <div id="paymentMessage" class="auth-message" aria-live="polite"></div>
+
+    <div class="payment-summary-card">
+      <div class="payment-summary-top">
+        <strong id="paymentPlanName">Pro Version</strong>
+        <span id="paymentPlanPrice">$19 lifetime</span>
+      </div>
+      <div class="payment-summary-meta">Full access • AI reviews • Certificates • Lifetime updates</div>
+    </div>
+
+    <div class="payment-methods" role="tablist" aria-label="Payment methods">
+      <button type="button" class="payment-method-btn active" data-method="card">Card</button>
+      <button type="button" class="payment-method-btn" data-method="upi">UPI</button>
+      <button type="button" class="payment-method-btn" data-method="wallet">Wallet</button>
+    </div>
+
+    <form id="paymentForm" class="payment-form" onsubmit="event.preventDefault(); processPayment();">
+      <div id="cardPanel" class="payment-method-panel">
+        <div class="form-group">
+          <label for="cardNumber">Card Number</label>
+          <input id="cardNumber" placeholder="4242 4242 4242 4242" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cardName">Cardholder Name</label>
+            <input id="cardName" placeholder="Your Name" />
+          </div>
+          <div class="form-group">
+            <label for="cardExpiry">Expiry</label>
+            <input id="cardExpiry" placeholder="MM/YY" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="cardCvv">CVV</label>
+          <input id="cardCvv" placeholder="123" />
+        </div>
+      </div>
+
+      <div id="upiPanel" class="payment-method-panel" hidden>
+        <div class="form-group">
+          <label for="upiId">UPI ID</label>
+          <input id="upiId" placeholder="yourname@upi" />
+        </div>
+        <div class="payment-note">You’ll receive an approval request on your UPI app.</div>
+      </div>
+
+      <div id="walletPanel" class="payment-method-panel" hidden>
+        <div class="form-group">
+          <label for="walletId">Mobile Wallet</label>
+          <input id="walletId" placeholder="Paytm / Google Pay / PhonePe" />
+        </div>
+        <div class="payment-note">Secure wallet payment with instant confirmation.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="paymentEmail">Email for receipt</label>
+        <input type="email" id="paymentEmail" placeholder="you@example.com" />
+      </div>
+
+      <div class="payment-security">
+        <span>🔒</span>
+        <span>Protected by 256-bit encryption</span>
+      </div>
+
+      <button type="submit" class="btn-primary payment-submit">Pay $19 Now →</button>
+    </form>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<div id="videoModal" class="video-overlay" aria-modal="true" role="dialog" hidden>
+  <div class="video-card">
+    <button type="button" class="video-back-btn" onclick="closeVideoDemo()">← Back to homepage</button>
+    <div class="video-wrapper">
+      <video id="demoVideo" controls playsinline>
+        <source src="algoverse_launch.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+</div>
+<script src="script.js"></script>
+<!-- VERA AI CHATBOT -->
+<div id="vera-chat-btn">
+  🤖
+</div>
+<div id="vera-chat-box">
+  <div class="vera-header">
+    <span>🤖 Vera AI</span>
+    <button id="vera-close">✕</button>
+  </div>
+  <div id="vera-messages">
+    <div class="vera-bot">
+      Hello! I'm Vera AI. How can I help you today? 🚀
+    </div>
+  </div>
+  <div class="vera-input-area">
+    <input
+      type="text"
+      id="vera-input"
+      placeholder="Ask Vera AI..."
+    />
+    <button id="vera-voice">🎤</button>
+    <button id="vera-send">➤</button>
+  </div>
+</div>
+  </body>
+</html>
