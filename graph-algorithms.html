@@ -94,8 +94,8 @@ Graph algorithms · HTML
     .progress-wrap span { font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--neon-cyan); }
     .progress-track { width: 200px; height: 5px; border-radius: 99px; background: rgba(255, 255, 255, 0.04); overflow: hidden; }
     .progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple)); transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-    .layout { display: grid; grid-template-columns: 360px 1fr; min-height: calc(100vh - 73px); }
-    .sidebar { padding: 2.5rem 1.5rem; background: var(--bg-surface-solid); border-right: 1px solid rgba(255, 255, 255, 0.05); overflow-y: auto; height: calc(100vh - 73px); position: sticky; top: 73px; }
+    .layout { display: grid; grid-template-columns: minmax(280px, 330px) minmax(0, 1fr); min-height: calc(100vh - 73px); }
+    .sidebar { padding: 2.5rem 1.5rem; background: var(--bg-surface-solid); border-right: 1px solid rgba(255, 255, 255, 0.05); overflow-y: auto; height: calc(100vh - 73px); position: sticky; top: 73px; min-width: 0; }
     .sidebar-search { display: flex; align-items: center; gap: 0.75rem; padding: 0.9rem 1.2rem; margin-bottom: 2.5rem; border: 1px solid var(--border-glow); border-radius: 14px; background: rgba(0, 0, 0, 0.3); transition: var(--transition-cosmic); }
     .sidebar-search:focus-within { border-color: var(--neon-purple); box-shadow: 0 0 20px rgba(129, 98, 255, 0.12); }
     .sidebar-search span { color: var(--text-dark); font-size: 1rem; }
@@ -103,17 +103,17 @@ Graph algorithms · HTML
     .module { border-radius: 16px; margin-bottom: 0.75rem; background: rgba(255, 255, 255, 0.01); border: 1px solid transparent; transition: var(--transition-cosmic); overflow: hidden; }
     .module.open { background: rgba(255, 255, 255, 0.015); border-color: rgba(255, 255, 255, 0.04); }
     .module-head { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 1.1rem; cursor: pointer; user-select: none; }
-    .module-head span:first-child { font-size: 0.92rem; font-weight: 700; max-width: 85%; }
+    .module-head span:first-child { font-size: 0.92rem; font-weight: 700; max-width: 100%; overflow-wrap: anywhere; word-break: break-word; line-height: 1.4; }
     .module-head .chevron { font-size: 0.75rem; color: var(--text-dark); transition: transform 0.3s ease; }
     .module.open .chevron { transform: rotate(90deg); color: var(--neon-purple); }
     .module-body { display: none; padding: 0 0.6rem 1.2rem; }
     .module.open .module-body { display: block; }
-    .topic-link { display: flex; align-items: center; padding: 0.8rem 1.1rem; margin-top: 0.4rem; border-radius: 10px; cursor: pointer; color: var(--text-muted); font-size: 0.88rem; font-weight: 500; transition: var(--transition-cosmic); }
+    .topic-link { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.8rem 1.1rem 0.8rem 1rem; margin-top: 0.4rem; border-radius: 10px; cursor: pointer; color: var(--text-muted); font-size: 0.88rem; font-weight: 500; transition: var(--transition-cosmic); overflow-wrap: anywhere; word-break: break-word; line-height: 1.45; min-width: 0; }
     .topic-link:hover { background: rgba(255, 255, 255, 0.03); color: #fff; }
     .topic-link.active { background: rgba(129, 98, 255, 0.12); color: #fff; font-weight: 600; border-left: 3px solid var(--neon-purple); }
-    .topic-link.done { color: var(--neon-green); position: relative; }
-    .topic-link.done::after { content: '●'; position: absolute; right: 16px; font-size: 0.7rem; color: var(--neon-green); }
-    .content { padding: 4rem 6rem; max-width: 1050px; margin: 0 auto; }
+    .topic-link.done { color: var(--neon-green); position: relative; padding-right: 2.2rem; }
+    .topic-link.done::after { content: '●'; position: absolute; right: 0.8rem; top: 0.95rem; font-size: 0.7rem; color: var(--neon-green); }
+    .content { padding: 2.5rem 2.5rem 4rem; max-width: none; margin: 0; min-width: 0; }
     .content-header { margin-bottom: 3.5rem; }
     .content-tag { display: inline-block; padding: 0.4rem 1rem; border-radius: 8px; background: rgba(255, 59, 147, 0.06); border: 1px solid rgba(255, 59, 147, 0.2); color: #ff6cb1; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.2rem; }
     .content-header h2 { font-family: 'Space Grotesk', sans-serif; font-size: 2.8rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.6rem; }
@@ -142,6 +142,16 @@ Graph algorithms · HTML
     .compare-card { padding: 1.4rem; border-radius: 14px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.02); }
     .compare-card strong { display: block; font-size: 0.95rem; color: #fff; margin-bottom: 0.3rem; }
     .compare-card span { color: var(--text-dark); font-size: 0.85rem; }
+    .module-outline { margin-bottom: 2rem; padding: 1.25rem 1.35rem; border-radius: 20px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: var(--card-shadow-3d); }
+    .outline-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+    .outline-header strong { display: block; color: #fff; font-size: 1.02rem; margin-top: 0.3rem; }
+    .outline-header span { color: var(--text-dark); font-size: 0.76rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; }
+    .outline-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; }
+    .outline-chip { display: flex; align-items: flex-start; gap: 0.65rem; width: 100%; padding: 0.8rem 0.9rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); color: var(--text-muted); text-align: left; cursor: pointer; transition: var(--transition-cosmic); }
+    .outline-chip:hover { border-color: rgba(129, 98, 255, 0.35); background: rgba(129, 98, 255, 0.04); color: #fff; }
+    .outline-chip.active { border-color: rgba(0, 255, 208, 0.35); background: rgba(0, 255, 208, 0.06); color: #fff; }
+    .outline-chip span { font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; color: var(--neon-cyan); min-width: 1rem; }
+    .outline-chip strong { margin: 0; font-size: 0.9rem; line-height: 1.35; color: inherit; }
     .actions-row { display: flex; justify-content: flex-start; align-items: center; margin-top: 5rem; padding-top: 2.5rem; border-top: 1px solid rgba(255, 255, 255, 0.05); }
     .mark-btn { background: transparent; border: 1px solid rgba(0, 255, 208, 0.3); color: var(--neon-cyan); padding: 0.9rem 2.4rem; border-radius: 999px; font-weight: 700; font-size: 0.92rem; cursor: pointer; transition: var(--transition-cosmic); }
     .mark-btn:hover { background: rgba(0, 255, 208, 0.04); border-color: var(--neon-cyan); }
@@ -238,7 +248,31 @@ Graph algorithms · HTML
     .browse-arrow { color: var(--neon-cyan); font-size: 1.1rem; flex-shrink: 0; }
     .browse-count-pill { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--neon-purple); border: 1px solid rgba(129, 98, 255, 0.35); padding: 0.3rem 0.8rem; border-radius: 999px; background: rgba(129, 98, 255, 0.06); }
     .roadmap-note { margin-top: 2rem; padding: 1.4rem 1.8rem; border-radius: 16px; background: rgba(255, 200, 87, 0.05); border: 1px solid rgba(255, 200, 87, 0.2); color: #ffd98a; font-size: 0.9rem; }
+    .module-outline { margin-bottom: 2rem; padding: 1.25rem 1.35rem; border-radius: 20px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: var(--card-shadow-3d); }
+    .outline-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+    .outline-header strong { display: block; color: #fff; font-size: 1.02rem; margin-top: 0.3rem; }
+    .outline-header span { color: var(--text-dark); font-size: 0.76rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; }
+    .outline-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; }
+    .outline-chip { display: flex; align-items: flex-start; gap: 0.65rem; width: 100%; padding: 0.8rem 0.9rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); color: var(--text-muted); text-align: left; cursor: pointer; transition: var(--transition-cosmic); }
+    .outline-chip:hover { border-color: rgba(129, 98, 255, 0.35); background: rgba(129, 98, 255, 0.04); color: #fff; }
+    .outline-chip.active { border-color: rgba(0, 255, 208, 0.35); background: rgba(0, 255, 208, 0.06); color: #fff; }
+    .outline-chip span { font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; color: var(--neon-cyan); min-width: 1rem; }
+    .outline-chip strong { margin: 0; font-size: 0.9rem; line-height: 1.35; color: inherit; }
     @media (max-width: 1024px) { .interview-content { padding: 2rem 1.5rem 4rem; } .iq-rank-row { grid-template-columns: 40px 1fr; } .iq-rank-row .rank-topic { display: none; } }
+    @media (max-width: 768px) { .topbar { padding: 1rem 1.2rem; flex-direction: column; align-items: flex-start; gap: 0.8rem; } .progress-wrap { width: 100%; justify-content: space-between; gap: 0.7rem; } .progress-track { width: 100%; max-width: 220px; } .content { padding: 2rem 1rem 3rem; } .content-header h2 { font-size: 2rem; } .content-hero { padding: 1.2rem 1.2rem; } .learning-card { padding: 1.25rem; } .compare-grid { grid-template-columns: 1fr; } .outline-list { grid-template-columns: 1fr; } .nav-buttons { flex-direction: column; } .nav-btn { padding: 1rem 1.2rem; } .actions-row { margin-top: 3rem; } }
+    @media (max-width: 640px) { .topbar { padding: 0.9rem 1rem; } .progress-wrap { flex-direction: column; align-items: flex-start; } .progress-track { max-width: none; } .content-header h2 { font-size: 1.6rem; } .content-body p, .content-body li { font-size: 1rem; } .content-hero p { font-size: 0.95rem; } .module-outline { padding: 1rem; } .outline-chip { padding: 0.75rem; } }
+
+    /* Mobile split layout: keep topics visible on the left and content on the right */
+    @media (max-width: 768px) {
+      .layout.split-mobile { grid-template-columns: 140px 1fr; }
+      .layout.split-mobile .sidebar {
+        position: fixed; left: 0; top: 73px; bottom: 0; width: 140px; height: calc(100vh - 73px);
+        z-index: 40; padding: 1rem 0.6rem; overflow-y: auto;
+      }
+      .layout.split-mobile .content { margin-left: 140px; padding: 1.5rem 1rem 3rem; }
+      .layout.split-mobile .module { padding-right: 0.5rem; }
+      .layout.split-mobile .outline-list { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -1048,6 +1082,26 @@ def dfs(u, parent, disc, low, time, graph, bridges):
       document.getElementById('progressText').textContent = `${done} / ${total} topics`;
       document.getElementById('progressFill').style.width = `${(done / total) * 100}%`;
     }
+    function buildModuleOutline(mi, ti) {
+      const mod = course[mi];
+      return `
+        <div class="module-outline">
+          <div class="outline-header">
+            <div>
+              <span>${mod.module}</span>
+              <strong>${mod.title}</strong>
+            </div>
+            <span>${mod.topics.length} lessons</span>
+          </div>
+          <div class="outline-list">
+            ${mod.topics.map((topic, idx) => `
+              <button class="outline-chip ${idx === ti ? 'active' : ''}" onclick="goToTopic(${mi}, ${idx})">
+                <span>${String(idx + 1).padStart(2, '0')}</span>
+                <strong>${topic.title}</strong>
+              </button>`).join('')}
+          </div>
+        </div>`;
+    }
     function renderContent(shouldScroll = false) {
       const { mi, ti } = flatTopics[currentIndex];
       const mod = course[mi];
@@ -1059,7 +1113,9 @@ def dfs(u, parent, disc, low, time, graph, bridges):
       if (activeLink) activeLink.classList.add('active');
       const visualMarkup = getVisualMarkup(mi, ti, mod, topic);
       const exerciseMarkup = getExerciseMarkup(mi, ti, mod, topic);
+      const moduleOutline = buildModuleOutline(mi, ti);
       document.getElementById('contentArea').innerHTML = `
+        ${moduleOutline}
         <div class="content-header">
           <div class="content-tag">${topic.tag}</div>
           <h2>${topic.title}</h2>
@@ -1115,6 +1171,8 @@ def dfs(u, parent, disc, low, time, graph, bridges):
       document.getElementById('heroShell').classList.add('is-hidden');
       document.getElementById('interviewShell').classList.remove('active');
       document.getElementById('curriculumView').classList.add('active');
+      const layout = document.querySelector('.layout');
+      if (window.innerWidth <= 768 && layout) layout.classList.add('split-mobile');
       window.scrollTo({ top: 0, behavior: 'auto' });
     });
     function goToTopic(mi, ti) {
@@ -1122,6 +1180,8 @@ def dfs(u, parent, disc, low, time, graph, bridges):
       document.getElementById('interviewShell').classList.remove('active');
       document.getElementById('heroShell').classList.add('is-hidden');
       document.getElementById('curriculumView').classList.add('active');
+      const layout = document.querySelector('.layout');
+      if (window.innerWidth <= 768 && layout) layout.classList.add('split-mobile');
       renderContent(true);
     }
     function buildTopicsView() {
