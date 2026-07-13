@@ -253,9 +253,13 @@
             btn.addEventListener('click', () => setPaymentMethod(btn.getAttribute('data-method') || 'card'));
         });
     }
-    const isLocalHost = (location.hostname === 'localhost' || location.hostname === '127.0.0.1');
-    const isFileProtocol = location.protocol === 'file:';
-    const BACKEND_URL = (isLocalHost || isFileProtocol) ? 'http://localhost:5000' : '/api';
+ // Detect if we are running locally via Live Server (e.g., port 5500)
+const isLocalHost = (location.hostname === 'localhost' || location.hostname === '127.0.0.1');
+const isFileProtocol = location.protocol === 'file:';
+
+// When running locally, explicitly point to the Express backend port 5000.
+// When deployed on Vercel, it will use the clean relative path.
+const BACKEND_URL = (isLocalHost || isFileProtocol) ? 'http://127.0.0.1:5000' : '';
     function initChatbot() {
         const chatBtn = $('#vera-chat-btn'); const chatBox = $('#vera-chat-box'); const closeBtn = $('#vera-close'); const sendBtn = $('#vera-send'); const voiceBtn = $('#vera-voice'); const input = $('#vera-input'); const messages = $('#vera-messages');
         if (!chatBtn || !chatBox) { console.warn('Chatbot elements not found'); return; }
