@@ -5,18 +5,32 @@
     function initMobileMenu() {
         const ham = $('#ham');
         const mob = $('#mobileMenu');
+        const backdrop = $('#mobileMenuBackdrop');
         if (!ham || !mob) return;
+        let scrollLockY = 0;
         function setMenu(open) {
             mob.classList.toggle('open', open);
-            const spans = ham.querySelectorAll('span');
-            if (spans.length === 3) {
-                spans[0].style.transform = open ? 'translateY(7px) rotate(45deg)' : '';
-                spans[1].style.opacity = open ? '0' : '1';
-                spans[2].style.transform = open ? 'translateY(-7px) rotate(-45deg)' : '';
+            ham.classList.toggle('open', open);
+            if (backdrop) backdrop.classList.toggle('show', open);
+            ham.setAttribute('aria-expanded', open ? 'true' : 'false');
+            if (open) {
+                scrollLockY = window.scrollY;
+                document.body.style.position = 'fixed';
+                document.body.style.top = `-${scrollLockY}px`;
+                document.body.style.left = '0';
+                document.body.style.right = '0';
+                document.body.style.width = '100%';
+            } else {
+                document.body.style.position = '';
+                document.body.style.top = '';
+                document.body.style.left = '';
+                document.body.style.right = '';
+                document.body.style.width = '';
+                window.scrollTo(0, scrollLockY);
             }
-            document.body.style.overflow = open ? 'hidden' : '';
         }
         ham.addEventListener('click', () => setMenu(!mob.classList.contains('open')));
+        if (backdrop) backdrop.addEventListener('click', () => setMenu(false));
         $$('#mobileMenu a').forEach(a => {
             a.addEventListener('click', (e) => {
                 const href = a.getAttribute('href') || '';
@@ -31,10 +45,18 @@
                 }
             });
         });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && mob.classList.contains('open')) setMenu(false);
+        });
         document.addEventListener('click', (e) => {
-            if (!mob.contains(e.target) && !ham.contains(e.target)) setMenu(false);
+            if (mob.classList.contains('open') && !mob.contains(e.target) && !ham.contains(e.target)) setMenu(false);
         });
         window.addEventListener('popstate', () => setMenu(false));
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 1024) setMenu(false);
+        });
+        window.addEventListener('orientationchange', () => setMenu(false));
+        window.closeMobileMenu = () => setMenu(false);
     }
     function initMarquee() {
         const techs = [
@@ -132,7 +154,7 @@
         else { if (title) title.innerHTML = 'Welcome back to Algo<span>Verse</span>'; if (subtitle) subtitle.innerText = 'Master your algorithmic skills'; if (nameField) nameField.style.display = 'none'; if (submitBtn) submitBtn.innerText = 'Sign In →'; }
         modal.dataset.mode = mode; modal.classList.add('show');
         // close mobile menu if open
-        const mobileMenu = $('#mobileMenu'); if (mobileMenu) mobileMenu.classList.remove('open');
+        if (typeof window.closeMobileMenu === 'function') window.closeMobileMenu();
     }
     function closeAuthModal() { const modal = $('#authModal'); if (modal) { modal.classList.remove('show'); showAuthMessage(''); } }
     let activePaymentMethod = 'card';
@@ -158,7 +180,7 @@
         modal.classList.add('show');
         document.body.style.overflow = 'hidden';
         document.documentElement.style.overflow = 'hidden';
-        const mobileMenu = $('#mobileMenu'); if (mobileMenu) mobileMenu.classList.remove('open');
+        if (typeof window.closeMobileMenu === 'function') window.closeMobileMenu();
     }
     function closePaymentModal() {
         const modal = $('#paymentModal'); const paymentMessage = $('#paymentMessage'); if (modal) {
