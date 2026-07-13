@@ -316,25 +316,8 @@
     cursor: pointer; text-decoration: none; transition: opacity .2s, transform .1s;
   }
   .nav-cta:hover { opacity: .88; transform: translateY(-1px); }
-  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; z-index: 210; position: relative; }
   .hamburger span { display: block; width: 22px; height: 2px; background: var(--c-text); border-radius: 2px; transition: .3s; }
-  .nav-cta {
-    background: var(--c-accent);
-    color: #fff;
-    border: none;
-    padding: .55rem 1.3rem;
-    border-radius: 8px;
-    font-family: var(--font-body);
-    font-size: .9rem;
-    font-weight: 500;
-    cursor: pointer;
-    text-decoration: none;
-    transition: opacity .2s, transform .1s;
-}
-.nav-cta:hover {
-    opacity: .88;
-    transform: translateY(-1px);
-}
 .nav-auth {
     display: flex;
     gap: 12px;
@@ -393,15 +376,6 @@
 .signup-btn:hover {
     transform: translateY(-2px);
     filter: brightness(0.95);
-}
-.hamburger {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    cursor: pointer;
-    background: none;
-    border: none;
-    padding: 4px;
 }
   #hero {
     min-height: 100vh; display: flex; align-items: center;
@@ -541,7 +515,6 @@
   .course-card {
     background: var(--c-bg3); border: 1px solid var(--c-border); border-radius: var(--radius-lg);
     overflow: hidden; transition: all .3s; width: 100%; min-width: 0;
-    /* make cards uniform and stretch to match grid rows */
     display: flex; flex-direction: column; height: 100%;
   }
   .course-card:hover { transform: translateY(-5px); border-color: var(--c-accent); }
@@ -720,14 +693,25 @@
     box-shadow: 0 4px 20px rgba(124,92,252,.4);
   }
   #btt.show { opacity: 1; transform: translateY(0); }
-  /* ── MOBILE MENU ── */
+  /* ── MOBILE / TABLET DRAWER MENU (slides in from the LEFT) ── */
   .mobile-menu {
-    display: none; flex-direction: column;
-    position: absolute; top: 100%; left: 0; right: 0;
-    background: rgba(5,5,10,.97); backdrop-filter: blur(18px);
-    border-bottom: 1px solid var(--c-border);
-    padding: 1.2rem 1.5rem 1.8rem; gap: 0;
+    display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0;
+    height: 100vh;
+    height: 100dvh;
+    width: min(78vw, 300px);
+    background: rgba(5,5,10,.98); backdrop-filter: blur(18px);
+    border-right: 1px solid var(--c-border);
+    box-shadow: 12px 0 40px rgba(0,0,0,.35);
+    padding: 5.5rem 1.5rem 1.8rem;
+    gap: 0;
+    transform: translateX(-100%);
+    transition: transform .34s cubic-bezier(.22,.9,.32,1);
+    z-index: 200;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
+  .mobile-menu.open { transform: translateX(0); }
   .mobile-menu a {
     color: var(--c-muted); text-decoration: none;
     font-size: 1rem; padding: .9rem 0;
@@ -735,18 +719,34 @@
     transition: color .2s;
   }
   .mobile-menu a:last-child { border-bottom: none; }
-  .mobile-menu a:hover { color: var(--c-accent); }
+  .mobile-menu a:hover, .mobile-menu a:focus-visible { color: var(--c-accent); }
   .mobile-menu .mob-cta {
     margin-top: 1rem; background: var(--c-accent); color: #fff;
     text-align: center; border-radius: 10px; padding: .9rem;
     font-weight: 500; border-bottom: none;
   }
-  .mobile-menu.open { display: flex; }
+  .mobile-menu-backdrop {
+    display: none;
+    position: fixed; top: 0; left: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    background: rgba(0,0,0,.5);
+    z-index: 150;
+    opacity: 0;
+    transition: opacity .3s ease;
+  }
+  .mobile-menu-backdrop.show { display: block; opacity: 1; }
   /* ── LARGE LAPTOPS / DESKTOPS ── */
   @media (min-width: 1200px) {
     .container { max-width: 1240px; padding: 0 2.5rem; }
     .hero-inner { gap: 5rem; }
     .section-head { margin-bottom: 4.5rem; }
+  }
+  /* ── SHOW HAMBURGER / HIDE DESKTOP NAV ON TABLET + MOBILE (≤1024px) ── */
+  @media (max-width: 1024px) {
+    .nav-links, .nav-cta, .nav-auth { display: none; }
+    .hamburger { display: flex; }
   }
   /* ── TABLET (769px – 1024px) ── */
   @media (min-width: 769px) and (max-width: 1024px) {
@@ -774,8 +774,6 @@
   @media (max-width: 768px) {
     /* Nav */
     .nav-inner { padding: .9rem 1.2rem; }
-    .nav-links, .nav-cta { display: none; }
-    .hamburger { display: flex; }
     /* Container */
     .container { padding: 0 1.1rem; }
     /* Hero */
@@ -858,15 +856,12 @@
     .course-body h3 { font-size: .95rem; }
     .stat-num { font-size: 1.2rem; }
   }
-
+ 
 /* Hamburger open -> X */
 .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
 .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
 .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-
-/* Ensure mobile menu overlay sits above content */
-.mobile-menu { z-index: 200; }
-
+ 
 /* Ensure course titles wrap and cards maintain layout stability */
 .course-body h3 { overflow-wrap: anywhere; word-break: break-word; }
   /* ── ANIMATIONS ── */

@@ -30,7 +30,7 @@
       <button type="button" class="login-btn" id="loginBtn" onclick="openAuthModal('login')">Login</button>
       <button type="button" class="signup-btn" id="signupBtn" onclick="openAuthModal('signup')">Sign Up</button>
     </div>
-    <button class="hamburger" id="ham" aria-label="Menu">
+    <button class="hamburger" id="ham" aria-label="Menu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -45,33 +45,7 @@
     <button type="button" class="login-btn" onclick="openAuthModal('login')">Login</button>
     <button type="button" class="mob-cta" onclick="openAuthModal('signup')" style="width: 100%; text-align: center;">Get Started Free →</button>
   </div>
-<script>
-  // Mobile menu toggle
-  (function(){
-    const ham = document.getElementById('ham');
-    const menu = document.getElementById('mobileMenu');
-    if (ham && menu) {
-      ham.addEventListener('click', () => {
-        menu.classList.toggle('open');
-        ham.classList.toggle('open');
-        const expanded = ham.classList.contains('open');
-        ham.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-      });
-      // Close menu when any link is clicked
-      menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-        menu.classList.remove('open'); ham.classList.remove('open'); ham.setAttribute('aria-expanded','false');
-      }));
-      // Close on Escape
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { menu.classList.remove('open'); ham.classList.remove('open'); ham.setAttribute('aria-expanded','false'); } });
-      // Close when clicking outside the menu on small screens
-      document.addEventListener('click', (e) => {
-        if (!menu.contains(e.target) && !ham.contains(e.target) && menu.classList.contains('open')) {
-          menu.classList.remove('open'); ham.classList.remove('open'); ham.setAttribute('aria-expanded','false');
-        }
-      });
-    }
-  })();
-</script>
+  <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
 </nav>
 <section id="hero">
   <div class="hero-glow"></div>
@@ -836,7 +810,7 @@ Send Message →
       <p id="paymentModalSubtitle">Complete your purchase safely</p>
     </div>
     <div id="paymentMessage" class="auth-message" aria-live="polite"></div>
-
+ 
     <div class="payment-summary-card">
       <div class="payment-summary-top">
         <strong id="paymentPlanName">Pro Version</strong>
@@ -844,13 +818,13 @@ Send Message →
       </div>
       <div class="payment-summary-meta">Full access • AI reviews • Certificates • Lifetime updates</div>
     </div>
-
+ 
     <div class="payment-methods" role="tablist" aria-label="Payment methods">
       <button type="button" class="payment-method-btn active" data-method="card">Card</button>
       <button type="button" class="payment-method-btn" data-method="upi">UPI</button>
       <button type="button" class="payment-method-btn" data-method="wallet">Wallet</button>
     </div>
-
+ 
     <form id="paymentForm" class="payment-form" onsubmit="event.preventDefault(); processPayment();">
       <div id="cardPanel" class="payment-method-panel">
         <div class="form-group">
@@ -872,7 +846,7 @@ Send Message →
           <input id="cardCvv" placeholder="123" />
         </div>
       </div>
-
+ 
       <div id="upiPanel" class="payment-method-panel" hidden>
         <div class="form-group">
           <label for="upiId">UPI ID</label>
@@ -880,7 +854,7 @@ Send Message →
         </div>
         <div class="payment-note">You’ll receive an approval request on your UPI app.</div>
       </div>
-
+ 
       <div id="walletPanel" class="payment-method-panel" hidden>
         <div class="form-group">
           <label for="walletId">Mobile Wallet</label>
@@ -888,17 +862,17 @@ Send Message →
         </div>
         <div class="payment-note">Secure wallet payment with instant confirmation.</div>
       </div>
-
+ 
       <div class="form-group">
         <label for="paymentEmail">Email for receipt</label>
         <input type="email" id="paymentEmail" placeholder="you@example.com" />
       </div>
-
+ 
       <div class="payment-security">
         <span>🔒</span>
         <span>Protected by 256-bit encryption</span>
       </div>
-
+ 
       <button type="submit" class="btn-primary payment-submit">Pay $19 Now →</button>
     </form>
   </div>

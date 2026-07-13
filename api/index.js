@@ -4,7 +4,6 @@ const dotenv = require('dotenv');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
 const Stripe = require('stripe');
-const { Groq } = require('groq-sdk'); // Import the Groq SDK
 
 dotenv.config();
 
@@ -13,74 +12,68 @@ const PORT = process.env.PORT || 5000;
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY) : null;
 
-// Initialize Groq SDK with your .env variable
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY
-});
-
 app.set('trust proxy', 1);
 
-// Rate limiting configuration for API security
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 60, // Limit each IP to 60 requests per window
+  windowMs: 15 * 60 * 1000,
+  max: 60,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: "Too many requests, please try again later." }
 });
 
-// MIDDLEWARES
+app.use(limiter);
 app.use(cors({ origin: true }));
 app.use(express.json());
+app.use(express.static(path.join(__dirname)));
 
-// Serve static assets directly from the root layout folder
-// Placed ABOVE the rate limiter so images/CSS don't trigger 429 errors!
-app.use(express.static(path.join(__dirname, '..')));
+function getReply(message) {
+  const text = String(message || '').toLowerCase().trim();
 
-// Real AI Chatbot Function with Groq Integration
-async function sendChatReply(req, res) {
-  const { message } = req.body || {};
-  
-  if (!message || !message.trim()) {
-    return res.json({ reply: 'How can I help you today?' });
+  if (!text) {
+    return 'How can I help you today?';
   }
 
-  try {
-    // Send the message securely to the Groq AI engine
-    const completion = await groq.chat.completions.create({
-      messages: [
-        { 
-          role: 'system', 
-          content: "You are Vera, the friendly and highly knowledgeable AlgoVerse study companion. You help users master Data Structures & Algorithms (DSA), clear coding roadmaps, solve competitive programming bugs, and guide them on course platform access. Keep answers direct, accurate, highly technical, and encouraging." 
-        },
-        { role: 'user', content: message }
-      ],
-      model: 'llama-3.3-70b-versatile', // Stable, fast Groq model
-    });
-
-    const aiReply = completion.choices[0].message.content;
-    return res.json({ reply: aiReply });
-
-  } catch (error) {
-    console.error('Groq AI API Error:', error);
-    return res.status(500).json({ error: 'Vera AI engine failed to generate a response.' });
+  if (text.includes('hello') || text.includes('hi') || text.includes('hey')) {
+    return "Hello! I'm Vera, your AlgoVerse study companion. Ask me about DSA, coding practice, or course access.";
   }
+
+  if (text.includes('dsa') || text.includes('array') || text.includes('linked list') || text.includes('graph') || text.includes('tree') || text.includes('dynamic programming') || text.includes('dp')) {
+    return 'I can help explain DSA topics step by step. Tell me the topic like arrays, trees, graphs, or dynamic programming and I will guide you.';
+  }
+
+  if (text.includes('payment') || text.includes('buy') || text.includes('course') || text.includes('plan')) {
+    return 'You can explore the course plans on the site. I can also help you choose the best option for beginners, interview prep, or advanced practice.';
+  }
+
+  if (text.includes('contact') || text.includes('email')) {
+    return 'You can reach the AlgoVerse team at officialalgoverse@gmail.com.';
+  }
+
+  if (text.includes('thank')) {
+    return 'You are welcome! I am here whenever you want to learn.';
+  }
+
+  return 'I can help with DSA concepts, coding problems, study plans, and course guidance. Tell me what you want to learn.';
 }
 
-// PUBLIC ROUTES
+function sendChatReply(req, res) {
+  const { message } = req.body || {};
+  const reply = getReply(message);
+  return res.json({ reply });
+}
+
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'algoverse-chatbot' });
 });
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// API ROUTES (Protected by the Rate Limiter)
-app.post('/chat', limiter, sendChatReply);
-app.post('/api/chat', limiter, sendChatReply);
+app.post('/chat', sendChatReply);
+app.post('/api/chat', sendChatReply);
 
-app.post('/create-checkout-session', limiter, async (req, res) => {
+app.post('/create-checkout-session', async (req, res) => {
   const { plan = 'Pro Version', amount = '$19 lifetime', email = '' } = req.body || {};
 
   if (!stripe) {
@@ -113,17 +106,10 @@ app.post('/create-checkout-session', limiter, async (req, res) => {
   }
 });
 
-app.post('/api/create-checkout-session', limiter, async (req, res) => {
+app.post('/api/create-checkout-session', async (req, res) => {
   return res.redirect(307, '/create-checkout-session');
 });
 
-// CONDITIONAL STARTUP
-// Runs standard server port listener ONLY when executing locally.
-// Passes control smoothly to Vercel Serverless environment in production.
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`AlgoVerse chatbot backend is running on port ${PORT}`);
-  });
-}
-
-module.exports = app;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`AlgoVerse chatbot backend is running on port ${PORT}`);
+});
