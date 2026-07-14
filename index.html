@@ -35,12 +35,42 @@
     </button>
   </div>
   <div class="mobile-menu" id="mobileMenu">
-    <a href="#features">Features</a>
-    <a href="#courses">Courses</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#about">About</a>
-    <a href="#blog">Blog</a>
-    <a href="#contact">Contact</a>
+    <div class="mobile-search">
+      <span class="mobile-search-icon" aria-hidden="true">🔍</span>
+      <input type="text" id="mobileSearchInput" placeholder="Search courses, topics…" autocomplete="off" />
+    </div>
+    <nav class="mobile-nav-list">
+      <a href="#features">Features</a>
+ 
+      <div class="mobile-accordion" data-accordion>
+        <button type="button" class="mobile-accordion-toggle" aria-expanded="false">
+          Courses
+          <span class="accordion-chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="mobile-accordion-panel">
+          <a href="dsa-course.html">Data Structures Fundamentals</a>
+          <a href="graph-algorithms.html">Graph Algorithms Mastery</a>
+          <a href="dynamic-programming.html">Dynamic Programming Deep Dive</a>
+          <a href="#courses">View all courses →</a>
+        </div>
+      </div>
+ 
+      <a href="#pricing">Pricing</a>
+      <a href="#about">About</a>
+ 
+      <div class="mobile-accordion" data-accordion>
+        <button type="button" class="mobile-accordion-toggle" aria-expanded="false">
+          Blog
+          <span class="accordion-chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="mobile-accordion-panel">
+          <a href="#blog">Code mastery & interview prep</a>
+          <a href="#articles-extra">More articles & deep dives</a>
+        </div>
+      </div>
+ 
+      <a href="#contact">Contact</a>
+    </nav>
     <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 1rem 0; width: 100%;" />
     <button type="button" class="login-btn" onclick="openAuthModal('login')">Login</button>
     <button type="button" class="mob-cta" onclick="openAuthModal('signup')" style="width: 100%; text-align: center;">Get Started Free →</button>
