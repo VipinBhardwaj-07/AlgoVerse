@@ -1,4 +1,4 @@
- *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --c-bg: #05050a;
     --c-bg2: #0d0d18;
@@ -725,49 +725,6 @@
     text-align: center; border-radius: 10px; padding: .9rem;
     font-weight: 500; border-bottom: none;
   }
-  .mobile-search {
-    display: flex; align-items: center; gap: 8px;
-    background: var(--c-bg3); border: 1px solid var(--c-border);
-    border-radius: 10px; padding: .65rem .9rem; margin-bottom: 1.1rem;
-    flex-shrink: 0;
-  }
-  .mobile-search-icon { font-size: .85rem; color: var(--c-muted); }
-  .mobile-search input {
-    flex: 1; background: none; border: none; color: var(--c-text);
-    font-family: var(--font-body); font-size: .92rem; min-width: 0;
-  }
-  .mobile-search input::placeholder { color: var(--c-dim); }
-  .mobile-search input:focus { outline: none; }
-  .mobile-nav-list { display: flex; flex-direction: column; }
-  .mobile-nav-list > a {
-    color: var(--c-muted); text-decoration: none;
-    font-size: 1rem; padding: .9rem 0;
-    border-bottom: 1px solid var(--c-border);
-    transition: color .2s;
-  }
-  .mobile-nav-list > a:hover, .mobile-nav-list > a:focus-visible { color: var(--c-accent); }
-  .mobile-accordion { border-bottom: 1px solid var(--c-border); }
-  .mobile-accordion-toggle {
-    width: 100%; background: none; border: none; color: var(--c-muted);
-    font-family: var(--font-body); font-size: 1rem; padding: .9rem 0;
-    display: flex; justify-content: space-between; align-items: center;
-    cursor: pointer; text-align: left;
-  }
-  .mobile-accordion-toggle:hover, .mobile-accordion-toggle:focus-visible { color: var(--c-accent); }
-  .accordion-chevron { transition: transform .25s ease; color: var(--c-accent); font-size: .8rem; }
-  .mobile-accordion.open .accordion-chevron { transform: rotate(180deg); }
-  .mobile-accordion-panel {
-    max-height: 0; overflow: hidden;
-    transition: max-height .3s ease;
-    display: flex; flex-direction: column;
-  }
-  .mobile-accordion.open .mobile-accordion-panel { max-height: 320px; }
-  .mobile-accordion-panel a {
-    color: var(--c-dim); text-decoration: none; font-size: .88rem;
-    padding: .65rem 0 .65rem .9rem;
-    border-top: 1px solid var(--c-border);
-  }
-  .mobile-accordion-panel a:hover, .mobile-accordion-panel a:focus-visible { color: var(--c-accent2); }
   .mobile-menu-backdrop {
     display: none;
     position: fixed; top: 0; left: 0;
@@ -1003,4 +960,3 @@
   cursor:pointer;
   background:#00e5c0;
 }
- 
