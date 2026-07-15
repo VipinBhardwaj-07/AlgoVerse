@@ -122,6 +122,15 @@
         window.addEventListener('scroll', () => btt.classList.toggle('show', window.scrollY > 400));
         btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
     }
+    function initScrollIndicator() {
+        const indicator = $('#scrollIndicator');
+        if (!indicator) return;
+        function update() {
+            indicator.classList.toggle('hide', window.scrollY > 120);
+        }
+        window.addEventListener('scroll', update, { passive: true });
+        update();
+    }
     function initScrollProgress() {
         const bar = $('#scrollProgress');
         if (!bar) return;
@@ -184,6 +193,30 @@
             });
         }, { threshold: 0.4 });
         nums.forEach(n => observer.observe(n));
+    }
+    function autoInitCarousels(selector) {
+        document.querySelectorAll(selector).forEach((grid) => {
+            const cards = Array.from(grid.children);
+            if (cards.length < 2) return;
+            const dotsWrap = document.createElement('div');
+            dotsWrap.className = 'carousel-dots';
+            grid.insertAdjacentElement('afterend', dotsWrap);
+            dotsWrap.innerHTML = cards.map((_, i) => `<span class="dot${i === 0 ? ' active' : ''}"></span>`).join('');
+            const dots = Array.from(dotsWrap.children);
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && entry.intersectionRatio > 0.55) {
+                        const idx = cards.indexOf(entry.target);
+                        dots.forEach(d => d.classList.remove('active'));
+                        if (dots[idx]) dots[idx].classList.add('active');
+                    }
+                });
+            }, { root: grid, threshold: [0.55] });
+            cards.forEach(c => observer.observe(c));
+            dots.forEach((d, i) => d.addEventListener('click', () => {
+                cards[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }));
+        });
     }
     function initMobileStickyCta() {
         const bar = $('#mobileStickyCta');
@@ -428,9 +461,11 @@
     }
     function init() {
         initMobileMenu(); initMarquee(); initBackToTop(); initMobileStickyCta(); initFAQ(); initScrollAnimations(); initNavbarShadow(); initAuth(); initPaymentFlow(); initChatbot();
-        initScrollProgress(); initCountUp();
+        initScrollProgress(); initCountUp(); initScrollIndicator();
         initCarouselDots('.courses-grid', 'coursesDots');
         initCarouselDots('.testimonials-grid', 'testimonialsDots');
+        autoInitCarousels('.features-grid');
+        autoInitCarousels('.blog-grid');
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
     window.addEventListener('load', () => {
