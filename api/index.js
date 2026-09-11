@@ -10,6 +10,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY) : null;
 
 app.set('trust proxy', 1);
@@ -26,39 +27,60 @@ app.use(cors({ origin: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
-function getReply(message) {
-  const text = String(message || '').toLowerCase().trim();
+// System prompt defines Vera's persona and scope
+const SYSTEM_PROMPT = `You are Vera, the AlgoVerse study companion chatbot.
+You help users with DSA (Data Structures & Algorithms) concepts, coding problems,
+study plans, and course guidance for the AlgoVerse platform.
+Answer the user's actual question clearly and helpfully.
+If asked about contact info, direct them to officialalgoverse@gmail.com.
+If asked about courses or pricing, mention they can check the course plans on the site.
+Keep answers concise and friendly.`;
 
-  if (!text) {
-    return 'How can I help you today?';
+async function getGroqReply(message) {
+  if (!GROQ_API_KEY) {
+    console.error('GROQ_API_KEY is missing from environment variables.');
+    return 'I can help with DSA concepts, coding problems, study plans, and course guidance. Tell me what you want to learn.';
   }
 
-  if (text.includes('hello') || text.includes('hi') || text.includes('hey')) {
-    return "Hello! I'm Vera, your AlgoVerse study companion. Ask me about DSA, coding practice, or course access.";
-  }
+  try {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile', // check Groq docs for current supported models
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: message },
+        ],
+        temperature: 0.7,
+        max_tokens: 500,
+      }),
+    });
 
-  if (text.includes('dsa') || text.includes('array') || text.includes('linked list') || text.includes('graph') || text.includes('tree') || text.includes('dynamic programming') || text.includes('dp')) {
-    return 'I can help explain DSA topics step by step. Tell me the topic like arrays, trees, graphs, or dynamic programming and I will guide you.';
-  }
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error('Groq API error:', response.status, errText);
+      return 'Sorry, I ran into an issue answering that. Please try again in a moment.';
+    }
 
-  if (text.includes('payment') || text.includes('buy') || text.includes('course') || text.includes('plan')) {
-    return 'You can explore the course plans on the site. I can also help you choose the best option for beginners, interview prep, or advanced practice.';
+    const data = await response.json();
+    const reply = data?.choices?.[0]?.message?.content?.trim();
+    return reply || 'I could not generate a response for that. Could you rephrase your question?';
+  } catch (error) {
+    console.error('Groq request failed:', error);
+    return 'Sorry, something went wrong while contacting the AI service.';
   }
-
-  if (text.includes('contact') || text.includes('email')) {
-    return 'You can reach the AlgoVerse team at officialalgoverse@gmail.com.';
-  }
-
-  if (text.includes('thank')) {
-    return 'You are welcome! I am here whenever you want to learn.';
-  }
-
-  return 'I can help with DSA concepts, coding problems, study plans, and course guidance. Tell me what you want to learn.';
 }
 
-function sendChatReply(req, res) {
+async function sendChatReply(req, res) {
   const { message } = req.body || {};
-  const reply = getReply(message);
+  if (!message || !String(message).trim()) {
+    return res.json({ reply: 'How can I help you today?' });
+  }
+  const reply = await getGroqReply(message);
   return res.json({ reply });
 }
 
@@ -67,7 +89,7 @@ app.get('/health', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-res.sendFile(path.join(__dirname, '..', 'index.html'));
+  res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
 app.post('/chat', sendChatReply);
