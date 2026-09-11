@@ -50,7 +50,7 @@ async function getGroqReply(message) {
         'Authorization': `Bearer ${GROQ_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile', // check Groq docs for current supported models
+        model: 'openai/gpt-oss-20b', // available on standard Groq developer accounts
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: message },
