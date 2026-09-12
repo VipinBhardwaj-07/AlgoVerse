@@ -4,10 +4,6 @@ const dotenv = require('dotenv');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
 const Stripe = require('stripe');
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('./models/User');
 
 dotenv.config();
 
@@ -15,29 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
-const MONGODB_URI = process.env.MONGODB_URI;
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-only-insecure-secret-change-me';
 const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY) : null;
-
-// ---- Database connection ----
-// Vercel serverless functions can be invoked many times; cache the connection
-// so we don't reconnect on every request.
-let isDbConnected = false;
-async function connectDB() {
-  if (isDbConnected) return;
-  if (!MONGODB_URI) {
-    console.error('MONGODB_URI is missing from environment variables.');
-    return;
-  }
-  try {
-    await mongoose.connect(MONGODB_URI);
-    isDbConnected = true;
-    console.log('MongoDB connected');
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-  }
-}
-connectDB();
 
 app.set('trust proxy', 1);
 
@@ -112,114 +86,6 @@ async function sendChatReply(req, res) {
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'algoverse-chatbot' });
-});
-
-// ---- Auth helpers ----
-function signToken(user) {
-  return jwt.sign({ sub: user._id.toString() }, JWT_SECRET, { expiresIn: '30d' });
-}
-
-function toPublicUser(user) {
-  return {
-    id: user._id,
-    name: user.name,
-    email: user.email,
-    address: user.address || {},
-    photoUrl: user.photoUrl || '',
-    provider: user.provider,
-  };
-}
-
-async function requireAuth(req, res, next) {
-  const header = req.headers.authorization || '';
-  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
-  if (!token) return res.status(401).json({ error: 'Not authenticated.' });
-  try {
-    const payload = jwt.verify(token, JWT_SECRET);
-    const user = await User.findById(payload.sub);
-    if (!user) return res.status(401).json({ error: 'User not found.' });
-    req.user = user;
-    next();
-  } catch (error) {
-    return res.status(401).json({ error: 'Invalid or expired session.' });
-  }
-}
-
-// ---- Auth routes ----
-app.post('/api/auth/signup', async (req, res) => {
-  try {
-    const { name, email, password } = req.body || {};
-    if (!name || !email || !password) {
-      return res.status(400).json({ error: 'Name, email, and password are required.' });
-    }
-    const normalizedEmail = String(email).toLowerCase().trim();
-    const existing = await User.findOne({ email: normalizedEmail });
-    if (existing) {
-      return res.status(409).json({ error: 'An account with this email already exists.' });
-    }
-    const passwordHash = await bcrypt.hash(password, 10);
-    const user = await User.create({
-      name: String(name).trim(),
-      email: normalizedEmail,
-      passwordHash,
-      provider: 'local',
-    });
-    const token = signToken(user);
-    return res.json({ token, user: toPublicUser(user) });
-  } catch (error) {
-    console.error('Signup error:', error);
-    return res.status(500).json({ error: 'Unable to create account right now.' });
-  }
-});
-
-app.post('/api/auth/login', async (req, res) => {
-  try {
-    const { email, password } = req.body || {};
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required.' });
-    }
-    const normalizedEmail = String(email).toLowerCase().trim();
-    const user = await User.findOne({ email: normalizedEmail });
-    if (!user || !user.passwordHash) {
-      return res.status(401).json({ error: 'Invalid email or password.' });
-    }
-    const match = await bcrypt.compare(password, user.passwordHash);
-    if (!match) {
-      return res.status(401).json({ error: 'Invalid email or password.' });
-    }
-    const token = signToken(user);
-    return res.json({ token, user: toPublicUser(user) });
-  } catch (error) {
-    console.error('Login error:', error);
-    return res.status(500).json({ error: 'Unable to log in right now.' });
-  }
-});
-
-app.get('/api/auth/me', requireAuth, async (req, res) => {
-  return res.json({ user: toPublicUser(req.user) });
-});
-
-app.put('/api/auth/profile', requireAuth, async (req, res) => {
-  try {
-    const { name, address, photoUrl } = req.body || {};
-    if (typeof name === 'string' && name.trim()) req.user.name = name.trim();
-    if (address && typeof address === 'object') {
-      req.user.address = {
-        line1: address.line1 || '',
-        line2: address.line2 || '',
-        city: address.city || '',
-        state: address.state || '',
-        zip: address.zip || '',
-        country: address.country || '',
-      };
-    }
-    if (typeof photoUrl === 'string') req.user.photoUrl = photoUrl;
-    await req.user.save();
-    return res.json({ user: toPublicUser(req.user) });
-  } catch (error) {
-    console.error('Profile update error:', error);
-    return res.status(500).json({ error: 'Unable to update profile right now.' });
-  }
 });
 
 app.get('/', (req, res) => {
