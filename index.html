@@ -151,6 +151,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="nav-auth">
       <div class="user-badge" id="userBadge" style="display:none;">
         <span id="userStatus">Hi, User</span>
+        <button type="button" class="btn-ghost" onclick="openProfileModal()">Profile</button>
         <button type="button" class="btn-ghost" id="logoutBtn" onclick="logoutUser()">Logout</button>
       </div>
       <button type="button" class="btn-accent" id="loginBtn" onclick="openAuthModal('login')">Login</button>
@@ -979,6 +980,70 @@ Send Message →
     </form>
   </div>
 </div>
+
+<!-- NEW: Profile modal -->
+<div id="profileModal" class="modal-overlay" aria-modal="true" role="dialog" hidden>
+  <div class="modal-box">
+    <button type="button" class="modal-close" onclick="closeProfileModal()">&times;</button>
+    <div class="modal-header">
+      <h2>Your Profile</h2>
+      <p>Update your personal details and photo</p>
+    </div>
+    <div id="profileMessage" class="auth-message" aria-live="polite"></div>
+
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.2rem;">
+      <img id="profilePhotoPreview" src="logo.png" alt="Profile photo"
+           style="width:70px; height:70px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,.15);" />
+      <label class="btn-ghost" style="cursor:pointer;">
+        Change Photo
+        <input type="file" id="profilePhotoInput" accept="image/*" style="display:none;" />
+      </label>
+    </div>
+
+    <form id="profileForm" class="modal-form">
+      <div class="form-group">
+        <label style="color: var(--c-muted); display:block; margin-bottom:0.4rem; font-size:0.9rem;">Full Name</label>
+        <input type="text" id="profileName" placeholder="Your name" style="width:100%; padding:0.75rem; background:#1e293b; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff;" />
+      </div>
+      <div class="form-group">
+        <label style="color: var(--c-muted); display:block; margin-bottom:0.4rem; font-size:0.9rem;">Email Address</label>
+        <input type="email" id="profileEmail" disabled style="width:100%; padding:0.75rem; background:#1e293b; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff; opacity:.6;" />
+      </div>
+      <div class="form-group">
+        <label style="color: var(--c-muted); display:block; margin-bottom:0.4rem; font-size:0.9rem;">Address Line 1</label>
+        <input type="text" id="profileLine1" placeholder="Street address" style="width:100%; padding:0.75rem; background:#1e293b; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff;" />
+      </div>
+      <div class="form-group">
+        <label style="color: var(--c-muted); display:block; margin-bottom:0.4rem; font-size:0.9rem;">Address Line 2</label>
+        <input type="text" id="profileLine2" placeholder="Apartment, suite, etc. (optional)" style="width:100%; padding:0.75rem; background:#1e293b; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff;" />
+      </div>
+      <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+        <div class="form-group">
+          <label style="color: var(--c-muted); display:block; margin-bottom:0.4rem; font-size:0.9rem;">City</label>
+          <input type="text" id="profileCity" style="width:100%; padding:0.75rem; background:#1e293b; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff;" />
+        </div>
+        <div class="form-group">
+          <label style="color: var(--c-muted); display:block; margin-bottom:0.4rem; font-size:0.9rem;">State</label>
+          <input type="text" id="profileState" style="width:100%; padding:0.75rem; background:#1e293b; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff;" />
+        </div>
+      </div>
+      <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+        <div class="form-group">
+          <label style="color: var(--c-muted); display:block; margin-bottom:0.4rem; font-size:0.9rem;">ZIP / Postal Code</label>
+          <input type="text" id="profileZip" style="width:100%; padding:0.75rem; background:#1e293b; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff;" />
+        </div>
+        <div class="form-group">
+          <label style="color: var(--c-muted); display:block; margin-bottom:0.4rem; font-size:0.9rem;">Country</label>
+          <input type="text" id="profileCountry" style="width:100%; padding:0.75rem; background:#1e293b; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff;" />
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:1rem;">
+        Save Changes
+      </button>
+    </form>
+  </div>
+</div>
+
 <div id="paymentModal" class="modal-overlay" aria-modal="true" role="dialog" hidden>
   <div class="modal-box payment-modal-box">
     <button type="button" class="modal-close" onclick="closePaymentModal()">&times;</button>

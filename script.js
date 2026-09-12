@@ -277,45 +277,237 @@
         .catch((err) => { console.error('Email send failed', err); alert('Failed to send message.'); });
     }
     window.sendContactForm = sendContactForm;
-    function getUsers() {
-        try { return JSON.parse(localStorage.getItem('algoVerseUsers') || '{}'); }
-        catch (e) { console.error('Failed to read stored users', e); return {}; }
-    }
-    function saveUsers(users) { localStorage.setItem('algoVerseUsers', JSON.stringify(users)); }
+
+    // ============================================================
+    // BACKEND URL (must be defined before auth functions use it)
+    // ============================================================
+    const isLocalHost = (location.hostname === 'localhost' || location.hostname === '127.0.0.1');
+    const isFileProtocol = location.protocol === 'file:';
+    const BACKEND_URL = (isLocalHost || isFileProtocol) ? 'http://localhost:5000' : '/api';
+
+    // ============================================================
+    // REAL AUTH + PROFILE (replaces old localStorage-based getUsers/saveUsers)
+    // ============================================================
+    const CLOUDINARY_CLOUD_NAME = 'YOUR_CLOUD_NAME'; // from Cloudinary dashboard
+    const CLOUDINARY_UPLOAD_PRESET = 'YOUR_UPLOAD_PRESET'; // unsigned preset you created
+
+    function getToken() { return localStorage.getItem('algoVerseToken'); }
+    function setToken(token) { localStorage.setItem('algoVerseToken', token); }
+    function clearToken() { localStorage.removeItem('algoVerseToken'); }
+
     function showAuthMessage(message, type = 'error') {
-        const el = $('#authMessage'); if (!el) return; el.textContent = message; el.classList.toggle('success', type === 'success');
+        const el = $('#authMessage'); if (!el) return;
+        el.textContent = message;
+        el.classList.toggle('success', type === 'success');
     }
-    function setLoggedInUser(email) {
-        const users = getUsers(); const user = users[email]; if (!user) return; localStorage.setItem('algoVerseCurrentUser', email);
-        const userBadge = $('#userBadge'); const userStatus = $('#userStatus'); const loginBtn = $('#loginBtn'); const signupBtn = $('#signupBtn');
+
+    function setLoggedInUser(user) {
+        const userBadge = $('#userBadge'); const userStatus = $('#userStatus');
+        const loginBtn = $('#loginBtn'); const signupBtn = $('#signupBtn');
         if (userBadge && userStatus && loginBtn && signupBtn) {
-            userStatus.textContent = `Hi, ${user.name}`; userBadge.style.display = 'flex'; loginBtn.style.display = 'none'; signupBtn.style.display = 'none';
+            userStatus.textContent = `Hi, ${user.name}`;
+            userBadge.style.display = 'flex';
+            loginBtn.style.display = 'none';
+            signupBtn.style.display = 'none';
+        }
+        window.currentUser = user;
+        renderProfileModal(user);
+    }
+
+    function clearLoggedInUser() {
+        clearToken();
+        window.currentUser = null;
+        const userBadge = $('#userBadge'); const loginBtn = $('#loginBtn'); const signupBtn = $('#signupBtn');
+        if (userBadge && loginBtn && signupBtn) {
+            userBadge.style.display = 'none';
+            loginBtn.style.display = 'inline-flex';
+            signupBtn.style.display = 'inline-flex';
         }
     }
-    function clearLoggedInUser() { localStorage.removeItem('algoVerseCurrentUser'); const userBadge = $('#userBadge'); const loginBtn = $('#loginBtn'); const signupBtn = $('#signupBtn'); if (userBadge && loginBtn && signupBtn) { userBadge.style.display = 'none'; loginBtn.style.display = 'inline-flex'; signupBtn.style.display = 'inline-flex'; } }
-    function restoreLoggedInUser() { const currentEmail = localStorage.getItem('algoVerseCurrentUser'); if (currentEmail) setLoggedInUser(currentEmail); }
-    function handleAuthSubmit(e) {
-        e.preventDefault(); const modal = $('#authModal'); if (!modal) return; const mode = modal.dataset.mode || 'login'; const name = ($('#authName')?.value || '').trim(); const email = ($('#authEmail')?.value || '').trim().toLowerCase(); const password = ($('#authPassword')?.value || '');
+
+    async function apiRequest(path, options = {}) {
+        const token = getToken();
+        const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        const response = await fetch(`${BACKEND_URL}${path}`, { ...options, headers });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || 'Something went wrong.');
+        return data;
+    }
+
+    async function restoreLoggedInUser() {
+        const token = getToken();
+        if (!token) return;
+        try {
+            const { user } = await apiRequest('/auth/me');
+            setLoggedInUser(user);
+        } catch (error) {
+            console.warn('Session expired or invalid, logging out.', error);
+            clearLoggedInUser();
+        }
+    }
+
+    async function handleAuthSubmit(e) {
+        e.preventDefault();
+        const modal = $('#authModal'); if (!modal) return;
+        const mode = modal.dataset.mode || 'login';
+        const name = ($('#authName')?.value || '').trim();
+        const email = ($('#authEmail')?.value || '').trim().toLowerCase();
+        const password = ($('#authPassword')?.value || '');
+
         if (!email || !password) { showAuthMessage('Please fill in both email and password.'); return; }
-        const users = getUsers();
-        if (mode === 'signup') {
-            if (!name) { showAuthMessage('Please enter your full name to create an account.'); return; }
-            if (users[email]) { showAuthMessage('This email is already registered. Try logging in.'); return; }
-            users[email] = { name, password }; saveUsers(users); setLoggedInUser(email); showAuthMessage(`Account created successfully. Welcome, ${name}!`, 'success'); setTimeout(closeAuthModal, 1000); return;
+
+        try {
+            if (mode === 'signup') {
+                if (!name) { showAuthMessage('Please enter your full name to create an account.'); return; }
+                const { token, user } = await apiRequest('/auth/signup', {
+                    method: 'POST',
+                    body: JSON.stringify({ name, email, password }),
+                });
+                setToken(token);
+                setLoggedInUser(user);
+                showAuthMessage(`Account created successfully. Welcome, ${user.name}!`, 'success');
+                setTimeout(closeAuthModal, 1000);
+                return;
+            }
+            const { token, user } = await apiRequest('/auth/login', {
+                method: 'POST',
+                body: JSON.stringify({ email, password }),
+            });
+            setToken(token);
+            setLoggedInUser(user);
+            showAuthMessage(`Login successful. Welcome back, ${user.name}!`, 'success');
+            setTimeout(closeAuthModal, 1000);
+        } catch (error) {
+            showAuthMessage(error.message || 'Something went wrong. Please try again.');
         }
-        const user = users[email]; if (!user || user.password !== password) { showAuthMessage('Invalid email or password. Please try again.'); return; }
-        setLoggedInUser(email); showAuthMessage(`Login successful. Welcome back, ${user.name}!`, 'success'); setTimeout(closeAuthModal, 1000);
     }
-    function logoutUser() { clearLoggedInUser(); showAuthMessage('You have been logged out.', 'success'); }
+
+    function logoutUser() {
+        clearLoggedInUser();
+        closeProfileModal();
+        showAuthMessage('You have been logged out.', 'success');
+    }
+
     function openAuthModal(mode) {
-        const modal = $('#authModal'); const title = $('#modalTitle'); const subtitle = $('#modalSubtitle'); const nameField = $('#nameFieldGroup'); const submitBtn = $('#modalSubmitBtn'); if (!modal) return;
-        if (mode === 'signup') { if (title) title.innerHTML = 'Create your Algo<span>Verse</span> account'; if (subtitle) subtitle.innerText = 'Join 50k+ engineers mastering DSA today'; if (nameField) nameField.style.display = 'block'; if (submitBtn) submitBtn.innerText = 'Create Account →'; }
-        else { if (title) title.innerHTML = 'Welcome back to Algo<span>Verse</span>'; if (subtitle) subtitle.innerText = 'Master your algorithmic skills'; if (nameField) nameField.style.display = 'none'; if (submitBtn) submitBtn.innerText = 'Sign In →'; }
-        modal.dataset.mode = mode; modal.classList.add('show');
-        // close mobile menu if open
+        const modal = $('#authModal'); const title = $('#modalTitle'); const subtitle = $('#modalSubtitle');
+        const nameField = $('#nameFieldGroup'); const submitBtn = $('#modalSubmitBtn'); if (!modal) return;
+        if (mode === 'signup') {
+            if (title) title.innerHTML = 'Create your Algo<span>Verse</span> account';
+            if (subtitle) subtitle.innerText = 'Join 50k+ engineers mastering DSA today';
+            if (nameField) nameField.style.display = 'block';
+            if (submitBtn) submitBtn.innerText = 'Create Account →';
+        } else {
+            if (title) title.innerHTML = 'Welcome back to Algo<span>Verse</span>';
+            if (subtitle) subtitle.innerText = 'Master your algorithmic skills';
+            if (nameField) nameField.style.display = 'none';
+            if (submitBtn) submitBtn.innerText = 'Sign In →';
+        }
+        modal.dataset.mode = mode;
+        modal.classList.add('show');
         if (typeof window.closeMobileMenu === 'function') window.closeMobileMenu();
     }
-    function closeAuthModal() { const modal = $('#authModal'); if (modal) { modal.classList.remove('show'); showAuthMessage(''); } }
+
+    function closeAuthModal() {
+        const modal = $('#authModal');
+        if (modal) { modal.classList.remove('show'); showAuthMessage(''); }
+    }
+
+    // ---- Profile modal ----
+    function renderProfileModal(user) {
+        const nameEl = $('#profileName'); const emailEl = $('#profileEmail');
+        const line1El = $('#profileLine1'); const line2El = $('#profileLine2');
+        const cityEl = $('#profileCity'); const stateEl = $('#profileState');
+        const zipEl = $('#profileZip'); const countryEl = $('#profileCountry');
+        const photoImg = $('#profilePhotoPreview');
+        if (nameEl) nameEl.value = user.name || '';
+        if (emailEl) emailEl.value = user.email || '';
+        const addr = user.address || {};
+        if (line1El) line1El.value = addr.line1 || '';
+        if (line2El) line2El.value = addr.line2 || '';
+        if (cityEl) cityEl.value = addr.city || '';
+        if (stateEl) stateEl.value = addr.state || '';
+        if (zipEl) zipEl.value = addr.zip || '';
+        if (countryEl) countryEl.value = addr.country || '';
+        if (photoImg) photoImg.src = user.photoUrl || 'logo.png';
+    }
+
+    function openProfileModal() {
+        const modal = $('#profileModal'); if (!modal || !window.currentUser) return;
+        renderProfileModal(window.currentUser);
+        modal.hidden = false;
+        modal.classList.add('show');
+        if (typeof window.closeMobileMenu === 'function') window.closeMobileMenu();
+    }
+
+    function closeProfileModal() {
+        const modal = $('#profileModal'); if (modal) { modal.classList.remove('show'); modal.hidden = true; }
+    }
+
+    async function uploadProfilePhoto(file) {
+        if (!CLOUDINARY_CLOUD_NAME || CLOUDINARY_CLOUD_NAME === 'YOUR_CLOUD_NAME') {
+            alert('Photo upload is not configured yet. Set CLOUDINARY_CLOUD_NAME and CLOUDINARY_UPLOAD_PRESET in script.js.');
+            return null;
+        }
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+            method: 'POST',
+            body: formData,
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error?.message || 'Photo upload failed.');
+        return data.secure_url;
+    }
+
+    async function handleProfilePhotoChange(e) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const photoImg = $('#profilePhotoPreview');
+        const statusEl = $('#profileMessage');
+        if (statusEl) { statusEl.textContent = 'Uploading photo…'; statusEl.classList.remove('success'); }
+        try {
+            const url = await uploadProfilePhoto(file);
+            if (!url) return;
+            if (photoImg) photoImg.src = url;
+            window.pendingPhotoUrl = url;
+            if (statusEl) { statusEl.textContent = 'Photo uploaded. Click Save to apply.'; statusEl.classList.add('success'); }
+        } catch (error) {
+            if (statusEl) { statusEl.textContent = error.message; statusEl.classList.remove('success'); }
+        }
+    }
+
+    async function saveProfile(e) {
+        e.preventDefault();
+        const statusEl = $('#profileMessage');
+        const name = ($('#profileName')?.value || '').trim();
+        const address = {
+            line1: $('#profileLine1')?.value || '',
+            line2: $('#profileLine2')?.value || '',
+            city: $('#profileCity')?.value || '',
+            state: $('#profileState')?.value || '',
+            zip: $('#profileZip')?.value || '',
+            country: $('#profileCountry')?.value || '',
+        };
+        const photoUrl = window.pendingPhotoUrl || window.currentUser?.photoUrl || '';
+        try {
+            const { user } = await apiRequest('/auth/profile', {
+                method: 'PUT',
+                body: JSON.stringify({ name, address, photoUrl }),
+            });
+            window.currentUser = user;
+            setLoggedInUser(user);
+            window.pendingPhotoUrl = null;
+            if (statusEl) { statusEl.textContent = 'Profile updated successfully.'; statusEl.classList.add('success'); }
+        } catch (error) {
+            if (statusEl) { statusEl.textContent = error.message; statusEl.classList.remove('success'); }
+        }
+    }
+    // ============================================================
+    // END REAL AUTH + PROFILE
+    // ============================================================
+
     let activePaymentMethod = 'card';
     function setPaymentMethod(method) {
         activePaymentMethod = method;
@@ -427,16 +619,28 @@
             }
         }
     }
-    window.openAuthModal = openAuthModal; window.closeAuthModal = closeAuthModal; window.logoutUser = logoutUser; window.openPaymentModal = openPaymentModal; window.closePaymentModal = closePaymentModal; window.processPayment = processPayment;
-    function initAuth() { const authForm = $('#authForm'); if (authForm) authForm.addEventListener('submit', handleAuthSubmit); restoreLoggedInUser(); }
+    window.openAuthModal = openAuthModal;
+    window.closeAuthModal = closeAuthModal;
+    window.logoutUser = logoutUser;
+    window.openProfileModal = openProfileModal;
+    window.closeProfileModal = closeProfileModal;
+    window.saveProfile = saveProfile;
+    window.handleProfilePhotoChange = handleProfilePhotoChange;
+    window.openPaymentModal = openPaymentModal;
+    window.closePaymentModal = closePaymentModal;
+    window.processPayment = processPayment;
+
+    function initAuth() {
+        const authForm = $('#authForm'); if (authForm) authForm.addEventListener('submit', handleAuthSubmit);
+        const profileForm = $('#profileForm'); if (profileForm) profileForm.addEventListener('submit', saveProfile);
+        const photoInput = $('#profilePhotoInput'); if (photoInput) photoInput.addEventListener('change', handleProfilePhotoChange);
+        restoreLoggedInUser();
+    }
     function initPaymentFlow() {
         $$('.payment-method-btn').forEach(btn => {
             btn.addEventListener('click', () => setPaymentMethod(btn.getAttribute('data-method') || 'card'));
         });
     }
-    const isLocalHost = (location.hostname === 'localhost' || location.hostname === '127.0.0.1');
-    const isFileProtocol = location.protocol === 'file:';
-    const BACKEND_URL = (isLocalHost || isFileProtocol) ? 'http://localhost:5000' : '/api';
     function initChatbot() {
         const chatBtn = $('#vera-chat-btn'); const chatBox = $('#vera-chat-box'); const closeBtn = $('#vera-close'); const sendBtn = $('#vera-send'); const voiceBtn = $('#vera-voice'); const input = $('#vera-input'); const messages = $('#vera-messages');
         if (!chatBtn || !chatBox) { console.warn('Chatbot elements not found'); return; }
@@ -469,8 +673,8 @@
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
     window.addEventListener('load', () => {
-        const currentUser = localStorage.getItem('algoVerseCurrentUser');
-        if (!currentUser) setTimeout(() => openAuthModal('signup'), 800);
+        const token = localStorage.getItem('algoVerseToken');
+        if (!token) setTimeout(() => openAuthModal('signup'), 800);
     });
     window.openVideoDemo = function () { const videoModal = $('#videoModal'); const demoVideo = $('#demoVideo'); if (!videoModal || !demoVideo) return; videoModal.hidden = false; videoModal.classList.add('show'); demoVideo.currentTime = 0; demoVideo.play().catch(() => {}); };
     window.closeVideoDemo = function () { const videoModal = $('#videoModal'); const demoVideo = $('#demoVideo'); if (!videoModal || !demoVideo) return; demoVideo.pause(); videoModal.classList.remove('show'); videoModal.hidden = true; };
