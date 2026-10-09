@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Settings | AlgoVerse</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#05050a">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="account.css">
+</head>
+<body>
+  <header class="ac-topbar">
+    <div class="ac-topbar-inner">
+      <a class="ac-logo" href="index.html"><img src="logo.png" alt=""> Algo<span>Verse</span></a>
+      <div class="ac-topbar-actions">
+        <a class="ac-link-btn" href="index.html">← <span class="lbl">Back to site</span></a>
+        <span id="topbarUser"></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="ac-wrap" id="main">
+    <h1 class="ac-page-title">Settings</h1>
+    <p class="ac-page-sub">Manage your account, security, privacy and notifications.</p>
+
+    <div class="ac-layout">
+      <nav class="ac-nav" role="tablist" aria-label="Settings sections" aria-orientation="vertical" id="tabs">
+        <button role="tab" id="tab-account" aria-controls="panel-account" data-tab="account"><span class="ico">👤</span>Account</button>
+        <button role="tab" id="tab-security" aria-controls="panel-security" data-tab="security"><span class="ico">🔐</span>Security</button>
+        <button role="tab" id="tab-privacy" aria-controls="panel-privacy" data-tab="privacy"><span class="ico">🔒</span>Privacy</button>
+        <button role="tab" id="tab-notifications" aria-controls="panel-notifications" data-tab="notifications"><span class="ico">🔔</span>Notifications</button>
+        <button role="tab" id="tab-payments" aria-controls="panel-payments" data-tab="payments"><span class="ico">💳</span>Billing</button>
+        <button role="tab" id="tab-legal" aria-controls="panel-legal" data-tab="legal"><span class="ico">📜</span>Data &amp; legal</button>
+        <hr>
+        <a href="profile.html"><span class="ico">🪪</span>View profile</a>
+        <a href="support.html"><span class="ico">❓</span>Help &amp; support</a>
+        <button type="button" class="danger" id="navLogout"><span class="ico">🚪</span>Log out</button>
+      </nav>
+
+      <div>
+        <!-- ACCOUNT -->
+        <section class="ac-panel" id="panel-account" role="tabpanel" aria-labelledby="tab-account">
+          <form class="ac-card" id="accountForm" novalidate>
+            <h2>Account details</h2>
+            <p class="desc">Your name is shown on your profile and in the menu.</p>
+            <div class="ac-grid">
+              <div class="ac-field"><label for="acName">Full name</label><input id="acName" maxlength="60" autocomplete="name"></div>
+              <div class="ac-field"><label for="acEmail">Email</label><input id="acEmail" readonly><span class="ac-hint">Used to sign in. Can't be changed here.</span></div>
+              <div class="ac-field"><label>Member since</label><input id="acJoined" readonly></div>
+              <div class="ac-field"><label>Plan</label><input value="Free" readonly></div>
+            </div>
+            <div class="ac-actions"><button class="ac-btn primary" type="submit">Save changes</button><a class="ac-btn ghost" href="profile.html">Edit full profile</a></div>
+          </form>
+
+          <section class="ac-card">
+            <h2>Appearance &amp; accessibility</h2>
+            <p class="desc">These apply to your account pages.</p>
+            <div class="ac-row">
+              <div class="txt"><strong>Text size</strong><span>Make text easier to read</span></div>
+              <select class="ac-select" id="prefFont" aria-label="Text size"><option value="small">Small</option><option value="medium">Medium</option><option value="large">Large</option></select>
+            </div>
+            <div class="ac-row">
+              <div class="txt"><strong>Reduce motion</strong><span>Turn off animations and transitions</span></div>
+              <label class="ac-switch"><input type="checkbox" id="prefMotion" aria-label="Reduce motion"><i></i></label>
+            </div>
+          </section>
+        </section>
+
+        <!-- SECURITY -->
+        <section class="ac-panel" id="panel-security" role="tabpanel" aria-labelledby="tab-security">
+          <form class="ac-card" id="pwForm" novalidate>
+            <h2>Change password</h2>
+            <p class="desc">Use at least 8 characters. A mix of letters, numbers and symbols is strongest.</p>
+            <input type="text" autocomplete="username" id="pwUser" hidden>
+            <div class="ac-grid">
+              <div class="ac-field full"><label for="pwCurrent">Current password</label><div class="ac-pw"><input type="password" id="pwCurrent" autocomplete="current-password"><button type="button" aria-label="Show password">👁️</button></div></div>
+              <div class="ac-field"><label for="pwNew">New password</label><div class="ac-pw"><input type="password" id="pwNew" autocomplete="new-password"><button type="button" aria-label="Show password">👁️</button></div>
+                <div class="strength" id="pwStrength" data-s="0" aria-hidden="true"><i></i><i></i><i></i><i></i></div><span class="ac-hint" id="pwStrengthTxt">&nbsp;</span></div>
+              <div class="ac-field"><label for="pwConfirm">Confirm new password</label><div class="ac-pw"><input type="password" id="pwConfirm" autocomplete="new-password"><button type="button" aria-label="Show password">👁️</button></div><span class="ac-hint" id="pwMatch">&nbsp;</span></div>
+            </div>
+            <div class="ac-actions"><button class="ac-btn primary" type="submit">Update password</button></div>
+          </form>
+
+          <section class="ac-card">
+            <h2>Sign-in protection</h2>
+            <p class="desc">Extra safeguards for your account.</p>
+            <div class="ac-row">
+              <div class="txt"><strong>Two-factor authentication <span class="badge warn">Coming soon</span></strong><span>Requires server-side support, so it isn't available yet.</span></div>
+              <label class="ac-switch" title="Not available yet"><input type="checkbox" disabled aria-label="Two-factor authentication (coming soon)"><i style="opacity:.4"></i></label>
+            </div>
+            <div class="ac-row">
+              <div class="txt"><strong>Security alerts</strong><span>Email me about important account activity</span></div>
+              <label class="ac-switch"><input type="checkbox" data-group="notifications" data-key="security" aria-label="Security alerts"><i></i></label>
+            </div>
+          </section>
+
+          <section class="ac-card">
+            <h2>Where you're signed in</h2>
+            <p class="desc">Sessions on this browser.</p>
+            <div class="ac-row">
+              <div class="txt"><strong id="sessDevice">This device</strong><span id="sessMeta">Active now</span></div>
+              <span class="badge">Current</span>
+            </div>
+            <div class="ac-actions"><button type="button" class="ac-btn ghost" id="signOutHere">Sign out of this device</button></div>
+          </section>
+        </section>
+
+        <!-- PRIVACY -->
+        <section class="ac-panel" id="panel-privacy" role="tabpanel" aria-labelledby="tab-privacy">
+          <section class="ac-card">
+            <h2>Profile privacy</h2>
+            <p class="desc">Choose what other learners can see about you.</p>
+            <div class="ac-row">
+              <div class="txt"><strong>Profile visibility</strong><span>Who can view your profile</span></div>
+              <select class="ac-select" data-group="privacy" data-key="visibility" aria-label="Profile visibility">
+                <option value="public">Everyone</option><option value="members">Signed-in members only</option><option value="private">Only me</option>
+              </select>
+            </div>
+            <div class="ac-row"><div class="txt"><strong>Show email on profile</strong><span>Off by default</span></div><label class="ac-switch"><input type="checkbox" data-group="privacy" data-key="showEmail" aria-label="Show email on profile"><i></i></label></div>
+            <div class="ac-row"><div class="txt"><strong>Show location</strong><span>City or country from your profile</span></div><label class="ac-switch"><input type="checkbox" data-group="privacy" data-key="showLocation" aria-label="Show location"><i></i></label></div>
+            <div class="ac-row"><div class="txt"><strong>Show learning progress</strong><span>Courses and achievements</span></div><label class="ac-switch"><input type="checkbox" data-group="privacy" data-key="showProgress" aria-label="Show learning progress"><i></i></label></div>
+            <div class="ac-row"><div class="txt"><strong>Appear on leaderboards</strong><span>Rankings and community boards</span></div><label class="ac-switch"><input type="checkbox" data-group="privacy" data-key="leaderboard" aria-label="Appear on leaderboards"><i></i></label></div>
+          </section>
+          <section class="ac-card">
+            <h2>Data &amp; cookies</h2>
+            <p class="desc">Control how usage data is used to improve AlgoVerse.</p>
+            <div class="ac-row"><div class="txt"><strong>Usage analytics</strong><span>Help us improve with anonymous usage stats</span></div><label class="ac-switch"><input type="checkbox" data-group="privacy" data-key="analytics" aria-label="Usage analytics"><i></i></label></div>
+          </section>
+        </section>
+
+        <!-- NOTIFICATIONS -->
+        <section class="ac-panel" id="panel-notifications" role="tabpanel" aria-labelledby="tab-notifications">
+          <section class="ac-card">
+            <h2>Email notifications</h2>
+            <p class="desc">Pick what you want to hear about.</p>
+            <div class="ac-row"><div class="txt"><strong>Product updates</strong><span>New courses, visualizers and features</span></div><label class="ac-switch"><input type="checkbox" data-group="notifications" data-key="product" aria-label="Product updates"><i></i></label></div>
+            <div class="ac-row"><div class="txt"><strong>Study reminders</strong><span>Nudges to keep your streak going</span></div><label class="ac-switch"><input type="checkbox" data-group="notifications" data-key="reminders" aria-label="Study reminders"><i></i></label></div>
+            <div class="ac-row"><div class="txt"><strong>Weekly progress summary</strong><span>A recap every Monday</span></div><label class="ac-switch"><input type="checkbox" data-group="notifications" data-key="weekly" aria-label="Weekly progress summary"><i></i></label></div>
+            <div class="ac-row"><div class="txt"><strong>Offers &amp; promotions</strong><span>Discounts and special events</span></div><label class="ac-switch"><input type="checkbox" data-group="notifications" data-key="marketing" aria-label="Offers and promotions"><i></i></label></div>
+            <div class="ac-row"><div class="txt"><strong>Reminder frequency</strong><span>How often study reminders are sent</span></div>
+              <select class="ac-select" data-group="notifications" data-key="frequency" aria-label="Reminder frequency"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="off">Never</option></select></div>
+          </section>
+        </section>
+
+        <!-- BILLING -->
+        <section class="ac-panel" id="panel-payments" role="tabpanel" aria-labelledby="tab-payments">
+          <section class="ac-card">
+            <div class="ac-card-head"><div><h2>Current plan</h2><p class="desc" style="margin:0">You're on the Free plan.</p></div><a class="ac-btn primary" href="index.html#pricing">View plans</a></div>
+          </section>
+          <section class="ac-card">
+            <h2>Payment history</h2>
+            <p class="desc">Receipts for purchases made with this account.</p>
+            <div class="ac-table-wrap">
+              <table class="ac-table"><thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Status</th></tr></thead><tbody id="payRows"></tbody></table>
+            </div>
+            <p class="ac-hint" style="margin-top:.8rem">Payments are handled securely by Stripe. Your card details are never stored on AlgoVerse.</p>
+          </section>
+        </section>
+
+        <!-- DATA & LEGAL -->
+        <section class="ac-panel" id="panel-legal" role="tabpanel" aria-labelledby="tab-legal">
+          <section class="ac-card">
+            <h2>Your data</h2>
+            <p class="desc">Download a copy of your profile and settings, or reset them.</p>
+            <div class="ac-actions" style="margin-top:0">
+              <button type="button" class="ac-btn ghost" id="exportBtn">⬇️ Export my data</button>
+              <button type="button" class="ac-btn ghost" id="resetBtn">↺ Reset profile &amp; settings</button>
+            </div>
+          </section>
+          <section class="ac-card">
+            <h2>Legal</h2>
+            <p class="desc">Policies that apply to your use of AlgoVerse.</p>
+            <div class="ac-legal-links">
+              <a href="legal.html#privacy-policy"><span>Privacy Policy</span><span aria-hidden="true">→</span></a>
+              <a href="legal.html#terms"><span>Terms of Service</span><span aria-hidden="true">→</span></a>
+              <a href="legal.html#cookies"><span>Cookie Policy</span><span aria-hidden="true">→</span></a>
+            </div>
+          </section>
+          <section class="ac-card danger">
+            <h2>Delete account</h2>
+            <p class="desc">Permanently removes your account, profile and settings from this browser. This can't be undone.</p>
+            <button type="button" class="ac-btn danger" id="deleteBtn">Delete my account…</button>
+          </section>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Confirm: delete -->
+  <div class="ac-modal" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="delTitle">
+    <form class="ac-modal-box" id="deleteForm" novalidate>
+      <h3 id="delTitle">Delete your account?</h3>
+      <p>This permanently deletes your account, profile and settings. Enter your password and type <b>DELETE</b> to confirm.</p>
+      <div class="ac-field" style="margin-bottom:.8rem"><label for="delPw">Password</label><div class="ac-pw"><input type="password" id="delPw" autocomplete="current-password"><button type="button" aria-label="Show password">👁️</button></div></div>
+      <div class="ac-field"><label for="delConfirm">Type DELETE</label><input id="delConfirm" autocomplete="off"></div>
+      <div class="ac-actions" style="justify-content:flex-end"><button type="button" class="ac-btn ghost" data-close="deleteModal">Cancel</button><button type="submit" class="ac-btn danger">Delete account</button></div>
+    </form>
+  </div>
+
+  <script src="account.js"></script>
+  <script>
+  (function () {
+    if (!Account.requireLogin('#main')) return;
+    const { $, $$ } = Account;
+    const TABS = ['account', 'security', 'privacy', 'notifications', 'payments', 'legal'];
+    const ALIAS = { billing: 'payments', data: 'legal' };
+
+    /* ---- tabs (hash-routed, keyboard accessible) ---- */
+    function show(id, focus) {
+      id = ALIAS[id] || id; if (!TABS.includes(id)) id = 'account';
+      TABS.forEach(t => {
+        const on = t === id;
+        $('#panel-' + t).classList.toggle('active', on);
+        const b = $('#tab-' + t); b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1;
+        if (on && focus) b.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+      });
+      if (location.hash.slice(1) !== id) history.replaceState(null, '', '#' + id);
+      document.title = $('#tab-' + id).textContent.trim() + ' · Settings | AlgoVerse';
+    }
+    $$('#tabs [data-tab]').forEach(b => b.addEventListener('click', () => show(b.dataset.tab, true)));
+    $('#tabs').addEventListener('keydown', e => {
+      const btns = $$('#tabs [data-tab]'); const i = btns.indexOf(document.activeElement); if (i < 0) return;
+      let n = -1;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') n = (i + 1) % btns.length;
+      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') n = (i - 1 + btns.length) % btns.length;
+      if (e.key === 'Home') n = 0; if (e.key === 'End') n = btns.length - 1;
+      if (n >= 0) { e.preventDefault(); btns[n].focus(); show(btns[n].dataset.tab, true); }
+    });
+    window.addEventListener('hashchange', () => show(location.hash.slice(1), true));
+    show(location.hash.slice(1), false);
+
+    /* ---- generic auto-saving toggles / selects ---- */
+    const S = Account.settings();
+    $$('[data-group][data-key]').forEach(el => {
+      const v = S[el.dataset.group][el.dataset.key];
+      if (el.type === 'checkbox') el.checked = !!v; else el.value = v;
+      el.addEventListener('change', () => {
+        const s = Account.settings();
+        s[el.dataset.group][el.dataset.key] = el.type === 'checkbox' ? el.checked : el.value;
+        if (Account.saveSettings(s)) Account.toast('Saved');
+      });
+    });
+
+    /* ---- account ---- */
+    const user = Account.user(), prof = Account.profile();
+    $('#acName').value = Account.displayName(); $('#acEmail').value = Account.email();
+    const joined = prof.joined || (user && user.createdAt);
+    $('#acJoined').value = joined ? new Date(joined).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }) : 'Not recorded';
+    $('#accountForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const name = $('#acName').value.trim();
+      if (name.length < 2) return Account.toast('Please enter your full name.', 'err');
+      const users = Account.users(), em = Account.email();
+      if (users[em]) { users[em].name = name; Account.saveUsers(users); }
+      const p = Account.profile(); p.name = name; Account.saveProfile(p);
+      Account.mountTopbar(); Account.toast('Account updated');
+    });
+    $('#prefFont').value = S.preferences.fontSize; $('#prefMotion').checked = S.preferences.reduceMotion;
+    $('#prefFont').addEventListener('change', e => { const s = Account.settings(); s.preferences.fontSize = e.target.value; Account.saveSettings(s); Account.applyPreferences(); Account.toast('Saved'); });
+    $('#prefMotion').addEventListener('change', e => { const s = Account.settings(); s.preferences.reduceMotion = e.target.checked; Account.saveSettings(s); document.documentElement.classList.toggle('reduce-motion', e.target.checked); Account.toast('Saved'); });
+
+    /* ---- security ---- */
+    Account.wirePwToggles();
+    $('#pwUser').value = Account.email();
+    const labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+    $('#pwNew').addEventListener('input', e => {
+      const sc = e.target.value ? Account.passwordScore(e.target.value) : 0;
+      $('#pwStrength').dataset.s = sc; $('#pwStrengthTxt').textContent = sc ? 'Strength: ' + labels[sc] : '\u00a0';
+      checkMatch();
+    });
+    function checkMatch() {
+      const a = $('#pwNew').value, b = $('#pwConfirm').value, el = $('#pwMatch');
+      if (!b) { el.textContent = '\u00a0'; el.className = 'ac-hint'; return; }
+      el.textContent = a === b ? 'Passwords match' : 'Passwords don\u2019t match'; el.className = 'ac-hint ' + (a === b ? 'ok' : 'err');
+    }
+    $('#pwConfirm').addEventListener('input', checkMatch);
+    $('#pwForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const cur = $('#pwCurrent').value, nw = $('#pwNew').value, cf = $('#pwConfirm').value;
+      const users = Account.users(), em = Account.email(), u = users[em];
+      if (!u || u.password !== cur) return Account.toast('Your current password is incorrect.', 'err');
+      if (nw.length < 8) return Account.toast('New password must be at least 8 characters.', 'err');
+      if (nw === cur) return Account.toast('Choose a password different from your current one.', 'err');
+      if (nw !== cf) return Account.toast('New passwords don\u2019t match.', 'err');
+      u.password = nw; u.passwordChangedAt = new Date().toISOString(); Account.saveUsers(users);
+      e.target.reset(); $('#pwStrength').dataset.s = 0; $('#pwStrengthTxt').textContent = '\u00a0'; $('#pwMatch').textContent = '\u00a0';
+      Account.toast('Password updated');
+    });
+    (function sessionInfo() {
+      const ua = navigator.userAgent;
+      const os = /Windows/.test(ua) ? 'Windows' : /Android/.test(ua) ? 'Android' : /iPhone|iPad|iPod/.test(ua) ? 'iOS' : /Mac OS X/.test(ua) ? 'macOS' : /Linux/.test(ua) ? 'Linux' : 'Unknown OS';
+      const br = /Edg\//.test(ua) ? 'Edge' : /OPR\/|Opera/.test(ua) ? 'Opera' : /Chrome\//.test(ua) ? 'Chrome' : /Firefox\//.test(ua) ? 'Firefox' : /Safari\//.test(ua) ? 'Safari' : 'Browser';
+      $('#sessDevice').textContent = br + ' on ' + os;
+      $('#sessMeta').textContent = 'Active now' + (user && user.passwordChangedAt ? ' · password changed ' + new Date(user.passwordChangedAt).toLocaleDateString() : '');
+    })();
+    $('#signOutHere').addEventListener('click', Account.logout);
+    $('#navLogout').addEventListener('click', Account.logout);
+
+    /* ---- billing (no payment records are stored client-side) ---- */
+    $('#payRows').innerHTML = '<tr><td colspan="4"><div class="empty">No payments yet. Purchases will appear here once you upgrade.</div></td></tr>';
+
+    /* ---- data & legal ---- */
+    $('#exportBtn').addEventListener('click', () => {
+      const out = { exportedAt: new Date().toISOString(), email: Account.email(), name: Account.displayName(), profile: Account.profile(), settings: Account.settings() };
+      Account.download('algoverse-data.json', JSON.stringify(out, null, 2)); Account.toast('Download started');
+    });
+    $('#resetBtn').addEventListener('click', () => {
+      if (!confirm('Reset your profile details and settings? Your account and password stay.')) return;
+      const em = Account.email(); localStorage.removeItem('algoVerseProfile_' + em); localStorage.removeItem('algoVerseSettings_' + em);
+      Account.toast('Profile and settings reset'); setTimeout(() => location.reload(), 700);
+    });
+    $('#deleteBtn').addEventListener('click', () => Account.openModal('deleteModal'));
+    $$('[data-close]').forEach(b => b.addEventListener('click', () => Account.closeModal(b.dataset.close)));
+    $('#deleteForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const u = Account.user();
+      if (!u || u.password !== $('#delPw').value) return Account.toast('Password is incorrect.', 'err');
+      if ($('#delConfirm').value.trim() !== 'DELETE') return Account.toast('Type DELETE to confirm.', 'err');
+      Account.deleteAccountData(); location.href = 'index.html';
+    });
+  })();
+  </script>
+</body>
+</html>

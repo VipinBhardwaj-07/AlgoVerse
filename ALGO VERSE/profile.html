@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>My Profile | AlgoVerse</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#05050a">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="account.css">
+</head>
+<body>
+  <header class="ac-topbar">
+    <div class="ac-topbar-inner">
+      <a class="ac-logo" href="index.html"><img src="logo.png" alt=""> Algo<span>Verse</span></a>
+      <div class="ac-topbar-actions">
+        <a class="ac-link-btn" href="index.html">← <span class="lbl">Back to site</span></a>
+        <a class="ac-link-btn" href="settings.html">⚙️ <span class="lbl">Settings</span></a>
+        <span id="topbarUser"></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="ac-wrap" id="main">
+    <!-- Hero -->
+    <section class="pf-hero" aria-label="Profile summary">
+      <div class="pf-cover" aria-hidden="true"></div>
+      <div class="pf-body">
+        <div class="pf-avatar" id="pfAvatar"><span id="pfInitial">U</span><img id="pfImg" alt="Profile photo"></div>
+        <div class="pf-id">
+          <h1 id="pfName">User</h1>
+          <p class="headline" id="pfHeadline">Add a headline so others know what you do</p>
+          <div class="pf-meta" id="pfMeta"></div>
+        </div>
+        <div class="pf-hero-actions">
+          <button class="ac-btn primary" id="editBtn" type="button">✏️ Edit profile</button>
+          <a class="ac-btn ghost" href="settings.html">⚙️ Settings</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats (all derived from real profile data) -->
+    <section class="pf-stats" aria-label="Profile stats">
+      <div class="pf-stat"><b id="stComplete">0%</b><span>Profile complete</span></div>
+      <div class="pf-stat"><b id="stJoined">—</b><span>Member since</span></div>
+      <div class="pf-stat"><b id="stSkills">0</b><span>Skills listed</span></div>
+      <div class="pf-stat"><b id="stLinks">0</b><span>Links added</span></div>
+    </section>
+
+    <div class="pf-two">
+      <div>
+        <section class="ac-card">
+          <div class="ac-card-head"><h2>About</h2></div>
+          <p id="pfBio" style="white-space:pre-wrap;overflow-wrap:anywhere"></p>
+        </section>
+
+        <section class="ac-card">
+          <div class="ac-card-head"><h2>Skills &amp; interests</h2></div>
+          <div class="chips" id="pfSkills"></div>
+        </section>
+
+        <section class="ac-card">
+          <div class="ac-card-head"><h2>Education &amp; goal</h2></div>
+          <div class="ac-grid">
+            <div class="ac-field"><span class="ac-label">Education</span><span id="pfEdu">—</span></div>
+            <div class="ac-field"><span class="ac-label">Learning goal</span><span id="pfGoal">—</span></div>
+          </div>
+        </section>
+      </div>
+
+      <aside>
+        <section class="ac-card">
+          <div class="ac-card-head"><h2>Profile strength</h2></div>
+          <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="pfBar"><i id="pfBarFill"></i></div>
+          <ul id="pfTodo" style="list-style:none;margin-top:.9rem;display:grid;gap:.4rem;font-size:.88rem;color:var(--c-muted)"></ul>
+        </section>
+
+        <section class="ac-card">
+          <div class="ac-card-head"><h2>Contact &amp; links</h2></div>
+          <ul class="pf-link-list" id="pfLinks"></ul>
+        </section>
+
+        <section class="ac-card">
+          <div class="ac-card-head"><h2>Account</h2></div>
+          <div class="ac-row"><div class="txt"><strong>Password &amp; security</strong><span>Change password, review sessions</span></div><a class="ac-btn ghost" href="settings.html#security">Manage</a></div>
+          <div class="ac-row"><div class="txt"><strong>Privacy</strong><span>Control who sees your profile</span></div><a class="ac-btn ghost" href="settings.html#privacy">Manage</a></div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Edit modal -->
+  <div class="ac-modal" id="editModal" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+    <form class="ac-modal-box" id="editForm" style="width:min(640px,100%)" novalidate>
+      <h3 id="editTitle">Edit profile</h3>
+      <p>This information appears on your profile. You control its visibility in <a href="settings.html#privacy" style="color:var(--c-accent2)">Privacy settings</a>.</p>
+
+      <div class="ac-field full" style="margin-bottom:1rem">
+        <span class="ac-label">Profile photo</span>
+        <div style="display:flex;gap:.8rem;align-items:center;flex-wrap:wrap">
+          <div class="pf-avatar" id="efAvatar" style="width:72px;height:72px;font-size:1.6rem;border-width:2px"><span id="efInitial">U</span><img id="efImg" alt=""></div>
+          <label class="ac-btn ghost" style="cursor:pointer">Upload photo<input type="file" id="efFile" accept="image/png,image/jpeg,image/webp,image/gif" hidden></label>
+          <button type="button" class="ac-btn ghost" id="efRemove">Remove</button>
+        </div>
+        <span class="ac-hint" id="efPhotoHint">PNG, JPG, WEBP or GIF · cropped to a square automatically</span>
+      </div>
+
+      <div class="ac-grid">
+        <div class="ac-field"><label for="efName">Full name *</label><input id="efName" maxlength="60" autocomplete="name" required></div>
+        <div class="ac-field"><label for="efHeadline">Headline</label><input id="efHeadline" maxlength="80" placeholder="e.g. B.Tech CSE student · DSA enthusiast"></div>
+        <div class="ac-field"><label for="efLocation">Location</label><input id="efLocation" maxlength="60" autocomplete="address-level2" placeholder="City, Country"></div>
+        <div class="ac-field"><label for="efEdu">Education</label><input id="efEdu" maxlength="80" placeholder="University / College"></div>
+        <div class="ac-field"><label for="efGoal">Learning goal</label>
+          <select id="efGoal">
+            <option value="">Select…</option><option>Crack coding interviews</option><option>Campus placements</option><option>Competitive programming</option>
+            <option>Learn the fundamentals</option><option>Switch careers into tech</option>
+          </select>
+        </div>
+        <div class="ac-field"><label for="efWebsite">Website</label><input id="efWebsite" inputmode="url" maxlength="120" placeholder="yoursite.com" autocomplete="url"></div>
+        <div class="ac-field"><label for="efGithub">GitHub</label><input id="efGithub" inputmode="url" maxlength="120" placeholder="github.com/username"></div>
+        <div class="ac-field"><label for="efLinkedin">LinkedIn</label><input id="efLinkedin" inputmode="url" maxlength="120" placeholder="linkedin.com/in/username"></div>
+        <div class="ac-field full"><label for="efBio">About you</label><textarea id="efBio" maxlength="400" placeholder="A short bio…"></textarea><span class="ac-hint"><span id="efBioCount">0</span>/400</span></div>
+        <div class="ac-field full"><label for="efSkillInput">Skills (press Enter or comma to add)</label>
+          <div class="chips" id="efChips" style="margin-bottom:6px"></div>
+          <input id="efSkillInput" maxlength="30" placeholder="e.g. Graphs, DP, Python">
+        </div>
+        <div class="ac-field full"><label for="efEmail">Email (sign-in)</label><input id="efEmail" readonly><span class="ac-hint">Your email is your sign-in ID and can't be changed here.</span></div>
+      </div>
+      <div class="ac-actions" style="justify-content:flex-end">
+        <button type="button" class="ac-btn ghost" id="efCancel">Cancel</button>
+        <button type="submit" class="ac-btn primary">Save changes</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="account.js"></script>
+  <script>
+  (function () {
+    if (!Account.requireLogin('#main')) return;
+    const { $, esc, safeUrl } = Account;
+    let draftSkills = [], draftImage = '';
+
+    function completeness(p) {
+      const checks = [
+        ['Add a profile photo', !!p.profileImage], ['Write a headline', !!p.headline], ['Write a short bio', !!(p.bio && p.bio.length >= 20)],
+        ['Add your location', !!p.location], ['Add your education', !!p.education], ['Set a learning goal', !!p.goal],
+        ['List at least 3 skills', (p.skills || []).length >= 3], ['Link GitHub or LinkedIn', !!(p.github || p.linkedin)]
+      ];
+      return { pct: Math.round(checks.filter(c => c[1]).length / checks.length * 100), checks };
+    }
+
+    function render() {
+      const p = Account.profile(), name = Account.displayName(), email = Account.email();
+      document.title = name + ' | AlgoVerse';
+      $('#pfName').textContent = name;
+      $('#pfInitial').textContent = Account.initial();
+      const av = $('#pfAvatar');
+      if (p.profileImage) { $('#pfImg').src = p.profileImage; av.classList.add('has-image'); } else { $('#pfImg').removeAttribute('src'); av.classList.remove('has-image'); }
+      $('#pfHeadline').textContent = p.headline || 'Add a headline so others know what you do';
+      $('#pfHeadline').style.opacity = p.headline ? 1 : .6;
+
+      const meta = [];
+      if (p.location) meta.push('📍 ' + esc(p.location));
+      meta.push('✉️ ' + esc(email));
+      if (p.education) meta.push('🎓 ' + esc(p.education));
+      $('#pfMeta').innerHTML = meta.map(m => '<span>' + m + '</span>').join('');
+
+      $('#pfBio').textContent = p.bio || 'You haven\u2019t written a bio yet. Tell people about your background and what you\u2019re learning.';
+      $('#pfBio').style.color = p.bio ? '' : 'var(--c-muted)';
+      $('#pfSkills').innerHTML = (p.skills && p.skills.length) ? p.skills.map(s => '<span class="chip">' + esc(s) + '</span>').join('') : '<div class="empty" style="width:100%">No skills added yet.</div>';
+      $('#pfEdu').textContent = p.education || '—';
+      $('#pfGoal').textContent = p.goal || '—';
+
+      const links = [['🌐', p.website, p.website], ['🐙', p.github, p.github], ['💼', p.linkedin, p.linkedin]]
+        .filter(l => l[1] && safeUrl(l[1]));
+      $('#pfLinks').innerHTML = links.length
+        ? links.map(l => '<li><a href="' + esc(safeUrl(l[1])) + '" target="_blank" rel="noopener noreferrer nofollow">' + l[0] + ' ' + esc(String(l[2]).replace(/^https?:\/\//i, '').replace(/\/$/, '')) + '</a></li>').join('')
+        : '<li class="empty">No links yet.</li>';
+
+      const c = completeness(p);
+      $('#stComplete').textContent = c.pct + '%';
+      $('#pfBarFill').style.width = c.pct + '%';
+      $('#pfBar').setAttribute('aria-valuenow', c.pct);
+      const missing = c.checks.filter(x => !x[1]);
+      $('#pfTodo').innerHTML = missing.length ? missing.slice(0, 4).map(m => '<li>○ ' + esc(m[0]) + '</li>').join('') : '<li style="color:var(--c-ok)">✓ Your profile is complete</li>';
+      $('#stSkills').textContent = (p.skills || []).length;
+      $('#stLinks').textContent = links.length;
+      const joined = p.joined || (Account.user() && Account.user().createdAt);
+      $('#stJoined').textContent = joined ? new Date(joined).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }) : 'Recently';
+    }
+
+    /* ---- edit modal ---- */
+    function renderChips() {
+      $('#efChips').innerHTML = draftSkills.map((s, i) => '<span class="chip">' + esc(s) + '<button type="button" data-i="' + i + '" aria-label="Remove ' + esc(s) + '">✕</button></span>').join('');
+    }
+    function paintDraftAvatar() {
+      const av = $('#efAvatar'); $('#efInitial').textContent = ($('#efName').value.trim().charAt(0) || Account.initial()).toUpperCase();
+      if (draftImage) { $('#efImg').src = draftImage; av.classList.add('has-image'); } else { $('#efImg').removeAttribute('src'); av.classList.remove('has-image'); }
+    }
+    function openEdit() {
+      const p = Account.profile();
+      $('#efName').value = Account.displayName(); $('#efHeadline').value = p.headline || ''; $('#efLocation').value = p.location || '';
+      $('#efEdu').value = p.education || ''; $('#efGoal').value = p.goal || ''; $('#efWebsite').value = p.website || '';
+      $('#efGithub').value = p.github || ''; $('#efLinkedin').value = p.linkedin || ''; $('#efBio').value = p.bio || '';
+      $('#efEmail').value = Account.email(); $('#efBioCount').textContent = $('#efBio').value.length;
+      draftSkills = (p.skills || []).slice(); draftImage = p.profileImage || '';
+      renderChips(); paintDraftAvatar(); Account.openModal('editModal');
+    }
+    function addSkill(raw) {
+      raw.split(',').map(s => s.trim()).filter(Boolean).forEach(s => {
+        if (draftSkills.length >= 15) return Account.toast('You can list up to 15 skills.', 'err');
+        if (!draftSkills.some(x => x.toLowerCase() === s.toLowerCase())) draftSkills.push(s);
+      });
+      renderChips();
+    }
+    $('#editBtn').addEventListener('click', openEdit);
+    $('#efCancel').addEventListener('click', () => Account.closeModal('editModal'));
+    $('#efBio').addEventListener('input', e => { $('#efBioCount').textContent = e.target.value.length; });
+    $('#efName').addEventListener('input', paintDraftAvatar);
+    $('#efChips').addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (b) { draftSkills.splice(+b.dataset.i, 1); renderChips(); } });
+    $('#efSkillInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addSkill(e.target.value); e.target.value = ''; }
+      else if (e.key === 'Backspace' && !e.target.value && draftSkills.length) { draftSkills.pop(); renderChips(); }
+    });
+    $('#efSkillInput').addEventListener('blur', e => { if (e.target.value.trim()) { addSkill(e.target.value); e.target.value = ''; } });
+    $('#efFile').addEventListener('change', async e => {
+      const f = e.target.files[0]; if (!f) return;
+      try { draftImage = await Account.imageToDataUrl(f, 256); paintDraftAvatar(); $('#efPhotoHint').textContent = 'Photo ready — click Save changes'; $('#efPhotoHint').className = 'ac-hint ok'; }
+      catch (err) { $('#efPhotoHint').textContent = err.message; $('#efPhotoHint').className = 'ac-hint err'; }
+      e.target.value = '';
+    });
+    $('#efRemove').addEventListener('click', () => { draftImage = ''; paintDraftAvatar(); });
+
+    $('#editForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const name = $('#efName').value.trim();
+      if (name.length < 2) { Account.toast('Please enter your full name.', 'err'); $('#efName').focus(); return; }
+      for (const id of ['efWebsite', 'efGithub', 'efLinkedin']) {
+        const v = $('#' + id).value.trim(); if (v && !safeUrl(v)) { Account.toast('That link doesn\u2019t look like a valid URL.', 'err'); $('#' + id).focus(); return; }
+      }
+      const old = Account.profile();
+      const p = Object.assign({}, old, {
+        name, headline: $('#efHeadline').value.trim(), location: $('#efLocation').value.trim(), education: $('#efEdu').value.trim(),
+        goal: $('#efGoal').value, website: $('#efWebsite').value.trim(), github: $('#efGithub').value.trim(), linkedin: $('#efLinkedin').value.trim(),
+        bio: $('#efBio').value.trim(), skills: draftSkills, profileImage: draftImage, joined: old.joined || new Date().toISOString()
+      });
+      if (!Account.saveProfile(p)) return;
+      // keep the sign-in record's display name in sync
+      const users = Account.users(), em = Account.email(); if (users[em]) { users[em].name = name; Account.saveUsers(users); }
+      Account.closeModal('editModal'); Account.mountTopbar(); render(); Account.toast('Profile updated');
+    });
+
+    render();
+  })();
+  </script>
+</body>
+</html>

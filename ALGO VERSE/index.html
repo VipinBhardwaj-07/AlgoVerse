@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Google Tag Manager -->
+  <script>
+    (function(w,d,s,l,i){
+      w[l]=w[l]||[];
+      w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+      var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),
+          dl=l!='dataLayer'?'&l='+l:'';
+      j.async=true;
+      j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+      f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NWCHK6W3');
+  </script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Charset -->
+  <meta charset="UTF-8">
+
+  <!-- Responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <!-- Search Console -->
+  <meta name="google-site-verification" content="MKAVHMNWXC59EAGMNCTBN7X5ZBZOF8E1A_BXV0ARE">
+
+  <!-- Primary SEO -->
+  <title>AlgoVerse | Learn Data Structures & Algorithms (DSA) with AI</title>
+
+  <meta
+    name="description"
+    content="Learn Data Structures and Algorithms with interactive visualizations, AI-powered code reviews, graph algorithms, dynamic programming, coding practice, and structured learning paths on AlgoVerse."
+  >
+
+  <meta
+    name="keywords"
+    content="AlgoVerse, Data Structures, Algorithms, DSA, Learn DSA, Graph Algorithms, Dynamic Programming, Coding Practice, Competitive Programming, AI Learning"
+  >
+
+  <meta name="author" content="AlgoVerse">
+
+  <meta name="robots" content="index,follow,max-image-preview:large">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://algoverseweb.vercel.app/">
+
+  <!-- Theme -->
+  <meta name="theme-color" content="#0b0f19">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/favicon.png">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="AlgoVerse">
+  <meta property="og:locale" content="en_US">
+
+  <meta
+    property="og:title"
+    content="AlgoVerse | Learn Data Structures & Algorithms with AI"
+  >
+
+  <meta
+    property="og:description"
+    content="Master Data Structures and Algorithms with interactive visualizations, AI-powered code reviews, graph algorithms, and coding practice."
+  >
+
+  <meta property="og:url" content="https://algoverseweb.vercel.app/">
+
+  <!-- Replace after creating image -->
+  <meta property="og:image" content="https://algoverseweb.vercel.app/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="AlgoVerse - Learn Data Structures and Algorithms">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta
+    name="twitter:title"
+    content="AlgoVerse | Learn DSA with AI"
+  >
+
+  <meta
+    name="twitter:description"
+    content="Interactive AI-powered platform to master Data Structures and Algorithms."
+  >
+
+  <meta
+    name="twitter:image"
+    content="https://algoverseweb.vercel.app/assets/og-image.png"
+  >
+
+  <!-- Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "AlgoVerse",
+    "url": "https://algoverseweb.vercel.app/",
+    "description": "AI-powered platform to learn Data Structures and Algorithms.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "AlgoVerse"
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://algoverseweb.vercel.app/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- Performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Aurora hero styles -->
+  <style>
+    /* ============ Aurora Hero ============ */
+    #hero.hero--aurora {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 640px;
+      overflow: hidden;
+      padding: 0;
+      display: block;
+      background: #000;
+    }
+
+    .aurora-hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .aurora-overlay { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+    .aurora-overlay--dark { background: rgba(0,0,0,0.10); }
+    .aurora-overlay--vertical {
+      background: linear-gradient(to bottom, rgba(0,0,0,0.13) 0%, transparent 22%, transparent 60%, rgba(0,0,0,0.19) 100%);
+    }
+    .aurora-overlay--horizontal {
+      background: linear-gradient(to right, rgba(0,0,0,0.07) 0%, transparent 18%, transparent 82%, rgba(0,0,0,0.07) 100%);
+    }
+    .aurora-glow {
+      position: absolute;
+      top: -14%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1000px;
+      height: 720px;
+      background: radial-gradient(ellipse at 50% 30%, rgba(6,95,70,0.18) 0%, transparent 68%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .aurora-hero-content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      height: 100%;
+      justify-content: flex-start;
+      padding-top: 24vh;
+      padding-left: 64px;
+      padding-right: 24px;
+    }
+
+    .aurora-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 999px;
+      padding: 6px 16px 6px 6px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.16);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      width: fit-content;
+    }
+    .aurora-avatars { display: flex; }
+    .aurora-avatars span {
+      width: 22px; height: 22px; border-radius: 999px;
+      background: linear-gradient(135deg, #10b981, #047857);
+      border: 2px solid rgba(10,20,16,0.9);
+      margin-left: -8px;
+    }
+    .aurora-avatars span:first-child { margin-left: 0; }
+    .aurora-badge-text {
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.75);
+      font-family: 'Inter', sans-serif;
+    }
+    .aurora-badge-text strong { color: #fff; font-weight: 600; }
+
+    .aurora-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 500;
+      font-size: clamp(2.2rem, 4.6vw, 4.1rem);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: #fff;
+      margin-top: 22px;
+      max-width: 620px;
+    }
+    .aurora-title-accent { color: #10b981; }
+
+    .aurora-subtitle {
+      margin-top: 16px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.6);
+      font-family: 'Inter', sans-serif;
+      max-width: 380px;
+    }
+
+    .aurora-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 30px;
+    }
+    .aurora-cta {
+      padding: 14px 26px;
+      border-radius: 999px;
+      background: #0a0a0a;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.15);
+      transition: transform 0.15s ease;
+      display: inline-block;
+    }
+    .aurora-cta:hover { transform: scale(1.03); }
+    .aurora-cta:active { transform: scale(0.97); }
+
+    .aurora-play {
+      width: 44px; height: 44px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .aurora-play:hover { transform: scale(1.08); }
+    .aurora-play:active { transform: scale(0.93); }
+
+    .aurora-stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 34px;
+    }
+
+    .aurora-socials {
+      position: absolute;
+      bottom: 34px;
+      left: 64px;
+      z-index: 10;
+      display: flex;
+      gap: 10px;
+    }
+    .aurora-social {
+      width: 34px; height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.22);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      transition: border-color 0.25s ease, color 0.25s ease, transform 0.25s ease, background 0.25s ease;
+    }
+    .aurora-social:hover {
+      border-color: rgba(16,185,129,0.6);
+      color: #fff;
+      background: rgba(16,185,129,0.12);
+      transform: translateY(-2px);
+    }
+
+    /* ---- Advanced layer: video ken-burns wrapper ---- */
+    .aurora-video-wrap {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      will-change: transform;
+    }
+    .aurora-hero-video {
+      position: absolute;
+      inset: -2%;
+      width: 104%;
+      height: 104%;
+      object-fit: cover;
+      animation: auroraKenBurns 24s ease-in-out infinite alternate;
+    }
+    @keyframes auroraKenBurns {
+      0%   { transform: scale(1) translate3d(0,0,0); }
+      100% { transform: scale(1.08) translate3d(-1%, -1%, 0); }
+    }
+
+
+    /* ---- Hero: algorithm animation (replaces the background video) ---- */
+    .aurora-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .hero-chips { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+    .hero-chip {
+      position: absolute; padding: 6px 12px; border-radius: 999px;
+      font-family: 'Courier New', monospace; font-size: .78rem; letter-spacing: .02em;
+      color: #b8fff0; background: rgba(0,229,192,.08); border: 1px solid rgba(0,229,192,.28);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      box-shadow: 0 0 22px rgba(0,229,192,.12);
+      animation: heroChipFloat 7s ease-in-out infinite;
+    }
+    .hero-chip.c1 { top: 22%; right: 10%; animation-delay: 0s; }
+    .hero-chip.c2 { top: 36%; right: 30%; animation-delay: -1.8s; color: #d9ceff; background: rgba(124,92,252,.1); border-color: rgba(124,92,252,.4); box-shadow: 0 0 22px rgba(124,92,252,.15); }
+    .hero-chip.c3 { top: 52%; right: 8%;  animation-delay: -3.6s; }
+    .hero-chip.c4 { top: 64%; right: 27%; animation-delay: -5.2s; color: #d9ceff; background: rgba(124,92,252,.1); border-color: rgba(124,92,252,.4); box-shadow: 0 0 22px rgba(124,92,252,.15); }
+    .hero-chip.c5 { top: 16%; right: 32%; animation-delay: -2.7s; }
+    @keyframes heroChipFloat {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-14px) rotate(1deg); }
+    }
+    @media (max-width: 1100px) { .hero-chips { display: none; } }
+    @media (prefers-reduced-motion: reduce) { .hero-chip { animation: none; } }
+
+    /* ---- Advanced layer: subtle texture grid ---- */
+    .aurora-grid-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: 42px 42px;
+      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 20% 40%, #000 0%, transparent 72%);
+      mask-image: radial-gradient(ellipse 80% 60% at 20% 40%, #000 0%, transparent 72%);
+      opacity: 0.5;
+    }
+
+    /* ---- Advanced layer: cursor-follow spotlight ---- */
+    .aurora-spotlight {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      background: radial-gradient(480px circle at var(--x, 50%) var(--y, 40%), rgba(16,185,129,0.16), transparent 62%);
+      mix-blend-mode: screen;
+    }
+    .aurora-spotlight.is-active { opacity: 1; }
+
+    /* ---- Entrance animation ---- */
+    .aurora-reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      animation: auroraRise 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation-delay: var(--d, 0s);
+    }
+    @keyframes auroraRise {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---- Rotating headline word ---- */
+    .aurora-title-accent {
+      position: relative;
+      display: inline-block;
+      background: linear-gradient(100deg, #34d399, #10b981 35%, #6ee7b7 60%, #047857);
+      background-size: 260% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: auroraGradientShift 6s ease-in-out infinite;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .aurora-title-accent.is-swapping {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    @keyframes auroraGradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    /* ---- CTA button shine + magnetic ---- */
+    .aurora-cta {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .aurora-cta-label { position: relative; z-index: 1; }
+    .aurora-cta-shine {
+      position: absolute;
+      top: 0; left: -60%;
+      width: 40%; height: 100%;
+      background: linear-gradient(115deg, transparent, rgba(255,255,255,0.35), transparent);
+      transform: skewX(-18deg);
+      transition: left 0.65s ease;
+      pointer-events: none;
+    }
+    .aurora-cta:hover .aurora-cta-shine { left: 130%; }
+
+    .aurora-play {
+      position: relative;
+      overflow: visible;
+    }
+    .aurora-play-ring {
+      position: absolute;
+      inset: -6px;
+      border-radius: 999px;
+      border: 1px solid rgba(16,185,129,0.55);
+      opacity: 0;
+      animation: auroraPulseRing 2.4s ease-out infinite;
+      pointer-events: none;
+    }
+    @keyframes auroraPulseRing {
+      0%   { transform: scale(0.85); opacity: 0.55; }
+      70%  { transform: scale(1.35); opacity: 0; }
+      100% { transform: scale(1.35); opacity: 0; }
+    }
+
+    .aurora-magnetic { transition: transform 0.15s ease-out; }
+
+    /* ---- Avatar shimmer ---- */
+    .aurora-avatars span {
+      position: relative;
+      overflow: hidden;
+    }
+    .aurora-avatars span::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.5) 50%, transparent 70%);
+      background-size: 220% 220%;
+      animation: auroraShimmer 3.6s ease-in-out infinite;
+    }
+    .aurora-avatars span:nth-child(2)::after { animation-delay: 0.4s; }
+    .aurora-avatars span:nth-child(3)::after { animation-delay: 0.8s; }
+    @keyframes auroraShimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .aurora-hero-video,
+      .aurora-title-accent,
+      .aurora-avatars span::after,
+      .aurora-play-ring,
+      .aurora-reveal {
+        animation: none !important;
+      }
+      .aurora-reveal { opacity: 1; transform: none; }
+    }
+
+    @media (max-width: 720px) {
+      .aurora-hero-content { padding-left: 24px; padding-top: 20vh; }
+      .aurora-socials { left: 24px; }
+      .aurora-stats { gap: 1.2rem; flex-wrap: wrap; }
+      .aurora-spotlight, .aurora-grid-overlay { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+  
+  <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NWCHK6W3"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+  
+  <nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <img src="logo.png" alt="AlgoVerse logo" class="logo-img" />
+      Algo<span>Verse</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#courses">Courses</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#blog">Blog</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    
+<div class="nav-auth">
+
+  <!-- Logged-in User Profile -->
+  <div class="user-badge profile-menu-wrapper" id="userBadge" style="display:none;">
+
+    <button
+      type="button"
+      class="profile-trigger"
+      id="profileTrigger"
+      aria-expanded="false"
+      aria-haspopup="true"
+    >
+      <span class="profile-avatar">
+        <span id="navProfileInitial">V</span>
+      </span>
+
+      <span class="profile-user-info">
+        <strong id="userStatus">Hi, User</strong>
+        <small id="navUserEmail">Account</small>
+      </span>
+
+      <span class="profile-chevron">⌄</span>
+    </button>
+
+    <!-- Profile Dropdown -->
+    <div class="profile-dropdown" id="profileDropdown">
+
+      <div class="profile-dropdown-header">
+
+        <div class="dropdown-avatar" id="dropdownProfileAvatar">
+    <span id="dropdownProfileInitial">V</span>
+    <img id="dropdownProfileImage" alt="Profile picture">
+</div>
+
+        <div class="dropdown-user-details">
+          <strong id="dropdownUserName">User</strong>
+          <span id="dropdownUserEmail">Account</span>
+        </div>
+
+      </div>
+
+      <div class="profile-dropdown-divider"></div>
+
+      <a href="profile.html" class="profile-menu-item">
+        <span class="menu-icon">👤</span>
+        <div>
+          <strong>My Profile</strong>
+          <small>View and edit your profile</small>
+        </div>
+      </a>
+
+      <a href="settings.html" class="profile-menu-item">
+        <span class="menu-icon">⚙️</span>
+        <div>
+          <strong>Settings</strong>
+          <small>Manage your account</small>
+        </div>
+      </a>
+
+      <a href="settings.html#security" class="profile-menu-item">
+        <span class="menu-icon">🔐</span>
+        <div>
+          <strong>Security</strong>
+          <small>Password and verification</small>
+        </div>
+      </a>
+
+      <a href="settings.html#notifications" class="profile-menu-item">
+        <span class="menu-icon">🔔</span>
+        <div>
+          <strong>Notifications</strong>
+          <small>Email and study reminders</small>
+        </div>
+      </a>
+
+      <a href="settings.html#payments" class="profile-menu-item">
+        <span class="menu-icon">💳</span>
+        <div>
+          <strong>Payments</strong>
+          <small>Payment history and billing</small>
+        </div>
+      </a>
+
+      <a href="settings.html#privacy" class="profile-menu-item">
+        <span class="menu-icon">🔒</span>
+        <div>
+          <strong>Privacy</strong>
+          <small>Privacy and cookie settings</small>
+        </div>
+      </a>
+
+      <a href="settings.html#legal" class="profile-menu-item">
+        <span class="menu-icon">📜</span>
+        <div>
+          <strong>Legal</strong>
+          <small>Policies and terms</small>
+        </div>
+      </a>
+
+      <a href="support.html" class="profile-menu-item">
+        <span class="menu-icon">❓</span>
+        <div>
+          <strong>Help &amp; Support</strong>
+          <small>Get help with AlgoVerse</small>
+        </div>
+      </a>
+
+      <div class="profile-dropdown-divider"></div>
+
+      <button
+        type="button"
+        class="profile-menu-item logout-item"
+        id="logoutBtn"
+        onclick="logoutUser()"
+      >
+        <span class="menu-icon">🚪</span>
+        <div>
+          <strong>Logout</strong>
+          <small>Sign out of AlgoVerse</small>
+        </div>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Login / Signup -->
+  <button
+    type="button"
+    class="btn-accent"
+    id="loginBtn"
+    onclick="openAuthModal('login')"
+  >
+    Login
+  </button>
+
+  <button
+    type="button"
+    class="btn-accent"
+    id="signupBtn"
+    onclick="openAuthModal('signup')"
+  >
+    Sign Up
+  </button>
+
+</div>
+
+    <button class="hamburger" id="ham" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+
+  <!-- Mobile Authentication -->
+  <div class="mobile-menu-auth">
+
+    <button
+      type="button"
+      id="mobileLoginBtn"
+      class="mobile-login-btn"
+      onclick="openAuthModal('login')"
+    >
+      🔐 Login
+    </button>
+
+    <button
+      type="button"
+      id="mobileSignupBtn"
+      class="mobile-signup-btn"
+      onclick="openAuthModal('signup')"
+    >
+      ✨ Sign Up
+    </button>
+
+
+  </div>
+
+    <div class="mobile-account" id="mobileAccount" hidden>
+      <a href="profile.html" class="mobile-account-head" id="mobileProfileBtn">
+        <span class="m-avatar" id="mobileAvatar"><span id="mobileAvatarInitial">V</span><img id="mobileAvatarImg" alt=""></span>
+        <span class="m-id">
+          <strong id="mobileUserName">User</strong>
+          <small id="mobileUserEmail">Account</small>
+        </span>
+      </a>
+      <div class="mobile-account-links">
+        <a href="profile.html">👤 Profile</a>
+        <a href="settings.html">⚙️ Settings</a>
+        <a href="settings.html#security">🔐 Security</a>
+        <a href="settings.html#privacy">🔒 Privacy</a>
+        <a href="settings.html#payments">💳 Billing</a>
+        <a href="support.html">❓ Help</a>
+      </div>
+      <button type="button" class="mobile-logout-btn" onclick="logoutUser(); window.closeMobileMenu && window.closeMobileMenu();">🚪 Log out</button>
+    </div>
+
+    <div class="mobile-search">
+      <span class="mobile-search-icon" aria-hidden="true">🔍</span>
+      <input type="text" id="mobileSearchInput" placeholder="Search courses, topics…" autocomplete="off" />
+    </div>
+    <div class="mobile-nav-list" role="navigation" aria-label="Mobile">
+      <a href="#features"><span class="menu-icon">✨</span>Features</a>
+
+      <div class="mobile-accordion" data-accordion>
+        <button type="button" class="mobile-accordion-toggle" aria-expanded="false">
+          <span class="menu-icon">📚</span>Courses
+          <span class="accordion-chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="mobile-accordion-panel">
+          <a href="dsa-course.html">Data Structures Fundamentals</a>
+          <a href="graph-algorithms.html">Graph Algorithms Mastery</a>
+          <a href="dynamic-programming.html">Dynamic Programming Deep Dive</a>
+          <a href="#courses">View all courses →</a>
+        </div>
+      </div>
+
+      <a href="#pricing"><span class="menu-icon">💎</span>Pricing</a>
+      <a href="#about"><span class="menu-icon">👥</span>About</a>
+
+      <div class="mobile-accordion" data-accordion>
+        <button type="button" class="mobile-accordion-toggle" aria-expanded="false">
+          <span class="menu-icon">✍️</span>Blog
+          <span class="accordion-chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="mobile-accordion-panel">
+          <a href="#blog">Code mastery & interview prep</a>
+          <a href="#blog" data-reveal-more="1">More articles & deep dives</a>
+        </div>
+      </div>
+
+      <a href="#contact"><span class="menu-icon">✉️</span>Contact</a>
+    </div>
+  </div>
+  <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
+</nav>
+<div class="scroll-progress-bar" id="scrollProgress"></div>
+
+<section id="hero" class="hero--aurora">
+  <div class="aurora-video-wrap" id="auroraVideoWrap" aria-hidden="true">
+    <canvas class="aurora-canvas" id="heroCanvas"></canvas>
+  </div>
+
+  <div class="aurora-overlay aurora-overlay--dark"></div>
+  <div class="aurora-overlay aurora-overlay--vertical"></div>
+  <div class="aurora-overlay aurora-overlay--horizontal"></div>
+  <div class="aurora-glow"></div>
+  <div class="aurora-grid-overlay"></div>
+  <div class="aurora-spotlight" id="auroraSpotlight"></div>
+  <div class="hero-chips" aria-hidden="true">
+    <span class="hero-chip c1">O(log n)</span>
+    <span class="hero-chip c2">BFS</span>
+    <span class="hero-chip c3">O(n log n)</span>
+    <span class="hero-chip c4">Dijkstra</span>
+    <span class="hero-chip c5">DP</span>
+  </div>
+
+  <div class="aurora-hero-content" id="auroraContent">
+    <div class="aurora-badge aurora-reveal" style="--d:0.1s">
+      <div class="aurora-avatars">
+        <span></span><span></span><span></span>
+      </div>
+      <span class="aurora-badge-text">Trusted by <strong>50k+ developers</strong></span>
+    </div>
+
+    <h1 class="aurora-title aurora-reveal" style="--d:0.25s">
+      Master the Art of <span class="aurora-title-accent" id="auroraRotator">Algorithms</span>
+    </h1>
+
+    <p class="aurora-subtitle aurora-reveal" style="--d:0.42s">
+      AlgoVerse is your universe of algorithmic knowledge — learn, visualize, and conquer complex problems with interactive lessons and real-world challenges.
+    </p>
+
+    <div class="aurora-actions aurora-reveal" style="--d:0.58s">
+      <a href="#courses" class="aurora-cta aurora-magnetic" data-magnetic>
+        <span class="aurora-cta-label">Start Learning</span>
+        <span class="aurora-cta-shine"></span>
+      </a>
+      <button type="button" class="aurora-play aurora-magnetic" data-magnetic aria-label="Watch demo" onclick="openVideoDemo()">
+        <span class="aurora-play-ring"></span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z" /></svg>
+      </button>
+    </div>
+
+    <div class="hero-stats aurora-stats aurora-reveal" style="--d:0.72s">
+      <div class="stat-item"><div class="stat-num" data-target="200" data-suffix="+">0+</div><div class="stat-label">Courses</div></div>
+      <div class="stat-item"><div class="stat-num" data-target="50" data-suffix="k+">0k+</div><div class="stat-label">Students</div></div>
+      <div class="stat-item"><div class="stat-num" data-target="98" data-suffix="%">0%</div><div class="stat-label">Pass Rate</div></div>
+    </div>
+  </div>
+
+  <div class="aurora-socials aurora-reveal" style="--d:0.85s">
+    <a href="#" class="aurora-social" aria-label="Twitter">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    <a href="#" class="aurora-social" aria-label="GitHub">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.207 11.387.6.113.793-.26.793-.577v-2.04c-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.744.083-.729.083-.729 1.205.084 1.84 1.237 1.84 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.42-1.305.762-1.605-2.665-.303-5.467-1.333-5.467-5.93 0-1.31.469-2.38 1.236-3.22-.124-.303-.536-1.524.117-3.176 0 0 1.008-.322 3.301 1.23a11.5 11.5 0 0 1 6.006 0c2.29-1.552 3.297-1.23 3.297-1.23.655 1.652.243 2.873.12 3.176.77.84 1.235 1.91 1.235 3.22 0 4.61-2.807 5.624-5.48 5.92.432.372.816 1.103.816 2.222v3.293c0 .32.192.694.8.576C20.565 21.795 24 17.298 24 12c0-6.63-5.37-12-12-12z"/></svg>
+    </a>
+    <a href="#" class="aurora-social" aria-label="LinkedIn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM7.119 20.452H3.554V9h3.565v11.452z"/></svg>
+    </a>
+  </div>
+
+  <div class="scroll-indicator" id="scrollIndicator" aria-hidden="true">
+    <span>⌄</span>
+  </div>
+</section>
+
+<!--
+  Issue 9 fix: the previous "Learning Paths", "Practice Problems" and
+  "Visualizer" sections were three near-identical feature-grid blocks
+  stacked back to back. They're now one tabbed "Explore" section, which
+  removes roughly two full screen-heights of redundant scrolling while
+  keeping every card's content.
+-->
+<section id="explore">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Explore</span>
+      <h2>Learn, Practice, Visualize</h2>
+      <p>Everything you need to build real algorithmic intuition — pick a track below.</p>
+    </div>
+    <div class="explore-tabs" role="tablist" aria-label="Explore AlgoVerse">
+      <button type="button" class="explore-tab active" data-tab="paths" role="tab" aria-selected="true">Learning Paths</button>
+      <button type="button" class="explore-tab" data-tab="practice" role="tab" aria-selected="false">Practice</button>
+      <button type="button" class="explore-tab" data-tab="visualizer" role="tab" aria-selected="false">Visualizer</button>
+    </div>
+
+    <div class="features-grid" data-panel="paths" role="tabpanel">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🔥</div>
+        <h3>Interview Crucible</h3>
+        <p>Arrays → Sliding Window → Graphs → DP — optimized for interviews.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🤖</div>
+        <h3>AI Architect</h3>
+        <p>Matrix math, feature engineering, and RAG pipelines.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">☁️</div>
+        <h3>Distributed Systems</h3>
+        <p>Sharding, replication, and global-scale patterns.</p>
+      </div>
+    </div>
+
+    <div class="features-grid" data-panel="practice" role="tabpanel" hidden>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">⚔️</div>
+        <h3>Pattern-First</h3>
+        <p>Filter by Two-Pointers, Sliding Window, Backtracking, Bit Hacks.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🧪</div>
+        <h3>Stress Tests</h3>
+        <p>Edge-case and large-input matrices for real-world validation.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🏢</div>
+        <h3>Company Sets</h3>
+        <p>Curated problems keyed to Microsoft, Meta, Amazon hiring patterns.</p>
+      </div>
+    </div>
+
+    <div class="features-grid" data-panel="visualizer" role="tabpanel" hidden>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">▶️</div>
+        <h3>Step Execution</h3>
+        <p>Pause, rewind, and slow down to inspect behavior.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🌐</div>
+        <h3>Synced Highlights</h3>
+        <p>See matching lines in C++, Java, and Python as the visual map updates.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🧩</div>
+        <h3>Playground</h3>
+        <p>Run your own arrays, matrices, and graphs for instant visualization.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee-section">
+  <div class="marquee-track" id="marquee"></div>
+</div>
+<section id="features">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Features</span>
+      <h2>Everything you need to<br/>think algorithmically</h2>
+      <p>From beginner-friendly visualizations to advanced competitive programming — we have it all.</p>
+      <p class="swipe-hint">← swipe to explore →</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card featured fade-in">
+        <div class="feature-icon">🧠</div>
+        <h3>AI-Powered Code Review</h3>
+        <p>Submit your solution and get instant, context-aware feedback. Our AI identifies inefficiencies, suggests optimizations, and explains the intuition behind better approaches — like having a senior engineer in your pocket.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🎯</div>
+        <h3>Visual Algorithm Tracer</h3>
+        <p>Watch sorting, graph traversal, and tree operations animate step-by-step in real time.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🏆</div>
+        <h3>Weekly Contests</h3>
+        <p>Compete globally, climb leaderboards, and earn badges that signal your mastery to employers.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">📚</div>
+        <h3>Curated Learning Paths</h3>
+        <p>From arrays & strings to dynamic programming — structured paths that adapt to your speed.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">💬</div>
+        <h3>Community Discussion</h3>
+        <p>Peer review, explain your approach, and learn from thousands of creative solutions.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">📊</div>
+        <h3>Progress Analytics</h3>
+        <p>Track topic mastery, time complexity improvement, and interview readiness at a glance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="how">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">How It Works</span>
+      <h2>Four steps to algorithmic fluency</h2>
+      <p>A clear, proven path from complete beginner to confident problem solver.</p>
+    </div>
+    <div class="steps">
+      <div class="step fade-in">
+        <div class="step-num">1</div>
+        <h3>Pick Your Path</h3>
+        <p>Choose a curated learning track based on your goals — FAANG prep, competitive, or fundamentals.</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-num">2</div>
+        <h3>Learn & Visualize</h3>
+        <p>Interactive lessons with animated visualizers make every concept click instantly.</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-num">3</div>
+        <h3>Practice Daily</h3>
+        <p>Solve curated problems, get AI feedback, and build a streak to reinforce your knowledge.</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-num">4</div>
+        <h3>Earn & Advance</h3>
+        <p>Collect certificates, rank up, and showcase your profile to top companies worldwide.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="about">
+  <div class="container">
+    <div class="about-inner">
+      <div class="about-visual fade-in">
+        <div class="about-card"><div class="num">98%</div><div class="lbl">Interview Pass Rate</div></div>
+        <div class="about-card"><div class="num">200+</div><div class="lbl">Expert Courses</div></div>
+        <div class="about-card"><div class="num">50k+</div><div class="lbl">Active Learners</div></div>
+        <div class="about-card"><div class="num">4.9★</div><div class="lbl">Average Rating</div></div>
+        <div style="grid-column: span 2; background: var(--c-bg3); border: 1px solid rgba(0,229,192,.2); border-radius: 12px; padding: 1.2rem; text-align: center;">
+          <div style="font-size: 1.8rem; margin-bottom: .4rem;">🚀</div>
+          <div style="font-size: .85rem; color: var(--c-muted);">Students at Google, Meta, Apple, Amazon & more</div>
+        </div>
+      </div>
+      <div class="about-text fade-in">
+        <span class="tag">About AlgoVerse</span>
+        <h2>Built by engineers, for engineers</h2>
+        <p>We started AlgoVerse because we struggled ourselves. Hours spent on scattered resources, unclear explanations, and zero feedback loops — we knew there had to be a better way.</p>
+        <p>Today, AlgoVerse is the go-to platform for developers who want to level up seriously. We combine pedagogy with interactivity and real-world relevance.</p>
+        <ul class="about-list">
+          <li>Lesson content written by FAANG engineers</li>
+          <li>Problems mapped to real interview formats</li>
+          <li>Multi-language support: Python, Java, C++, JS</li>
+          <li>Live doubt sessions every week</li>
+          <li>Lifetime access with one-time purchase</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="careers">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Careers</span>
+      <h2>Build the Ecosystem You Wish You Had</h2>
+      <p>Remote-first, fast-moving team focused on product and performance.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🚢</div>
+        <h3>Ships Over Meetings</h3>
+        <p>Deliver production-grade code; decisions move quickly.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">⚡</div>
+        <h3>Speed Obsessed</h3>
+        <p>UX and execution optimized for performance.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🛡️</div>
+        <h3>Extreme Ownership</h3>
+        <p>End-to-end responsibility for shipped features.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="press">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Press</span>
+      <h2>News & Releases</h2>
+      <p>Product updates and community milestones.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🚀</div>
+        <h3>June 2026</h3>
+        <p>Launched v2.0 Algorithm Visualizer with multi-language sync.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">📈</div>
+        <h3>April 2026</h3>
+        <p>Global active developer community milestone reached.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="courses">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">All Courses</span>
+      <h2>Advanced Engineering Modules. Zero Fluff.</h2>
+      <p>Go beyond syntax. Master structural blueprints, core design patterns, and low-level compiler optimizations that separate junior developers from elite tech leads.</p>
+      <p class="swipe-hint">← swipe to explore →</p>
+    </div>
+    
+    <div class="courses-grid">
+      <a href="dsa-course.html" class="course-card fade-in">
+        <div class="course-thumb purple">
+          <span class="course-badge-ribbon">🔥 Bestseller</span>
+          <span class="course-thumb-icon">🌳</span>
+        </div>
+        <div class="course-body">
+          <span class="course-level level-beg">Beginner</span>
+          <h3>Data Structures Fundamentals</h3>
+          <p>Arrays, linked lists, stacks, queues, and trees — built from the ground up.</p>
+          <div class="course-meta">
+            <span>📖 42 lessons</span>
+            <span>⏱ 18 hrs</span>
+            <span class="course-rating">⭐ 4.9 <em>(2.1k)</em></span>
+          </div>
+          <div class="course-cta">Start Course <span class="arrow">→</span></div>
+        </div>
+      </a>
+      <a href="graph-algorithms.html" class="course-card fade-in">
+        <div class="course-thumb teal">
+          <span class="course-badge-ribbon">⚡ Trending</span>
+          <span class="course-thumb-icon">⚡</span>
+        </div>
+        <div class="course-body">
+          <span class="course-level level-int">Intermediate</span>
+          <h3>Graph Algorithms Mastery</h3>
+          <p>BFS, DFS, Dijkstra, Bellman-Ford, MST and everything in between.</p>
+          <div class="course-meta">
+            <span>📖 55 lessons</span>
+            <span>⏱ 24 hrs</span>
+            <span class="course-rating">⭐ 4.8 <em>(1.4k)</em></span>
+          </div>
+          <div class="course-cta">Start Course <span class="arrow">→</span></div>
+        </div>
+      </a>
+      <a href="dynamic-programming.html" class="course-card fade-in">
+        <div class="course-thumb coral">
+          <span class="course-badge-ribbon">🆕 New</span>
+          <span class="course-thumb-icon">🧩</span>
+        </div>
+        <div class="course-body">
+          <span class="course-level level-adv">Advanced</span>
+          <h3>Dynamic Programming Deep Dive</h3>
+          <p>Memoization, tabulation, optimization patterns and competitive DP tricks.</p>
+          <div class="course-meta">
+            <span>📖 68 lessons</span>
+            <span>⏱ 30 hrs</span>
+            <span class="course-rating">⭐ 4.9 <em>(980)</em></span>
+          </div>
+          <div class="course-cta">Start Course <span class="arrow">→</span></div>
+        </div>
+      </a>
+    </div>
+    <div class="carousel-dots" id="coursesDots"></div>
+    <div style="text-align:center; margin-top:2.5rem;">
+      <a href="#" class="btn btn-secondary">🚀 Explore All Courses →</a>
+    </div>
+</div></section>
+<section id="pricing">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Pricing</span>
+      <h2>Invest in your future</h2>
+      <p>Flexible plans tailored to your engineering journey. No surprise fees.</p>
+    </div>
+    <div class="pricing-grid" style="max-width: 840px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+      <div class="price-card fade-in">
+        <div class="price-name">Free Plan</div>
+        <div class="price-amount"><sup>$</sup>0</div>
+        <div class="price-per">forever</div>
+        <hr class="price-divider"/>
+        <ul class="price-features">
+  <li>25 Beginner Practice Problems</li>
+  <li>5 Core DSA Courses</li>
+  <li>Basic Algorithm Visualizer</li>
+  <li>Community Discussion Access</li>
+  <li>Progress Tracking Dashboard</li>
+  <li class="off">Daily Coding Challenges</li>
+  <li class="off">AI Code Review</li>
+  <li class="off">Interview Question Bank</li>
+  <li class="off">HR Round Preparation</li>
+  <li class="off">Zero to Hero Roadmap</li>
+  <li class="off">Certificates</li>
+  <li class="off">Premium Contests</li>
+</ul>
+        <button type="button" class="btn-plan btn-plan-outline" onclick="openAuthModal('signup')">Get Started Free</button>
+      </div>
+      <div class="price-card popular fade-in">
+        <div class="popular-badge">Complete Access</div>
+        <div class="price-name">Pro Version</div>
+        <div class="price-amount"><sup>$</sup>19</div>
+        <div class="price-per">one-time lifetime access</div>
+        <hr class="price-divider"/>
+        <ul class="price-features">
+          <li style="font-weight: 600; color: #00e5c0;">⚡ Daily Practice of Code Modules</li>
+          <li style="font-weight: 600; color: #00e5c0;">🔥 Real-World Interview Questions</li>
+          <li style="font-weight: 600; color: #00e5c0;">💼 Complete HR Round Crack Guide</li>
+          <li style="font-weight: 600; color: #00e5c0;">🚀 From Zero to Hero Learning Paths</li>
+          <li>All 200+ Interactive Courses</li>
+          <li>Unlimited AI Code Reviews</li>
+          <li>Verifiable Digital Certificates</li>
+        </ul>
+        <button type="button" class="btn-plan btn-plan-filled" onclick="openPaymentModal('Pro Version', '$19 lifetime')">Start Pro Trial</button>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="testimonials">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Testimonials</span>
+      <h2>Words from our community</h2>
+      <p>Thousands of developers have changed their careers with AlgoVerse.</p>
+      <p class="swipe-hint">← swipe to read more →</p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testi-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>AlgoVerse's visual tracer finally made BFS click for me after months of confusion. Got my Google offer two weeks after finishing the graph course.</blockquote>
+        <div class="testi-author"><div class="avatar av1">AK</div><div><div class="author-name">Aanya Krishnan</div><div class="author-role">SWE @ Google</div></div></div>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>The AI code review is unlike anything else. It doesn't just say "wrong" — it explains *why* my O(n²) approach fails and guides me to the optimal one.</blockquote>
+        <div class="testi-author"><div class="avatar av2">ML</div><div><div class="author-name">Marcus Li</div><div class="author-role">Staff Engineer @ Meta</div></div></div>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>I went from zero CS background to clearing Amazon's system design round. The structured learning paths made it feel achievable, not overwhelming.</blockquote>
+        <div class="testi-author"><div class="avatar av3">PR</div><div><div class="author-name">Priya Rao</div><div class="author-role">Engineer @ Amazon</div></div></div>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>The weekly contests keep me sharp. It's addictive in the best way — I've improved my ranking every single month for six months straight.</blockquote>
+        <div class="testi-author"><div class="avatar av4">JT</div><div><div class="author-name">James Thornton</div><div class="author-role">Competitive Programmer</div></div></div>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>Our entire engineering team uses AlgoVerse Team edition for onboarding. The analytics show us exactly where new hires need extra support. Worth every penny.</blockquote>
+        <div class="testi-author"><div class="avatar av5">SN</div><div><div class="author-name">Sofia Nguyen</div><div class="author-role">Engineering Lead @ Stripe</div></div></div>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="stars">★★★★★</div>
+        <blockquote>I love that it's not just about memorizing patterns. The "why" behind every algorithm is explained so intuitively. Best investment I made this year.</blockquote>
+        <div class="testi-author"><div class="avatar av6">RM</div><div><div class="author-name">Rohan Mehta</div><div class="author-role">Freelance Dev → Apple</div></div></div>
+      </div>
+    </div>
+    <div class="carousel-dots" id="testimonialsDots"></div>
+  </div>
+</section>
+<section id="community">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Community</span>
+      <h2>Code Together — Compete Better</h2>
+      <p>Weekly contests, leaderboards, forums, and study cohorts to accelerate progress.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">⏱️</div>
+        <h3>Weekly Contests</h3>
+        <p>90-minute sprints with 4 curated problems.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🏆</div>
+        <h3>Leaderboards</h3>
+        <p>Rank by streaks, speed, and quality — climb tiers to Grandmaster.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">💬</div>
+        <h3>Forums</h3>
+        <p>Tagged threads for focused help: #Optimization, #SystemDesign, #LeetCodeHard.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🤝</div>
+        <h3>Study Groups</h3>
+        <p>Small cohorts, synchronized 30-day grinds, and weekly reviews.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🟣</div>
+        <h3>Discord</h3>
+        <p>Real-time channels for announcements, code help, and career growth.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!--
+  Issue 12 fix: "Curated Tech & Interview Deep Dives" and "More Articles &
+  Deep Dives" were two visually/functionally identical sections stacked back
+  to back. The second grid now lives inside this same section and is
+  revealed in place via the button below instead of duplicating the whole
+  section (see the inline script near the end of <body>).
+-->
+<section id="blog">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">Journal</span>
+      <h2>Curated Tech & Interview Deep Dives</h2>
+      <p>Master technical logic, unlock performance patterns, and ace complex behavioral rounds.</p>
+      <p class="swipe-hint">← swipe to read →</p>
+    </div>
+    <div class="blog-grid">
+      <article class="blog-card fade-in">
+        <div class="blog-img b1">🧊</div>
+        <div class="blog-body">
+          <div class="blog-category">Code Mastery</div>
+          <h3>Mastering Sliding Window Patterns for Fast Execution</h3>
+          <p>How converting sub-array loops into linear-time checks optimizes complex operations from O(n²) to O(n).</p>
+          <div class="blog-footer"><span>Jun 6, 2026</span><span>7 min read →</span></div>
+        </div>
+      </article>
+      <article class="blog-card fade-in">
+        <div class="blog-img b2">🎯</div>
+        <div class="blog-body">
+          <div class="blog-category">Interview Prep</div>
+          <h3>Cracking the Behavioral & HR Round: The STAR Approach</h3>
+          <p>Don't let tech-skills carry you alone. Learn how top tech leads score communication, teamwork, and cultural alignment.</p>
+          <div class="blog-footer"><span>Jun 2, 2026</span><span>10 min read →</span></div>
+        </div>
+      </article>
+      <article class="blog-card fade-in">
+        <div class="blog-img b3">🔥</div>
+        <div class="blog-body">
+          <div class="blog-category">Career Blueprint</div>
+          <h3>From Scratch to FAANG: The Ultimate Zero-to-Hero Strategy</h3>
+          <p>A structured roadmap covering crucial fundamentals, rigorous problem sets, and portfolio builds to jumpstart engineering careers.</p>
+          <div class="blog-footer"><span>May 29, 2026</span><span>14 min read →</span></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="blog-grid" id="moreArticles" hidden>
+      <article class="blog-card fade-in">
+        <div class="blog-img">🔗</div>
+        <div class="blog-body">
+          <div class="blog-category">Interview Prep</div>
+          <h3>Decoding Graph Algorithms: When to Use BFS vs. DFS</h3>
+          <p>How to decide between BFS and DFS in interviews — shortest paths, cycle detection, and topological sorts.</p>
+          <div class="blog-footer"><span>Jun 8, 2026</span><span>9 min read →</span></div>
+        </div>
+      </article>
+      <article class="blog-card fade-in">
+        <div class="blog-img">🏎️</div>
+        <div class="blog-body">
+          <div class="blog-category">Code Mastery</div>
+          <h3>Memory Locality: Writing Code That Plays Nice with the CPU Cache</h3>
+          <p>Small changes in loop order and data layout can dramatically affect performance. Learn why.</p>
+          <div class="blog-footer"><span>Jun 10, 2026</span><span>7 min read →</span></div>
+        </div>
+      </article>
+      <article class="blog-card fade-in">
+        <div class="blog-img">🔒</div>
+        <div class="blog-body">
+          <div class="blog-category">System Design</div>
+          <h3>The Blueprint of Web Security: Understanding OAuth 2.0 and JWTs</h3>
+          <p>Stateless authentication patterns for microservices: when to use JWTs and how OAuth 2.0 fits in.</p>
+          <div class="blog-footer"><span>Jun 11, 2026</span><span>9 min read →</span></div>
+        </div>
+      </article>
+      <article class="blog-card fade-in">
+        <div class="blog-img">🤖</div>
+        <div class="blog-body">
+          <div class="blog-category">Next-Gen Tech</div>
+          <h3>Quantization: How to Fit an LLM on Your Smartphone</h3>
+          <p>Compressing massive neural networks to run locally — the tradeoffs and techniques that make it possible.</p>
+          <div class="blog-footer"><span>Jun 12, 2026</span><span>10 min read →</span></div>
+        </div>
+      </article>
+      <article class="blog-card fade-in">
+        <div class="blog-img">🏗️</div>
+        <div class="blog-body">
+          <div class="blog-category">Full-Stack Craft</div>
+          <h3>Hydration Horrors: Mastering React Server-Side Rendering</h3>
+          <p>Why components blink and how to prevent hydration mismatches between server and client.</p>
+          <div class="blog-footer"><span>Jun 13, 2026</span><span>8 min read →</span></div>
+        </div>
+      </article>
+      <article class="blog-card fade-in">
+        <div class="blog-img">🛠️</div>
+        <div class="blog-body">
+          <div class="blog-category">Career Blueprint</div>
+          <h3>The Art of the Code Review: How Senior Engineers Read PRs</h3>
+          <p>Move beyond superficial reviews — learn the framework seniors use to evaluate architecture, edge cases, and maintainability.</p>
+          <div class="blog-footer"><span>Jun 14, 2026</span><span>6 min read →</span></div>
+        </div>
+      </article>
+    </div>
+
+    <div style="text-align:center; margin-top:2.5rem;">
+      <button type="button" class="btn btn-secondary" id="loadMoreArticlesBtn">Read All Articles →</button>
+    </div>
+    <div style="text-align:center; margin-top:1rem; color:var(--c-muted); font-size:0.95rem;">
+      <div style="margin-bottom:.6rem;">Included articles:</div>
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
+        <span class="inline-article-link">Decoding Graph Algorithms</span>
+        <span class="inline-article-link">Memory Locality</span>
+        <span class="inline-article-link">OAuth 2.0 & JWTs</span>
+        <span class="inline-article-link">Quantization</span>
+        <span class="inline-article-link">Hydration & SSR</span>
+        <span class="inline-article-link">The Art of Code Review</span>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="faq">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="tag">FAQ</span>
+      <h2>Questions? We've got answers.</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q">Do I need prior coding experience to start? <span class="faq-chevron">▾</span></button>
+        <div class="faq-a">No! Our Beginner track starts from scratch. We assume zero prior CS knowledge and build your intuition systematically through interactive lessons.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Which programming languages are supported? <span class="faq-chevron">▾</span></button>
+        <div class="faq-a">We support Python, Java, C++, JavaScript, and Go. You can switch languages mid-course, and our AI reviews code in all supported languages.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Is there a free trial for the Pro plan? <span class="faq-chevron">▾</span></button>
+        <div class="faq-a">Yes — 14 days free, no credit card required. Cancel anytime. You get full Pro access during the trial period.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How are the weekly contests structured? <span class="faq-chevron">▾</span></button>
+        <div class="faq-a">Contests run every Saturday for 90 minutes with 4 problems of varying difficulty. Rankings are global and contribute to your AlgoVerse rating.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Can I get a certificate for completing courses? <span class="faq-chevron">▾</span></button>
+        <div class="faq-a">Pro and Team members receive a verifiable digital certificate upon course completion. Certificates include a unique link you can add to LinkedIn or your resume.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Do you offer student or group discounts? <span class="faq-chevron">▾</span></button>
+        <div class="faq-a">Yes! Students get 50% off Pro with a valid .edu email. Teams of 5+ receive volume pricing — reach out via the contact form for a custom quote.</div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="contact">
+  <div class="container">
+    <div class="contact-inner">
+      <div class="contact-info fade-in">
+        <span class="tag">Contact Us</span>
+        <h2>Let's talk algorithms — or anything else</h2>
+        <p>Have a question, feedback, or want to explore an enterprise plan? We read every message.</p>
+        <div class="contact-detail">
+          <div class="contact-icon">📧</div>
+          <div><div class="contact-label">Email</div><div class="contact-val">officialalgoverse@gmail.com</div></div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-icon">💬</div>
+          <div><div class="contact-label">Discord</div><div class="contact-val">discord.gg/algoverse</div></div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-icon">📍</div>
+          <div><div class="contact-label">Headquarters</div><div class="contact-val">San Francisco, CA</div></div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-icon">🕐</div>
+          <div><div class="contact-label">Support Hours</div><div class="contact-val">Mon–Fri, 9am–6pm PST</div></div>
+        </div>
+      </div>
+      <div class="contact-form fade-in">
+        <div class="form-row">
+          <div class="form-group"><label for="contactFirstName">First Name</label><input id="contactFirstName" name="firstName" type="text" placeholder="First Name"/></div>
+          <div class="form-group"><label for="contactLastName">Last Name</label><input id="contactLastName" name="lastName" type="text" placeholder="Last Name"/></div>
+        </div>
+        <div class="form-group"><label for="contactEmail">Email</label><input id="contactEmail" name="email" type="email" placeholder="you@example.com"/></div>
+        <div class="form-group">
+          <label>Topic</label>
+          <select>
+            <option>General Inquiry</option>
+            <option>Technical Support</option>
+            <option>Enterprise / Team Plan</option>
+            <option>Partnership</option>
+            <option>Press & Media</option>
+          </select>
+        </div>
+        <div class="form-group"><label for="contactMessage">Message</label><textarea id="contactMessage" name="message" placeholder="Tell us what's on your mind…"></textarea></div>
+        <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="sendContactForm()">
+Send Message →
+</button>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="newsletter-section">
+  <div class="container">
+    <div class="newsletter-inner fade-in">
+      <span class="tag">Newsletter</span>
+      <h2>Get weekly algorithm insights</h2>
+      <p>One email a week. No fluff. Deep dives, contest recaps, and curated problem sets.</p>
+      <div class="newsletter-form">
+        <input type="email" placeholder="your@email.com"/>
+        <button class="btn btn-primary" onclick="alert('Subscribed! Check your inbox.')">Subscribe →</button>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="#" class="logo" style="margin-bottom:.5rem; display:inline-flex;">
+          <img src="logo.png" alt="AlgoVerse logo" class="logo-img" />
+          Algo<span>Verse</span>
+        </a>
+        <p>The universe of algorithmic knowledge. Learn, visualize, and master DSA with the world's most interactive platform.</p>
+        <div class="social-links">
+          <a href="#" class="social-btn" aria-label="Twitter">𝕏</a>
+          <a href="#" class="social-btn" aria-label="GitHub">⌥</a>
+          <a href="#" class="social-btn" aria-label="LinkedIn">in</a>
+          <a href="#" class="social-btn" aria-label="YouTube">▷</a>
+          <a href="#" class="social-btn" aria-label="Discord">⬡</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3>Learn</h3>
+        <ul>
+          <li><a href="#">All Courses</a></li>
+          <li><a href="#">Learning Paths</a></li>
+          <li><a href="#">Practice Problems</a></li>
+          <li><a href="#">Algorithm Visualizer</a></li>
+          <li><a href="#">Cheat Sheets</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Community</h3>
+        <ul>
+          <li><a href="#">Weekly Contests</a></li>
+          <li><a href="#">Leaderboards</a></li>
+          <li><a href="#">Discussion Forums</a></li>
+          <li><a href="#">Study Groups</a></li>
+          <li><a href="#">Discord Server</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Company</h3>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 AlgoVerse Inc. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Settings</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<div class="mobile-sticky-cta" id="mobileStickyCta">
+  <a href="#pricing" class="btn btn-primary">🚀 Start Learning Free →</a>
+</div>
+<button id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+<div id="authModal" class="modal-overlay">
+  <div class="modal-box">
+    <button type="button" class="modal-close" onclick="closeAuthModal()">&times;</button>
+    <div class="modal-header">
+      <h2 id="modalTitle">Welcome back to Algo<span>Verse</span></h2>
+      <p id="modalSubtitle">Master your algorithmic skills</p>
+    </div>
+    <div id="authMessage" class="auth-message" aria-live="polite"></div>
+    <form id="authForm" class="modal-form">
+      <div class="form-group" id="nameFieldGroup" style="display: none; margin-bottom: 1rem;">
+        <label style="color:#94a3b8; display:block; margin-bottom:0.4rem; font-size:0.9rem;">Full Name</label>
+        <input type="text" id="authName" placeholder="Aanya Krishnan" style="width:100%; padding:0.75rem; background:#1e293b; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff;" />
+      </div>
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label style="color: var(--c-muted); display:block; margin-bottom:0.4rem; font-size:0.9rem;">Email Address</label>
+        <input type="email" id="authEmail" required placeholder="you@example.com" style="width:100%; padding:0.75rem; background:#1e293b; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff;" />
+      </div>
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label style="color: var(--c-muted); display:block; margin-bottom:0.4rem; font-size:0.9rem;">Password</label>
+        <input type="password" id="authPassword" required placeholder="••••••••" style="width:100%; padding:0.75rem; background:#1e293b; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff;" />
+      </div>
+      <button type="submit" id="modalSubmitBtn" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:1.5rem;">
+        Sign In →
+      </button>
+    </form>
+  </div>
+</div>
+<div id="paymentModal" class="modal-overlay" aria-modal="true" role="dialog" hidden>
+  <div class="modal-box payment-modal-box">
+    <button type="button" class="modal-close" onclick="closePaymentModal()">&times;</button>
+    <div class="modal-header">
+      <h2 id="paymentModalTitle">Secure Checkout</h2>
+      <p id="paymentModalSubtitle">Complete your purchase safely</p>
+    </div>
+    <div id="paymentMessage" class="auth-message" aria-live="polite"></div>
+
+    <div class="payment-summary-card">
+      <div class="payment-summary-top">
+        <strong id="paymentPlanName">Pro Version</strong>
+        <span id="paymentPlanPrice">$19 lifetime</span>
+      </div>
+      <div class="payment-summary-meta">Full access • AI reviews • Certificates • Lifetime updates</div>
+    </div>
+
+    <div class="payment-methods" role="tablist" aria-label="Payment methods">
+      <button type="button" class="payment-method-btn active" data-method="card">Card</button>
+      <button type="button" class="payment-method-btn" data-method="upi">UPI</button>
+      <button type="button" class="payment-method-btn" data-method="wallet">Wallet</button>
+    </div>
+
+    <form id="paymentForm" class="payment-form" onsubmit="event.preventDefault(); processPayment();">
+      <div id="cardPanel" class="payment-method-panel">
+        <div class="form-group">
+          <label for="cardNumber">Card Number</label>
+          <input id="cardNumber" placeholder="4242 4242 4242 4242" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cardName">Cardholder Name</label>
+            <input id="cardName" placeholder="Your Name" />
+          </div>
+          <div class="form-group">
+            <label for="cardExpiry">Expiry</label>
+            <input id="cardExpiry" placeholder="MM/YY" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="cardCvv">CVV</label>
+          <input id="cardCvv" placeholder="123" />
+        </div>
+      </div>
+
+      <div id="upiPanel" class="payment-method-panel" hidden>
+        <div class="form-group">
+          <label for="upiId">UPI ID</label>
+          <input id="upiId" placeholder="yourname@upi" />
+        </div>
+        <div class="payment-note">You’ll receive an approval request on your UPI app.</div>
+      </div>
+
+      <div id="walletPanel" class="payment-method-panel" hidden>
+        <div class="form-group">
+          <label for="walletId">Mobile Wallet</label>
+          <input id="walletId" placeholder="Paytm / Google Pay / PhonePe" />
+        </div>
+        <div class="payment-note">Secure wallet payment with instant confirmation.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="paymentEmail">Email for receipt</label>
+        <input type="email" id="paymentEmail" placeholder="you@example.com" />
+      </div>
+
+      <div class="payment-security">
+        <span>🔒</span>
+        <span>Protected by 256-bit encryption</span>
+      </div>
+
+      <button type="submit" class="btn-primary payment-submit">Pay $19 Now →</button>
+    </form>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<div id="videoModal" class="video-overlay" aria-modal="true" role="dialog" hidden>
+  <div class="video-card">
+    <button type="button" class="video-back-btn btn-ghost" onclick="closeVideoDemo()">← Back to homepage</button>
+    <div class="video-wrapper">
+      <video id="demoVideo" controls playsinline>
+        <source src="algoverse_launch.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+</div>
+<script src="script.js"></script>
+<script>
+  // Issue 9: tabs for the merged "Explore" section (Learning Paths / Practice / Visualizer)
+  document.querySelectorAll('.explore-tab').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.explore-tab').forEach(function (b) {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      document.querySelectorAll('#explore [data-panel]').forEach(function (p) {
+        p.hidden = true;
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      var panel = document.querySelector('#explore [data-panel="' + btn.dataset.tab + '"]');
+      if (panel) panel.hidden = false;
+    });
+  });
+
+  // Issue 12: reveal the second set of blog articles in place instead of a duplicate section
+  function revealMoreArticles() {
+    var more = document.getElementById('moreArticles');
+    var btn = document.getElementById('loadMoreArticlesBtn');
+    if (more) more.hidden = false;
+    if (btn) btn.hidden = true;
+  }
+  var loadMoreBtn = document.getElementById('loadMoreArticlesBtn');
+  if (loadMoreBtn) loadMoreBtn.addEventListener('click', revealMoreArticles);
+  document.querySelectorAll('[data-reveal-more]').forEach(function (link) {
+    link.addEventListener('click', function () { revealMoreArticles(); });
+  });
+</script>
+
+<script>
+(function () {
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hasHover = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var heroEl = document.getElementById('hero');
+  if (!heroEl) return;
+
+  /* ---- 1. Rotating headline word ---- */
+  var rotator = document.getElementById('auroraRotator');
+  if (rotator && !reduceMotion) {
+    var words = ['Algorithms', 'Data Structures', 'Dynamic Programming', 'Graph Theory', 'System Design'];
+    var wi = 0;
+    setInterval(function () {
+      rotator.classList.add('is-swapping');
+      setTimeout(function () {
+        wi = (wi + 1) % words.length;
+        rotator.textContent = words[wi];
+        rotator.classList.remove('is-swapping');
+      }, 350);
+    }, 2600);
+  }
+
+  /* ---- 2. Cursor-follow spotlight (desktop only) ---- */
+  var spotlight = document.getElementById('auroraSpotlight');
+  if (spotlight && hasHover && !reduceMotion) {
+    heroEl.addEventListener('mouseenter', function () { spotlight.classList.add('is-active'); });
+    heroEl.addEventListener('mouseleave', function () { spotlight.classList.remove('is-active'); });
+    heroEl.addEventListener('mousemove', function (e) {
+      var rect = heroEl.getBoundingClientRect();
+      var x = ((e.clientX - rect.left) / rect.width) * 100;
+      var y = ((e.clientY - rect.top) / rect.height) * 100;
+      spotlight.style.setProperty('--x', x + '%');
+      spotlight.style.setProperty('--y', y + '%');
+    });
+  }
+
+  /* ---- 3. Scroll parallax: video drifts, content fades as you scroll past hero ---- */
+  var videoWrap = document.getElementById('auroraVideoWrap');
+  var content = document.getElementById('auroraContent');
+  if ((videoWrap || content) && !reduceMotion) {
+    var ticking = false;
+    function updateParallax() {
+      var heroHeight = heroEl.offsetHeight || 1;
+      var progress = Math.min(Math.max(-heroEl.getBoundingClientRect().top / heroHeight, 0), 1);
+      if (videoWrap) videoWrap.style.transform = 'translate3d(0,' + (progress * 60) + 'px,0)';
+      if (content) {
+        content.style.transform = 'translate3d(0,' + (progress * 34) + 'px,0)';
+        content.style.opacity = String(1 - progress * 0.85);
+      }
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        window.requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
+    }, { passive: true });
+    updateParallax();
+  }
+
+  /* ---- 4. Magnetic buttons (desktop only) ---- */
+  if (hasHover && !reduceMotion) {
+    document.querySelectorAll('[data-magnetic]').forEach(function (btn) {
+      btn.addEventListener('mousemove', function (e) {
+        var rect = btn.getBoundingClientRect();
+        var relX = e.clientX - rect.left - rect.width / 2;
+        var relY = e.clientY - rect.top - rect.height / 2;
+        btn.style.transform = 'translate(' + (relX * 0.22) + 'px,' + (relY * 0.32) + 'px)';
+      });
+      btn.addEventListener('mouseleave', function () {
+        btn.style.transform = 'translate(0,0)';
+      });
+    });
+  }
+})();
+</script>
+<!-- VERA AI CHATBOT -->
+<div id="vera-chat-btn">
+  🤖
+</div>
+<div id="vera-chat-box">
+  <div class="vera-header">
+    <span>🤖 Vera AI</span>
+    <button id="vera-close">✕</button>
+  </div>
+  <div id="vera-messages">
+    <div class="vera-bot">
+      Hello! I'm Vera AI. How can I help you today? 🚀
+    </div>
+  </div>
+  <div class="vera-input-area">
+    <input
+      type="text"
+      id="vera-input"
+      placeholder="Ask Vera AI..."
+    />
+    <button id="vera-voice">🎤</button>
+    <button id="vera-send">➤</button>
+  </div>
+</div>
+
+
+
+
+  </body>
+</html>
