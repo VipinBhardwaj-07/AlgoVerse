@@ -3,6 +3,7 @@ services:
     name: algoverse-chatbot
     env: node
     plan: free
+    rootDir: "ALGO VERSE"
     buildCommand: npm install
     startCommand: npm start
     envVars:

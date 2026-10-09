@@ -25,7 +25,7 @@ const limiter = rateLimit({
 app.use(limiter);
 app.use(cors({ origin: true }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname, '..')));
 
 // System prompt defines Vera's persona and scope
 const SYSTEM_PROMPT = `You are Vera, the AlgoVerse study companion chatbot.
