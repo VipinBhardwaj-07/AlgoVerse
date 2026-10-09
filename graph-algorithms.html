@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AlgoVerse Pro | Graph Algorithms Mastery</title>
+  <meta name="description" content="Learn BFS, DFS, Dijkstra, MST, and topological sorting with AlgoVerse's Graph Algorithms Mastery course — hands-on exercises and real interview questions." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #05050f;
+      --bg-surface: linear-gradient(160deg, rgba(22, 22, 54, 0.8), rgba(7, 7, 20, 0.95));
+      --bg-surface-solid: #0b0b22;
+      --card-shadow-3d: 0 40px 90px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      --border-glow: rgba(129, 98, 255, 0.25);
+      --border-bright: rgba(0, 255, 208, 0.5);
+      --neon-purple: #8162ff;
+      --neon-cyan: #00ffd0;
+      --neon-magenta: #ff3b93;
+      --neon-green: #00ff66;
+      --text-main: #f5f5fa;
+      --text-muted: #a9aecd;
+      --text-dark: #4d5171;
+      --transition-cosmic: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    .space-matrix-background {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 50% 30%, #151242 0%, #03030a 85%);
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .perspective-floor-grid {
+      position: absolute;
+      width: 200%; height: 200%;
+      top: -30%; left: -50%;
+      background-image:
+        linear-gradient(rgba(129, 98, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(129, 98, 255, 0.06) 1px, transparent 1px);
+      background-size: 60px 60px;
+      transform: perspective(300px) rotateX(65deg);
+      transform-origin: center center;
+      animation: gridScroll 20s linear infinite;
+    }
+    @keyframes gridScroll {
+      0% { transform: perspective(300px) rotateX(65deg) translateY(0); }
+      100% { transform: perspective(300px) rotateX(65deg) translateY(60px); }
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: rgba(129, 98, 255, 0.3); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); }
+
+    /* HERO SECTION */
+    .hero-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 4rem 1.5rem; position: relative; z-index: 1; }
+    .hero-shell.is-hidden { display: none !important; }
+    .hero-card { width: min(1200px, 100%); border-radius: 36px; padding: 4.5rem 3.5rem; background: var(--bg-surface); border: 1px solid var(--border-glow); box-shadow: var(--card-shadow-3d); backdrop-filter: blur(30px); text-align: center; position: relative; }
+    .hero-card h1 { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 5vw, 4.2rem); font-weight: 800; line-height: 1.15; margin-bottom: 1.2rem; letter-spacing: -0.02em; color: #ffffff; text-shadow: 0 1px 0 #7353ff, 0 2px 0 #573be6, 0 4px 20px rgba(129, 98, 255, 0.4); word-wrap: break-word; }
+    .hero-card > p { color: var(--text-muted); max-width: 780px; margin: 1.5rem auto 3rem; font-size: 1.1rem; font-weight: 500; }
+    .badge { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.5rem 1.2rem; border-radius: 999px; background: rgba(0, 255, 208, 0.06); color: var(--neon-cyan); border: 1px solid rgba(0, 255, 208, 0.25); font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2rem; }
+    .hero-actions { display: flex; justify-content: center; align-items: center; gap: 1.2rem; margin-bottom: 4rem; flex-wrap: wrap; }
+    .start-btn { background: #ffffff; color: #05050f; border: none; padding: 1.1rem 3rem; border-radius: 999px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: var(--transition-cosmic); box-shadow: 0 12px 35px rgba(255, 255, 255, 0.15); }
+    .start-btn:hover { transform: translateY(-4px); background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); color: #fff; box-shadow: 0 20px 45px rgba(0, 255, 208, 0.35); }
+    .secondary-link { display: inline-flex; align-items: center; justify-content: center; padding: 1.1rem 3rem; border-radius: 999px; font-weight: 600; border: 1px solid var(--border-glow); background: rgba(255, 255, 255, 0.01); transition: var(--transition-cosmic); color: var(--text-main); text-decoration: none; }
+    .secondary-link:hover { background: rgba(255, 255, 255, 0.04); border-color: #fff; }
+    .home-dsa-showcase-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin: 3.5rem 0; text-align: left; }
+    .dsa-preview-card { background: rgba(4, 4, 15, 0.7); border: 1px solid rgba(255, 255, 255, 0.02); border-radius: 20px; padding: 1.5rem; box-shadow: inset 0 2px 15px rgba(0,0,0,0.6); display: flex; flex-direction: column; justify-content: space-between; gap: 1.2rem; transition: var(--transition-cosmic); }
+    .dsa-preview-card:hover { transform: translateY(-6px) scale(1.01); border-color: rgba(129, 98, 255, 0.4); background: rgba(129, 98, 255, 0.03); }
+    .dsa-preview-card h4 { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: #fff; font-weight: 700; margin-bottom: 0.3rem; }
+    .dsa-preview-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+    .card-graphic-wrapper { background: #050512; border-radius: 12px; padding: 0.75rem; border: 1px solid rgba(255,255,255,0.01); display: flex; justify-content: center; align-items: center; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 3rem; }
+    .stat-card { background: rgba(255, 255, 255, 0.01); border: 1px solid var(--border-glow); border-radius: 20px; padding: 1.5rem; text-align: left; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03); transition: var(--transition-cosmic); cursor: pointer; }
+    .stat-card:hover { border-color: var(--neon-purple); transform: translateY(-4px); }
+    .stat-card strong { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 0.2rem; }
+    .stat-card span { color: var(--text-muted); font-size: 0.88rem; font-weight: 500; }
+
+    /* WORKSPACE VIEW */
+    .curriculum-shell { display: none; position: relative; z-index: 1; }
+    .curriculum-shell.active { display: block !important; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; position: sticky; top: 0; z-index: 100; background: rgba(5, 5, 13, 0.92); border-bottom: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); }
+    .back-btn { display: inline-flex; align-items: center; padding: 0.5rem 1.2rem; border-radius: 999px; border: 1px solid var(--border-glow); background: rgba(255, 255, 255, 0.02); font-size: 0.82rem; font-weight: 600; color: var(--text-muted); transition: var(--transition-cosmic); text-decoration: none; cursor: pointer; }
+    .back-btn:hover { border-color: var(--neon-cyan); color: #fff; }
+    .progress-wrap { display: flex; align-items: center; gap: 1rem; }
+    .progress-wrap span { font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--neon-cyan); white-space: nowrap; }
+    .progress-track { width: 160px; height: 5px; border-radius: 99px; background: rgba(255, 255, 255, 0.04); overflow: hidden; }
+    .progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple)); transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    
+    .layout { display: grid; grid-template-columns: minmax(280px, 320px) minmax(0, 1fr); min-height: calc(100vh - 65px); }
+    
+    /* MOBILE SIDEBAR TOGGLE BUTTON */
+    .mobile-menu-btn {
+      display: none;
+      width: 100%;
+      padding: 0.8rem 1.2rem;
+      background: #0d0d26;
+      border: 1px solid var(--border-glow);
+      border-radius: 12px;
+      color: var(--neon-cyan);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-align: left;
+      cursor: pointer;
+      margin-bottom: 1rem;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sidebar { padding: 2rem 1.25rem; background: var(--bg-surface-solid); border-right: 1px solid rgba(255, 255, 255, 0.05); overflow-y: auto; height: calc(100vh - 65px); position: sticky; top: 65px; min-width: 0; }
+    .sidebar-search { display: flex; align-items: center; gap: 0.75rem; padding: 0.8rem 1rem; margin-bottom: 1.8rem; border: 1px solid var(--border-glow); border-radius: 14px; background: rgba(0, 0, 0, 0.3); transition: var(--transition-cosmic); }
+    .sidebar-search:focus-within { border-color: var(--neon-purple); box-shadow: 0 0 20px rgba(129, 98, 255, 0.12); }
+    .sidebar-search span { color: var(--text-dark); font-size: 0.95rem; }
+    .sidebar-search input { width: 100%; border: none; outline: none; background: transparent; color: var(--text-main); font-size: 0.88rem; font-family: inherit; }
+    .module { border-radius: 16px; margin-bottom: 0.6rem; background: rgba(255, 255, 255, 0.01); border: 1px solid transparent; transition: var(--transition-cosmic); overflow: hidden; }
+    .module.open { background: rgba(255, 255, 255, 0.015); border-color: rgba(255, 255, 255, 0.04); }
+    .module-head { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1rem; cursor: pointer; user-select: none; }
+    .module-head span:first-child { font-size: 0.88rem; font-weight: 700; max-width: 100%; overflow-wrap: anywhere; word-break: break-word; line-height: 1.4; }
+    .module-head .chevron { font-size: 0.75rem; color: var(--text-dark); transition: transform 0.3s ease; }
+    .module.open .chevron { transform: rotate(90deg); color: var(--neon-purple); }
+    .module-body { display: none; padding: 0 0.5rem 1rem; }
+    .module.open .module-body { display: block; }
+    .topic-link { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.7rem 0.9rem; margin-top: 0.3rem; border-radius: 10px; cursor: pointer; color: var(--text-muted); font-size: 0.85rem; font-weight: 500; transition: var(--transition-cosmic); overflow-wrap: anywhere; word-break: break-word; line-height: 1.4; min-width: 0; }
+    .topic-link:hover { background: rgba(255, 255, 255, 0.03); color: #fff; }
+    .topic-link.active { background: rgba(129, 98, 255, 0.12); color: #fff; font-weight: 600; border-left: 3px solid var(--neon-purple); }
+    .topic-link.done { color: var(--neon-green); position: relative; padding-right: 2rem; }
+    .topic-link.done::after { content: '●'; position: absolute; right: 0.8rem; top: 0.8rem; font-size: 0.65rem; color: var(--neon-green); }
+    
+    .content { padding: 2rem 2.5rem 4rem; max-width: none; margin: 0; min-width: 0; }
+    .content-header { margin-bottom: 2.5rem; }
+    .content-tag { display: inline-block; padding: 0.35rem 0.9rem; border-radius: 8px; background: rgba(255, 59, 147, 0.06); border: 1px solid rgba(255, 59, 147, 0.2); color: #ff6cb1; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; }
+    .content-header h2 { font-family: 'Space Grotesk', sans-serif; font-size: 2.4rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.5rem; line-height: 1.25; word-wrap: break-word; }
+    .content-meta { color: var(--text-dark); font-size: 0.9rem; font-weight: 600; }
+    .content-hero { padding: 1.75rem 2rem; border-radius: 20px; background: linear-gradient(135deg, rgba(129, 98, 255, 0.06), rgba(0, 255, 208, 0.01)); border: 1px solid var(--border-glow); box-shadow: var(--card-shadow-3d); margin-bottom: 2.5rem; }
+    .content-hero .eyebrow { font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--neon-cyan); font-weight: 700; margin-bottom: 0.5rem; }
+    .content-hero p { color: var(--text-muted); font-size: 1rem; }
+    .learning-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; margin-bottom: 3rem; }
+    .learning-card { padding: 1.4rem; border-radius: 18px; background: #0f0f24; border: 1px solid rgba(255, 255, 255, 0.03); box-shadow: var(--card-shadow-3d); }
+    .learning-card strong { display: block; font-size: 0.95rem; font-weight: 700; margin-bottom: 0.3rem; color: #fff; }
+    .learning-card span { color: var(--text-muted); font-size: 0.82rem; }
+    .content-body p { margin-bottom: 1.5rem; color: #dbdee9; font-size: 1.05rem; line-height: 1.7; }
+    .content-body ul, .content-body ol { margin-bottom: 2rem; padding-left: 1.5rem; color: #dbdee9; }
+    .content-body li { margin-bottom: 0.6rem; }
+    .content-body h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; margin: 2.5rem 0 1rem; color: #fff; }
+    .content-body pre { 
+      background: #04040c; 
+      border: 1px solid rgba(255, 255, 255, 0.04); 
+      border-radius: 14px; 
+      padding: 1.25rem; 
+      overflow-x: auto; 
+      margin: 2rem 0; 
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-width: 100%;
+    }
+    .content-body code { font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; color: #9effdf; }
+    .callout { border-left: 3px solid var(--neon-purple); padding: 1.25rem 1.5rem; border-radius: 0 16px 16px 0; background: rgba(129, 98, 255, 0.03); margin: 2rem 0; color: #dfd8ff; font-size: 1rem; }
+    .visual-block { margin: 2.5rem 0; padding: 2rem; border-radius: 20px; background: linear-gradient(160deg, #111129, #080816); border: 1px solid var(--border-glow); box-shadow: var(--card-shadow-3d); }
+    .visual-head { font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dark); margin-bottom: 1.5rem; }
+    .flow-grid { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .flow-chip { padding: 0.6rem 1.2rem; border-radius: 10px; background: rgba(129, 98, 255, 0.06); border: 1px solid rgba(129, 98, 255, 0.15); color: #cbd2ff; font-weight: 600; font-size: 0.85rem; }
+    .flow-arrow { color: var(--neon-cyan); font-weight: 700; font-size: 1.1rem; filter: drop-shadow(0 0 4px var(--neon-cyan)); }
+    .visual-caption { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.2rem; }
+    .compare-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .compare-card { padding: 1.2rem; border-radius: 12px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255, 255, 255, 0.02); }
+    .compare-card strong { display: block; font-size: 0.9rem; color: #fff; margin-bottom: 0.25rem; }
+    .compare-card span { color: var(--text-dark); font-size: 0.8rem; }
+    .module-outline { margin-bottom: 2rem; padding: 1.25rem; border-radius: 18px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: var(--card-shadow-3d); }
+    .outline-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+    .outline-header strong { display: block; color: #fff; font-size: 0.98rem; margin-top: 0.2rem; }
+    .outline-header span { color: var(--text-dark); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; }
+    .outline-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+    .outline-chip { display: flex; align-items: flex-start; gap: 0.6rem; width: 100%; padding: 0.75rem 0.85rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); color: var(--text-muted); text-align: left; cursor: pointer; transition: var(--transition-cosmic); }
+    .outline-chip:hover { border-color: rgba(129, 98, 255, 0.35); background: rgba(129, 98, 255, 0.04); color: #fff; }
+    .outline-chip.active { border-color: rgba(0, 255, 208, 0.35); background: rgba(0, 255, 208, 0.06); color: #fff; }
+    .outline-chip span { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--neon-cyan); min-width: 1rem; }
+    .outline-chip strong { margin: 0; font-size: 0.85rem; line-height: 1.35; color: inherit; overflow-wrap: anywhere; word-break: break-word; }
+    .actions-row { display: flex; justify-content: flex-start; align-items: center; margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+    .mark-btn { background: transparent; border: 1px solid rgba(0, 255, 208, 0.3); color: var(--neon-cyan); padding: 0.85rem 2rem; border-radius: 999px; font-weight: 700; font-size: 0.88rem; cursor: pointer; transition: var(--transition-cosmic); }
+    .mark-btn:hover { background: rgba(0, 255, 208, 0.04); border-color: var(--neon-cyan); }
+    .mark-btn.done { background: var(--neon-cyan); border-color: var(--neon-cyan); color: #060610; box-shadow: 0 0 30px rgba(0, 255, 208, 0.25); }
+    .nav-buttons { display: flex; justify-content: space-between; gap: 1rem; margin-top: 2.5rem; }
+    .nav-btn { flex: 1; padding: 1.25rem 1.4rem; border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 16px; background: #0f0f24; cursor: pointer; text-align: left; box-shadow: var(--card-shadow-3d); transition: var(--transition-cosmic); }
+    .nav-btn:hover { border-color: rgba(129, 98, 255, 0.4); background: rgba(129, 98, 255, 0.02); }
+    .nav-btn.disabled { opacity: 0.15; pointer-events: none; }
+    .nav-btn#nextBtn { text-align: right; }
+    .nav-btn strong { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dark); margin-bottom: 0.3rem; }
+    .nav-btn span { color: var(--text-main); font-size: 0.95rem; font-weight: 600; }
+
+    /* CHALLENGES & MCQS */
+    .challenge-console { margin: 3rem 0; border-radius: 20px; background: linear-gradient(160deg, #0d0d26, #06060f); border: 1px solid var(--border-bright); box-shadow: 0 40px 90px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.08); overflow: hidden; position: relative; }
+    .challenge-console::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-purple), var(--neon-magenta), transparent); opacity: 0.8; }
+    .console-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1.5rem 2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.06); background: rgba(0, 255, 208, 0.02); }
+    .console-title { display: flex; align-items: center; gap: 0.8rem; }
+    .console-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--neon-cyan); box-shadow: 0 0 12px var(--neon-cyan); animation: pulseDot 2s ease-in-out infinite; }
+    @keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+    .console-title span { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dark); }
+    .console-title strong { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #fff; display: block; }
+    .console-count { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--neon-cyan); border: 1px solid rgba(0, 255, 208, 0.3); padding: 0.35rem 0.85rem; border-radius: 999px; background: rgba(0, 255, 208, 0.05); }
+    .console-body { padding: 1.75rem 2rem; display: flex; flex-direction: column; gap: 1rem; }
+    .challenge-card { border-radius: 14px; background: rgba(255, 255, 255, 0.015); border: 1px solid rgba(255, 255, 255, 0.05); padding: 1.4rem; transition: var(--transition-cosmic); }
+    .challenge-card:hover { border-color: rgba(129, 98, 255, 0.35); background: rgba(129, 98, 255, 0.03); }
+    .challenge-row { display: flex; align-items: flex-start; gap: 1rem; }
+    .challenge-index { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 600; color: var(--neon-purple); min-width: 48px; padding-top: 0.15rem; }
+    .challenge-main { flex: 1; min-width: 0; }
+    .challenge-meta { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+    .diff-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.25rem 0.65rem; border-radius: 999px; }
+    .diff-badge.easy { color: var(--neon-green); background: rgba(0, 255, 102, 0.08); border: 1px solid rgba(0, 255, 102, 0.3); }
+    .diff-badge.medium { color: #ffc857; background: rgba(255, 200, 87, 0.08); border: 1px solid rgba(255, 200, 87, 0.3); }
+    .diff-badge.hard { color: var(--neon-magenta); background: rgba(255, 59, 147, 0.08); border: 1px solid rgba(255, 59, 147, 0.3); }
+    .type-badge { font-family: 'Space Grotesk', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dark); padding: 0.25rem 0.65rem; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.08); }
+    .challenge-question { color: #e6e8f5; font-size: 0.98rem; font-weight: 500; line-height: 1.55; margin-bottom: 0.5rem; word-wrap: break-word; }
+    .hint-toggle { background: none; border: none; color: var(--neon-cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0; display: inline-flex; align-items: center; gap: 0.4rem; transition: var(--transition-cosmic); }
+    .hint-toggle:hover { color: #fff; }
+    .hint-panel { display: none; margin-top: 0.8rem; padding: 0.9rem 1.1rem; border-radius: 10px; background: rgba(0, 0, 0, 0.35); border-left: 3px solid var(--neon-cyan); color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; word-wrap: break-word; }
+    .hint-panel.open { display: block; }
+    .console-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 1.25rem 2rem; border-top: 1px solid rgba(255, 255, 255, 0.06); background: rgba(0,0,0,0.2); }
+    .console-footer p { color: var(--text-dark); font-size: 0.82rem; margin: 0; }
+    .console-cta { font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; font-weight: 700; color: #060610; background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); padding: 0.65rem 1.4rem; border-radius: 999px; border: none; cursor: pointer; transition: var(--transition-cosmic); }
+    .challenge-btn-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .sol-toggle { background: none; border: none; color: var(--neon-green); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0; display: inline-flex; align-items: center; gap: 0.4rem; }
+    .hint-panel.sol-panel { border-left-color: var(--neon-green); color: #d7ffe8; }
+    .hint-panel.sol-panel strong { color: var(--neon-green); }
+    .mcq-console { border-color: rgba(255, 59, 147, 0.35); }
+    .mcq-console::before { background: linear-gradient(90deg, transparent, var(--neon-magenta), var(--neon-purple), var(--neon-cyan), transparent); }
+    .mcq-card { border-radius: 14px; background: rgba(255, 255, 255, 0.015); border: 1px solid rgba(255, 255, 255, 0.05); padding: 1.25rem 1.4rem; }
+    .mcq-question { color: #e6e8f5; font-size: 0.95rem; font-weight: 600; margin-bottom: 0.8rem; word-wrap: break-word; }
+    .mcq-num { color: var(--neon-magenta); font-family: 'JetBrains Mono', monospace; margin-right: 0.3rem; }
+    .mcq-options { display: flex; flex-direction: column; gap: 0.5rem; }
+    .mcq-option { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: var(--transition-cosmic); }
+    .mcq-option input { accent-color: var(--neon-purple); cursor: pointer; }
+    .mcq-option-letter { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text-dark); min-width: 14px; }
+    .mcq-option-text { color: #d5d9e8; font-size: 0.88rem; word-wrap: break-word; }
+    .mcq-option.correct { border-color: var(--neon-green); background: rgba(0, 255, 102, 0.08); }
+    .mcq-option.correct .mcq-option-letter { color: var(--neon-green); }
+    .mcq-option.wrong { border-color: var(--neon-magenta); background: rgba(255, 59, 147, 0.08); }
+    .mcq-option.wrong .mcq-option-letter { color: var(--neon-magenta); }
+
+    /* INTERVIEW SHELL */
+    .interview-shell { display: none; position: relative; z-index: 1; }
+    .interview-shell.active { display: block !important; }
+    .interview-content { padding: 2.5rem 2rem 5rem; max-width: 1050px; margin: 0 auto; }
+    .interview-intro { padding: 2rem; border-radius: 20px; background: linear-gradient(135deg, rgba(255, 59, 147, 0.07), rgba(129, 98, 255, 0.03)); border: 1px solid var(--border-glow); margin-bottom: 2.5rem; }
+    .interview-intro h2 { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; margin-bottom: 0.6rem; word-wrap: break-word; }
+    .interview-intro p { color: var(--text-muted); font-size: 1rem; }
+    .iq-module { border-radius: 16px; margin-bottom: 1rem; background: rgba(255, 255, 255, 0.012); border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden; }
+    .iq-module-head { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.5rem; cursor: pointer; user-select: none; }
+    .iq-module-head strong { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: #fff; }
+    .iq-module-head span.iq-sub { display:block; color: var(--text-dark); font-size: 0.8rem; font-weight: 500; margin-top: 0.15rem; }
+    .iq-module-head .chevron { font-size: 0.75rem; color: var(--text-dark); transition: transform 0.3s ease; }
+    .iq-module.open .chevron { transform: rotate(90deg); color: var(--neon-magenta); }
+    .iq-module-body { display: none; padding: 0 1.5rem 1.5rem; flex-direction: column; gap: 1rem; }
+    .iq-module.open .iq-module-body { display: flex; }
+    .iq-card { border-radius: 14px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255, 255, 255, 0.05); padding: 1.4rem; }
+    .iq-q { color: #fff; font-weight: 700; font-size: 0.98rem; margin-bottom: 0.6rem; word-wrap: break-word; }
+    .iq-q span { color: var(--neon-cyan); font-family: 'JetBrains Mono', monospace; margin-right: 0.4rem; }
+    .iq-a { color: #dbdee9; font-size: 0.92rem; margin-bottom: 0.8rem; word-wrap: break-word; }
+    .iq-a strong { color: var(--neon-green); }
+    .iq-analysis { border-left: 3px solid var(--neon-purple); padding: 0.8rem 1rem; border-radius: 0 10px 10px 0; background: rgba(129, 98, 255, 0.04); color: var(--text-muted); font-size: 0.85rem; word-wrap: break-word; }
+    .iq-rank-table { display: grid; gap: 0.5rem; margin-top: 0.8rem; }
+    .iq-rank-row { display: grid; grid-template-columns: 40px 1fr 140px; gap: 0.8rem; padding: 0.8rem 1rem; border-radius: 8px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.03); font-size: 0.85rem; align-items: center; }
+    .iq-rank-row .rank-num { color: var(--neon-magenta); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+    .iq-rank-row .rank-topic { color: var(--text-dark); font-size: 0.75rem; text-transform: uppercase; }
+    .browse-card { border-radius: 14px; background: rgba(255, 255, 255, 0.015); border: 1px solid rgba(255, 255, 255, 0.05); padding: 1.2rem 1.4rem; cursor: pointer; transition: var(--transition-cosmic); display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .browse-card:hover { border-color: rgba(129, 98, 255, 0.4); background: rgba(129, 98, 255, 0.04); }
+    .browse-card-main strong { display: block; font-size: 0.95rem; color: #fff; font-weight: 700; margin-bottom: 0.2rem; }
+    .browse-card-main span { color: var(--text-dark); font-size: 0.78rem; font-weight: 600; text-transform: uppercase; }
+    .browse-arrow { color: var(--neon-cyan); font-size: 1rem; flex-shrink: 0; }
+    .browse-count-pill { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--neon-purple); border: 1px solid rgba(129, 98, 255, 0.35); padding: 0.25rem 0.75rem; border-radius: 999px; background: rgba(129, 98, 255, 0.06); }
+    .roadmap-note { margin-top: 2rem; padding: 1.2rem 1.5rem; border-radius: 14px; background: rgba(255, 200, 87, 0.05); border: 1px solid rgba(255, 200, 87, 0.2); color: #ffd98a; font-size: 0.88rem; }
+
+    /* MEDIA QUERIES FOR MOBILE */
+    @media (max-width: 1024px) {
+      .layout { grid-template-columns: 1fr; }
+      .mobile-menu-btn { display: flex; }
+      .sidebar { 
+        display: none;
+        height: auto; 
+        position: static; 
+        border-right: none; 
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+        padding: 1.25rem 1rem; 
+        background: #08081a;
+        margin-bottom: 1.5rem;
+        border-radius: 16px;
+      }
+      .sidebar.mobile-open { display: block; }
+      .home-dsa-showcase-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats { grid-template-columns: 1fr; gap: 1rem; }
+      .learning-grid { grid-template-columns: 1fr; }
+      .interview-content { padding: 1.5rem 1rem 4rem; }
+      .iq-rank-row { grid-template-columns: 35px 1fr; }
+      .iq-rank-row .rank-topic { display: none; }
+    }
+
+    @media (max-width: 768px) {
+      .hero-shell { padding: 2rem 1rem; }
+      .hero-card { padding: 2.2rem 1.2rem; border-radius: 24px; }
+      .hero-card h1 { font-size: 1.75rem; }
+      .hero-card > p { font-size: 0.95rem; margin: 1rem auto 2rem; }
+      .hero-actions { flex-direction: column; gap: 0.85rem; margin-bottom: 2.5rem; }
+      .start-btn, .secondary-link { width: 100%; text-align: center; padding: 0.9rem 1.25rem; font-size: 0.95rem; }
+      .home-dsa-showcase-grid { grid-template-columns: 1fr; margin: 2.5rem 0; }
+      .topbar { padding: 0.75rem 1rem; flex-direction: column; align-items: stretch; gap: 0.6rem; }
+      .topbar > div { width: 100%; justify-content: space-between; }
+      .progress-wrap { width: 100%; justify-content: space-between; }
+      .progress-track { flex: 1; max-width: 130px; }
+      .content { padding: 1rem 0.5rem 3rem; }
+      .content-header h2 { font-size: 1.5rem; }
+      .content-hero { padding: 1rem; }
+      .learning-card { padding: 1rem; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .outline-list { grid-template-columns: 1fr; }
+      .nav-buttons { flex-direction: column; }
+      .nav-btn { padding: 1rem; }
+      .nav-btn#nextBtn { text-align: left; }
+      .actions-row { margin-top: 2.5rem; }
+      .console-header { flex-direction: column; align-items: flex-start; padding: 1rem; }
+      .console-body { padding: 1rem; }
+      .console-footer { flex-direction: column; align-items: stretch; padding: 1rem; }
+      .console-cta { width: 100%; text-align: center; }
+      .challenge-row { flex-direction: column; gap: 0.4rem; }
+      .module-outline { padding: 0.85rem; }
+      .outline-chip { padding: 0.65rem; }
+      .visual-block { padding: 1rem; }
+      .visual-block svg { max-width: 100%; height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="space-matrix-background"><div class="perspective-floor-grid"></div></div>
+  <section class="hero-shell" id="heroShell">
+    <div class="hero-card">
+      <div class="badge">⚡ Production Graph Core v1.0 · Modules 1–6 Live</div>
+      <h1>Graph Algorithms Mastery</h1>
+      <p>Master BFS, DFS, shortest paths, minimum spanning trees, DAGs, and connectivity algorithms through engineered lesson pipelines, complexity breakdowns, and real interview vectors.</p>
+      <div class="hero-actions">
+        <button class="start-btn" id="startLearningBtn">Start Learning</button>
+        <a class="secondary-link" href="index.html">Back to Home</a>
+      </div>
+      <div class="home-dsa-showcase-grid">
+        <div class="dsa-preview-card">
+          <div><h4>Traversal Engines</h4><p>BFS and DFS pipelines that unlock shortest paths, components, and ordering.</p></div>
+          <div class="card-graphic-wrapper">
+            <svg width="100%" height="40" viewBox="0 0 160 40" fill="none">
+              <circle cx="20" cy="20" r="6" fill="#05050f" stroke="#8162ff" stroke-width="2"/>
+              <circle cx="60" cy="8" r="6" fill="#05050f" stroke="#00ffd0" stroke-width="2"/>
+              <circle cx="60" cy="32" r="6" fill="#05050f" stroke="#00ffd0" stroke-width="2"/>
+              <circle cx="100" cy="8" r="6" fill="#05050f" stroke="#ff3b93" stroke-width="1.5"/>
+              <circle cx="100" cy="32" r="6" fill="#05050f" stroke="#ff3b93" stroke-width="1.5"/>
+              <path d="M26 20 L54 9 M26 20 L54 31 M66 8 L94 8 M66 32 L94 32" stroke="#4d5171" stroke-width="1.5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="dsa-preview-card">
+          <div><h4>Shortest Paths</h4><p>Weighted routing logic behind Dijkstra, Bellman-Ford, and Floyd-Warshall.</p></div>
+          <div class="card-graphic-wrapper">
+            <svg width="100%" height="40" viewBox="0 0 160 40" fill="none">
+              <circle cx="15" cy="20" r="5" fill="#8162ff" fill-opacity="0.3" stroke="#8162ff"/>
+              <circle cx="75" cy="8" r="5" fill="#8162ff" fill-opacity="0.3" stroke="#8162ff"/>
+              <circle cx="75" cy="32" r="5" fill="#8162ff" fill-opacity="0.3" stroke="#8162ff"/>
+              <circle cx="140" cy="20" r="5" fill="#00ffd0" fill-opacity="0.3" stroke="#00ffd0"/>
+              <path d="M20 20 L70 9" stroke="#00ffd0" stroke-width="1.5"/>
+              <path d="M20 20 L70 31" stroke="#4d5171" stroke-width="1.5"/>
+              <path d="M80 8 L135 19" stroke="#00ffd0" stroke-width="1.5"/>
+              <path d="M80 32 L135 21" stroke="#4d5171" stroke-width="1.5"/>
+              <text x="45" y="10" fill="#00ffd0" font-size="7" font-family="monospace">2</text>
+              <text x="105" y="10" fill="#00ffd0" font-size="7" font-family="monospace">4</text>
+            </svg>
+          </div>
+        </div>
+        <div class="dsa-preview-card">
+          <div><h4>Spanning Trees</h4><p>Prim's and Kruskal's build minimum-cost networks with Union-Find.</p></div>
+          <div class="card-graphic-wrapper">
+            <svg width="100%" height="40" viewBox="0 0 160 40" fill="none">
+              <circle cx="80" cy="8" r="5" fill="#05050f" stroke="#00ffd0" stroke-width="2"/>
+              <circle cx="30" cy="30" r="5" fill="#05050f" stroke="#00ffd0" stroke-width="2"/>
+              <circle cx="130" cy="30" r="5" fill="#05050f" stroke="#00ffd0" stroke-width="2"/>
+              <circle cx="80" cy="34" r="5" fill="#05050f" stroke="#8162ff" stroke-width="1.5" stroke-dasharray="2 2"/>
+              <path d="M80 13 L33 27 M80 13 L127 27" stroke="#00ffd0" stroke-width="2"/>
+              <path d="M30 30 L80 34" stroke="#4d5171" stroke-width="1.2" stroke-dasharray="3 3"/>
+            </svg>
+          </div>
+        </div>
+        <div class="dsa-preview-card">
+          <div><h4>DAGs &amp; Ordering</h4><p>Topological sort and dependency resolution for scheduling problems.</p></div>
+          <div class="card-graphic-wrapper">
+            <svg width="100%" height="40" viewBox="0 0 160 40" fill="none">
+              <rect x="8" y="14" width="28" height="14" rx="4" fill="#8162ff" fill-opacity="0.2" stroke="#8162ff"/>
+              <rect x="66" y="4" width="28" height="14" rx="4" fill="#00ffd0" fill-opacity="0.2" stroke="#00ffd0"/>
+              <rect x="66" y="24" width="28" height="14" rx="4" fill="#00ffd0" fill-opacity="0.2" stroke="#00ffd0"/>
+              <rect x="124" y="14" width="28" height="14" rx="4" fill="#ff3b93" fill-opacity="0.2" stroke="#ff3b93"/>
+              <path d="M36 21 L66 11 M36 21 L66 31 M94 11 L124 21 M94 31 L124 21" stroke="#4d5171" stroke-width="1.5"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat-card trigger-interview" data-view="topics"><strong>18 Topics</strong><span>Systematic graph algorithm modules — click to browse all topics →</span></div>
+        <div class="stat-card trigger-interview" data-view="modules"><strong>6 Modules</strong><span>Fundamentals through Connectivity, live now — click to browse modules →</span></div>
+        <div class="stat-card trigger-interview" data-view="interview"><strong>Interview Ready</strong><span>Optimized for fast platform profiling — click to view Q&amp;A →</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="curriculum-shell" id="curriculumView">
+    <div class="topbar">
+      <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+        <a href="index.html" class="back-btn">← Back to Home</a>
+        <div style="font-weight:700; font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em;">AlgoVerse Workspace · Graphs</div>
+      </div>
+      <div class="progress-wrap">
+        <span id="progressText">0 / 18 topics</span>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+    </div>
+
+    <div style="padding: 1rem 1rem 0;">
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <span>☰ Course Syllabus &amp; Modules</span>
+        <span id="mobileMenuChevron">▸</span>
+      </button>
+    </div>
+
+    <div class="layout" style="padding: 0 1rem;">
+      <aside class="sidebar" id="sidebarNav">
+        <div class="sidebar-search"><span>🔍</span><input id="topicSearch" type="text" placeholder="Filter modules and lessons..." /></div>
+        <div id="moduleList"></div>
+      </aside>
+      <main class="content" id="contentArea"></main>
+    </div>
+  </div>
+
+  <div class="interview-shell" id="interviewShell">
+    <div class="topbar">
+      <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+        <button class="back-btn" id="interviewBackBtn">← Back to Home</button>
+        <div style="font-weight:700; font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em;" id="interviewShellLabel">Interview Ready · Q&amp;A Bank</div>
+      </div>
+      <button class="back-btn" id="interviewToCourseBtn">Go to Course →</button>
+    </div>
+    <div class="interview-content" id="interviewContent"></div>
+  </div>
+
+  <script>
+    const course = [
+      {
+        module: 'Module 1',
+        title: 'Graph Fundamentals',
+        topics: [
+          {
+            title: 'What is a Graph? Vertices, Edges & Terminology',
+            tag: 'Concept',
+            body: `<p>A graph is a data structure made of a set of <strong>vertices</strong> (nodes) connected by <strong>edges</strong> (links). Unlike arrays or trees, a graph places no restriction on how many connections a node can have — this makes it the most general structure for modeling relationships.</p><div class="callout"><strong>Key idea:</strong> If your data is "things connected to other things" — people, cities, web pages, tasks — a graph is almost always the right lens.</div><p>Core vocabulary you'll use constantly:</p><ul><li><strong>Vertex (node):</strong> a single entity in the graph, e.g. a city or a person.</li><li><strong>Edge:</strong> a connection between two vertices, e.g. a road or a friendship.</li><li><strong>Degree:</strong> the number of edges touching a vertex. In directed graphs this splits into <strong>in-degree</strong> (incoming edges) and <strong>out-degree</strong> (outgoing edges).</li><li><strong>Adjacent / neighbor:</strong> two vertices connected by a direct edge.</li><li><strong>Path:</strong> a sequence of edges connecting a sequence of distinct vertices.</li><li><strong>Cycle:</strong> a path that starts and ends at the same vertex.</li></ul><p>Graphs generalize almost every structure you've studied before — a tree is just a graph with no cycles and exactly one path between any two nodes, and a linked list is a graph where every vertex has degree at most 2.</p>`,
+            exercises: [
+              { q: 'A graph has vertices {A, B, C, D} and edges A-B, B-C, C-D, D-A. What is the degree of vertex B?', diff: 'easy', type: 'Conceptual', hint: 'Count how many edges touch B directly.', sol: 'Vertex B has edges A-B and B-C touching it, so its degree is 2.' },
+              { q: 'In a directed graph modeling Twitter "follows" (A → B means A follows B), what does a high in-degree mean for a vertex, and what does a high out-degree mean?', diff: 'medium', type: 'Conceptual', hint: 'In-degree counts incoming arrows; out-degree counts outgoing arrows — think about who is doing the following.', sol: 'A high in-degree means many accounts follow this vertex (it\'s an influencer/popular account). A high out-degree means this account follows many others.' },
+              { q: 'Prove that the sum of degrees of all vertices in an undirected graph is always even.', diff: 'hard', type: 'Analysis', hint: 'Think about how many vertices a single edge touches, and how many times it gets counted in the degree sum.', sol: 'Every edge connects exactly two vertices and contributes exactly 1 to each vertex\'s degree count — so each edge adds exactly 2 to the total degree sum. Since the sum is a total of contributions in groups of 2, it must be even (this is the Handshaking Lemma).' }
+            ],
+            mcqs: [
+              { q: 'A single connection between two vertices is called a(n):', options: ['Node', 'Edge', 'Path', 'Cycle'], answer: 1 },
+              { q: 'In a directed graph, the number of edges pointing into a vertex is its:', options: ['Out-degree', 'In-degree', 'Total degree', 'Weight'], answer: 1 },
+              { q: 'A path that starts and ends at the same vertex is called a:', options: ['Tree', 'Cycle', 'Matching', 'Cut'], answer: 1 },
+              { q: 'The sum of all vertex degrees in an undirected graph is always:', options: ['Odd', 'Even', 'Equal to the vertex count', 'Zero'], answer: 1 },
+              { q: 'A tree can be described as a graph that is:', options: ['Cyclic and disconnected', 'Connected and acyclic', 'Directed only', 'Always weighted'], answer: 1 }
+            ]
+          },
+          {
+            title: 'Types of Graphs',
+            tag: 'Comparison',
+            body: `<p>Before picking an algorithm, you must correctly classify the graph — the wrong assumption here silently breaks otherwise-correct code.</p><h3>Directed vs Undirected</h3><p>In a <strong>directed graph</strong> (digraph), edges have a direction — A → B does not imply B → A (e.g. a one-way street, a "follows" relationship). In an <strong>undirected graph</strong>, an edge A-B works both ways (e.g. a friendship, a two-way road).</p><h3>Weighted vs Unweighted</h3><p>A <strong>weighted graph</strong> attaches a cost or distance to each edge (e.g. flight duration, road distance). An <strong>unweighted graph</strong> treats every edge as costing the same "1 step" — this is why BFS alone solves shortest paths on unweighted graphs, but weighted graphs need Dijkstra or Bellman-Ford.</p><h3>Cyclic vs Acyclic</h3><p>A graph containing at least one cycle is <strong>cyclic</strong>. A graph with no cycles at all is <strong>acyclic</strong> — a directed acyclic graph (DAG) is central to scheduling and dependency problems.</p><h3>Connected vs Disconnected</h3><p>A graph is <strong>connected</strong> if there's a path between every pair of vertices. Otherwise it's <strong>disconnected</strong>, splitting into multiple connected components.</p>`,
+            exercises: [
+              { q: 'Classify each: (a) a family tree of "parent of" relationships, (b) a road map with two-way streets, (c) a flight network with ticket prices.', diff: 'easy', type: 'Conceptual', hint: 'Ask: does direction matter? Does cost matter?', sol: '(a) Directed, unweighted (parent → child is one-directional). (b) Undirected, unweighted (if just checking connectivity) or weighted (if distances matter). (c) Directed or undirected depending on route symmetry, and weighted by ticket price.' },
+              { q: 'You are given an undirected graph with 5 vertices and 3 edges. Can it possibly be connected? Explain the minimum number of edges needed for connectivity.', diff: 'medium', type: 'Analysis', hint: 'A tree connecting n vertices needs exactly n-1 edges — compare that minimum to what\'s given.', sol: 'No — connecting 5 vertices requires at least 4 edges (forming a spanning tree). With only 3 edges, the graph has at most 4 vertices in one component, so at least one vertex must be disconnected from the rest.' },
+              { q: 'Explain why a DAG (directed acyclic graph) cannot be undirected. Could an undirected graph ever be "acyclic" in a similar sense?', diff: 'hard', type: 'Analysis', hint: 'Consider what a single undirected edge A-B implies about traversal direction.', sol: 'In an undirected graph, a single edge A-B already lets you go A→B→A, which by most definitions counts as a trivial cycle — so meaningful cycle-freedom depends on direction. An undirected acyclic connected graph is exactly a tree; the DAG concept specifically needs direction to express "must happen before" relationships.' }
+            ],
+            mcqs: [
+              { q: 'A graph where A → B does not imply B → A is called:', options: ['Undirected', 'Directed', 'Weighted', 'Cyclic'], answer: 1 },
+              { q: 'Shortest path in an unweighted graph can be solved with:', options: ['Only Dijkstra', 'Plain BFS', 'Only Bellman-Ford', 'Only DFS'], answer: 1 },
+              { q: 'A DAG is:', options: ['Directed and cyclic', 'Directed and acyclic', 'Undirected and acyclic', 'Undirected and cyclic'], answer: 1 },
+              { q: 'A graph with 5 vertices split into two groups with no edges between them is:', options: ['Connected', 'Disconnected', 'Weighted', 'A DAG'], answer: 1 },
+              { q: 'The minimum number of edges to connect n vertices into a tree is:', options: ['n', 'n+1', 'n-1', '2n'], answer: 2 }
+            ]
+          },
+          {
+            title: 'Graph Representations & Complexity',
+            tag: 'Core',
+            body: `<p>How you store a graph in memory directly determines how fast your algorithms run. The three standard representations trade off memory against lookup speed.</p><pre><code># Adjacency List (most common)
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A'],
+    'D': ['B']
+}</code></pre><ul><li><strong>Adjacency Matrix:</strong> a V×V grid where cell [i][j] marks whether an edge exists between vertex i and j. Uses O(V²) space.</li><li><strong>Adjacency List:</strong> each vertex keeps a list of its neighbors. Uses O(V + E) space, ideal for sparse graphs.</li><li><strong>Edge List:</strong> a flat list of all (u, v) pairs. Simple and compact, used for Kruskal's or edge scanning.</li></ul><div class="callout"><strong>Rule of thumb:</strong> use an adjacency list unless the graph is dense or you need O(1) edge checks.</div>`,
+            exercises: [
+              { q: 'A graph has 6 vertices and 5 edges. Roughly how much space would an adjacency matrix use vs. an adjacency list?', diff: 'easy', type: 'Analysis', hint: 'Matrix space depends only on V; list space depends on V + E.', sol: 'Adjacency matrix: 6×6 = 36 cells regardless of edge count. Adjacency list: proportional to V + E = 6 + 5 = 11 entries. List is much more efficient here.' },
+              { q: 'Write pseudocode to build an adjacency list from a given edge list for an undirected graph.', diff: 'medium', type: 'Coding', hint: 'Each undirected edge must be added to both vertices\' neighbor lists.', sol: 'Initialize an empty list for every vertex. For each edge (u, v): append v to adjList[u], and u to adjList[v]. Runs in O(V + E) time.' },
+              { q: 'For a social network with 500 million users where each user follows ~200 others on average, would you use an adjacency matrix or adjacency list? Justify with numbers.', diff: 'hard', type: 'Design', hint: 'Compute V² vs V + E for these numbers.', sol: 'V = 5×10⁸. An adjacency matrix needs V² ≈ 2.5×10¹⁷ cells — impossible to store. An adjacency list needs O(V + E) ≈ 10¹¹ entries, which is feasible when distributed. An adjacency list is required.' }
+            ],
+            mcqs: [
+              { q: 'An adjacency matrix uses space:', options: ['O(V)', 'O(E)', 'O(V + E)', 'O(V²)'], answer: 3 },
+              { q: 'An adjacency list is generally preferred for graphs that are:', options: ['Dense', 'Sparse', 'Always weighted', 'Always small'], answer: 1 },
+              { q: 'Checking if an edge exists between two vertices is fastest with:', options: ['Edge list', 'Adjacency list', 'Adjacency matrix', 'All are equal'], answer: 2 },
+              { q: 'An edge list is most useful for algorithms that:', options: ['Need O(1) neighbor lookup', 'Just need to scan all edges once (e.g. Kruskal\'s)', 'Only work on trees', 'Require a matrix'], answer: 1 },
+              { q: 'Adjacency list space complexity is:', options: ['O(V²)', 'O(V + E)', 'O(E²)', 'O(1)'], answer: 1 }
+            ]
+          }
+        ]
+      },
+      {
+        module: 'Module 2',
+        title: 'Graph Traversal Algorithms',
+        topics: [
+          {
+            title: 'Breadth First Search (BFS) & Applications',
+            tag: 'Core',
+            body: `<p>BFS explores a graph level by level using a <strong>queue</strong> to expand the closest unvisited vertices first.</p><pre><code>def bfs(graph, start):
+    visited = {start}
+    queue = [start]
+    while queue:
+        node = queue.pop(0)
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)</code></pre><h3>Applications</h3><ul><li><strong>Shortest path in an unweighted graph:</strong> first arrival is guaranteed shortest.</li><li><strong>Connected components:</strong> count separate BFS runs.</li><li><strong>Bipartite check:</strong> 2-coloring level by level.</li></ul>`,
+            exercises: [
+              { q: 'Given graph A-B, A-C, B-D, C-D, run BFS from A and list the visit order.', diff: 'easy', type: 'Coding', hint: 'Visit A\'s neighbors first, then their unvisited neighbors.', sol: 'Order: A, B, C, D.' },
+              { q: 'Write pseudocode to count connected components in an undirected graph using BFS.', diff: 'medium', type: 'Coding', hint: 'Start BFS from any unvisited node and count how many fresh BFS runs are needed.', sol: 'count = 0; visited = set(). For each vertex v: if v not in visited, increment count, run BFS from v. Return count.' },
+              { q: 'Design a bipartite-check algorithm using BFS 2-coloring.', diff: 'hard', type: 'Analysis', hint: 'Assign alternating colors, conflict occurs if two adjacent nodes share the same color.', sol: 'Color start vertex 0. For each neighbor: if uncolored, set color to 1 - curr_color; if already colored with curr_color, return False (not bipartite). If BFS completes with no conflict, return True.' }
+            ],
+            mcqs: [
+              { q: 'BFS uses which core data structure?', options: ['Stack', 'Queue', 'Heap', 'Hashmap only'], answer: 1 },
+              { q: 'BFS guarantees shortest paths on:', options: ['Only weighted graphs', 'Only trees', 'Unweighted graphs', 'Only directed graphs'], answer: 2 },
+              { q: 'Counting connected components with BFS means:', options: ['Running BFS once total', 'Running BFS from every unvisited vertex and counting the runs', 'Running BFS only from vertex 0', 'Not possible with BFS'], answer: 1 },
+              { q: 'A graph is bipartite if:', options: ['It has no edges', 'It can be 2-colored with no edge connecting same-colored vertices', 'It is always a tree', 'It is always disconnected'], answer: 1 },
+              { q: 'The time complexity of BFS on an adjacency list is:', options: ['O(V)', 'O(E)', 'O(V + E)', 'O(V²)'], answer: 2 }
+            ]
+          },
+          {
+            title: 'Depth First Search (DFS) & Applications',
+            tag: 'Core',
+            body: `<p>DFS explores as far as possible along one branch before backtracking, using recursion or an explicit stack.</p><pre><code>def dfs(graph, node, visited):
+    visited.add(node)
+    for neighbor in graph[node]:
+        if neighbor not in visited:
+            dfs(graph, neighbor, visited)</code></pre><h3>Applications</h3><ul><li><strong>Cycle detection:</strong> track back-edges or active call stack paths.</li><li><strong>Topological sorting:</strong> reverse of post-order finish times.</li><li><strong>Bridges &amp; Articulation Points:</strong> using discovery/low-link times.</li></ul>`,
+            exercises: [
+              { q: 'Given graph A-B, B-C, C-A, run DFS from A and explain cycle detection.', diff: 'easy', type: 'Conceptual', hint: 'Look for an edge back to a visited non-parent ancestor.', sol: 'A → B → C. From C, neighbor A is already visited and not C\'s parent B, revealing a cycle.' },
+              { q: 'Write pseudocode for directed cycle detection using DFS.', diff: 'medium', type: 'Coding', hint: 'Maintain an inStack set alongside globally visited.', sol: 'If node in inStack: cycle found. If node visited: return. Mark visited & inStack. Recurse for neighbors. Unmark inStack on return.' },
+              { q: 'Explain why reversing DFS finish order gives a valid topological sort.', diff: 'hard', type: 'Analysis', hint: 'A node finishes DFS only after all nodes reachable from it finish.', sol: 'Sinks with no dependencies finish first. Reversing finish order places dependencies before their descendants, producing a valid topological order.' }
+            ],
+            mcqs: [
+              { q: 'DFS is naturally implemented using:', options: ['A queue', 'Recursion or an explicit stack', 'A heap', 'A hashmap only'], answer: 1 },
+              { q: 'A directed cycle is detected in DFS when reaching a vertex:', options: ['Any visited vertex', 'Currently on the active recursion stack', 'The start vertex only', 'Never visited'], answer: 1 },
+              { q: 'Topological sort using DFS requires:', options: ['Sorting by discovery time', 'Reversing the DFS finish order', 'Running BFS', 'No specific order'], answer: 1 },
+              { q: 'Bridges and articulation points are found using:', options: ['BFS level order', 'DFS discovery and low-link times', 'Sorting edges', 'Union-Find'], answer: 1 },
+              { q: 'DFS time complexity on an adjacency list is:', options: ['O(V + E)', 'O(V²)', 'O(E²)', 'O(log V)'], answer: 0 }
+            ]
+          },
+          {
+            title: 'Iterative vs Recursive DFS, and BFS vs DFS',
+            tag: 'Comparison',
+            body: `<p>DFS can be written recursively or iteratively using a heap-allocated stack to avoid stack overflow errors on deep graphs.</p><pre><code># Iterative DFS
+def dfs_iterative(graph, start):
+    visited = set()
+    stack = [start]
+    while stack:
+        node = stack.pop()
+        if node not in visited:
+            visited.add(node)
+            for neighbor in graph[node]:
+                stack.append(neighbor)</code></pre>`,
+            exercises: [
+              { q: 'Why might recursive DFS crash on a graph with 100,000 linear nodes while iterative DFS succeeds?', diff: 'easy', type: 'Conceptual', hint: 'Think about call stack size limits.', sol: '100,000 recursive frames exceed system stack limits. Iterative DFS uses heap memory with much larger capacity.' },
+              { q: 'Why can neighbor visit order differ between recursive DFS and iterative DFS with a plain stack?', diff: 'medium', type: 'Analysis', hint: 'A stack is LIFO (last-in, first-out).', sol: 'Pushing neighbors in order pops the last neighbor first, reversing exploration order compared to recursion unless pushed in reverse.' },
+              { q: 'How would you track "in-progress" state iteratively for cycle detection?', diff: 'hard', type: 'Design', hint: 'Track when a node\'s children are all processed.', sol: 'Push a tuple (node, processed_flag). When first popped, mark in-progress and re-push with flag=True along with neighbors. When popped with flag=True, remove from in-progress.' }
+            ],
+            mcqs: [
+              { q: 'Recursive DFS risks which error on deep graphs?', options: ['Infinite loop', 'Stack overflow', 'Memory leak', 'Incorrect answer'], answer: 1 },
+              { q: 'Iterative DFS manages its stack on the:', options: ['Call stack', 'Heap', 'CPU registers', 'Disk'], answer: 1 },
+              { q: 'Which is best for unweighted shortest path?', options: ['DFS', 'BFS', 'Both equal', 'Neither'], answer: 1 },
+              { q: 'Which is best for topological sorting?', options: ['BFS only', 'DFS finish order', 'Neither', 'Quicksort'], answer: 1 },
+              { q: 'Time complexity for BFS and DFS is:', options: ['O(V)', 'O(E)', 'O(V + E)', 'O(V × E)'], answer: 2 }
+            ]
+          }
+        ]
+      },
+      {
+        module: 'Module 3',
+        title: 'Shortest Path Algorithms',
+        topics: [
+          {
+            title: "Dijkstra's Algorithm (Single Source, Non-negative Weights)",
+            tag: 'Core',
+            body: `<p>Dijkstra's algorithm finds single-source shortest paths on non-negative weighted graphs in O((V + E) log V) using a priority queue.</p><pre><code>import heapq
+def dijkstra(graph, start):
+    dist = {v: float('inf') for v in graph}
+    dist[start] = 0
+    pq = [(0, start)]
+    while pq:
+        d, node = heapq.heappop(pq)
+        if d > dist[node]: continue
+        for neighbor, weight in graph[node]:
+            if d + weight < dist[neighbor]:
+                dist[neighbor] = d + weight
+                heapq.heappush(pq, (dist[neighbor], neighbor))
+    return dist</code></pre>`,
+            exercises: [
+              { q: 'Why does Dijkstra fail on graphs with negative edge weights?', diff: 'easy', type: 'Conceptual', hint: 'Can a finalized node\'s shortest distance change later?', sol: 'Dijkstra assumes distances only increase when expanding. Negative weights can shorten previously finalized distances, which Dijkstra never revisits.' },
+              { q: 'Given A→B (w:4), A→C (w:1), C→B (w:1), what is dist[B] from A?', diff: 'medium', type: 'Coding', hint: 'Compare direct vs path through C.', sol: 'A→C→B = 1 + 1 = 2.' },
+              { q: 'When can an array-based Dijkstra (O(V²)) outperform a min-heap Dijkstra O((V+E) log V)?', diff: 'hard', type: 'Analysis', hint: 'Consider dense graphs where E ≈ V².', sol: 'When E ≈ V², heap complexity is O(V² log V), whereas array extraction is O(V²), making the array version faster on dense graphs.' }
+            ],
+            mcqs: [
+              { q: 'Dijkstra requires edge weights to be:', options: ['Equal', 'Non-negative', 'Negative', 'Integers'], answer: 1 },
+              { q: 'Dijkstra uses which data structure for selection?', options: ['Stack', 'Min-heap / priority queue', 'Queue', 'Array only'], answer: 1 },
+              { q: 'Heap-based Dijkstra complexity is:', options: ['O(V + E)', 'O(V²)', 'O((V + E) log V)', 'O(V³)'], answer: 2 },
+              { q: 'Finalized distances in Dijkstra:', options: ['Can decrease later', 'Are guaranteed final (for non-negative weights)', 'Are estimated', 'Reset at the end'], answer: 1 },
+              { q: 'For negative weight edges, use:', options: ['BFS', 'Dijkstra', 'Bellman-Ford', 'DFS'], answer: 2 }
+            ]
+          },
+          {
+            title: 'Bellman-Ford Algorithm, 0-1 BFS & Multi-source BFS',
+            tag: 'Core',
+            body: `<p>Bellman-Ford handles single-source shortest paths with negative weights and detects negative cycles by relaxing all edges V-1 times.</p><pre><code>def bellman_ford(edges, V, start):
+    dist = [float('inf')] * V
+    dist[start] = 0
+    for _ in range(V - 1):
+        for u, v, w in edges:
+            if dist[u] + w < dist[v]:
+                dist[v] = dist[u] + w
+    for u, v, w in edges:
+        if dist[u] + w < dist[v]:
+            return "Negative cycle"
+    return dist</code></pre>`,
+            exercises: [
+              { q: 'Why does Bellman-Ford relax edges V-1 times?', diff: 'easy', type: 'Conceptual', hint: 'What is the maximum edges in a simple path?', sol: 'A simple path visits at most V vertices, using at most V-1 edges. V-1 relaxations propagate distances across all simple paths.' },
+              { q: 'How is a negative cycle detected in Bellman-Ford?', diff: 'medium', type: 'Analysis', hint: 'What happens if a V-th relaxation pass still reduces distances?', sol: 'If a V-th pass still relaxes an edge, a path is using >V-1 edges, proving a negative cycle exists.' },
+              { q: 'Design 0-1 BFS using a deque.', diff: 'hard', type: 'Design', hint: 'Push 0-weight to front, 1-weight to back.', sol: 'Use deque: pop front. If edge weight is 0, appendleft(neighbor); if weight is 1, append(neighbor). Achieves O(V + E) time.' }
+            ],
+            mcqs: [
+              { q: 'Bellman-Ford handles:', options: ['Positive weights only', 'Negative weights and negative cycle detection', 'Unweighted graphs only', 'DAGs only'], answer: 1 },
+              { q: 'Standard Bellman-Ford relaxations:', options: ['V times', 'V - 1 times', 'E times', 'log V times'], answer: 1 },
+              { q: 'Negative cycles are flagged when:', options: ['First pass fails', 'V-th pass reduces a distance', 'Distances are 0', 'Graph is disconnected'], answer: 1 },
+              { q: '0-1 BFS uses which data structure?', options: ['Queue', 'Deque', 'Priority Queue', 'Stack'], answer: 1 },
+              { q: 'Multi-source BFS initializes by:', options: ['Running BFS per source', 'Pushing all sources at distance 0 initially', 'Weighted graphs only', 'Ignoring sources'], answer: 1 }
+            ]
+          },
+          {
+            title: "Floyd-Warshall & Johnson's Algorithm (All-Pairs Shortest Paths)",
+            tag: 'Comparison',
+            body: `<p>Floyd-Warshall computes all-pairs shortest paths in O(V³) time. Johnson's algorithm uses Bellman-Ford reweighting then Dijkstra for sparse graphs in O(V² log V + VE) time.</p>`,
+            exercises: [
+              { q: 'Why must the k-loop be outermost in Floyd-Warshall?', diff: 'easy', type: 'Conceptual', hint: 'k represents intermediate vertices allowed in paths.', sol: 'It guarantees paths using intermediate nodes 1..k-1 are fully computed before introducing k as a new potential stop.' },
+              { q: 'Compare Floyd-Warshall and Johnson\'s algorithm for V=1000, E=2000.', diff: 'medium', type: 'Analysis', hint: 'Evaluate V³ vs V² log V + VE.', sol: 'Floyd-Warshall takes ~10⁹ ops. Johnson\'s takes ~1.2×10⁷ ops. Johnson\'s is much faster on sparse graphs.' },
+              { q: 'Explain Johnson\'s reweighting technique.', diff: 'hard', type: 'Analysis', hint: 'Uses potential values h(u) from Bellman-Ford.', sol: 'w\'(u,v) = w(u,v) + h(u) - h(v). Keeps edge weights non-negative while preserving shortest path choices.' }
+            ],
+            mcqs: [
+              { q: 'Floyd-Warshall solves:', options: ['Single-source shortest path', 'All-pairs shortest paths', 'MST', 'Max flow'], answer: 1 },
+              { q: 'Floyd-Warshall complexity:', options: ['O(V + E)', 'O(V log V)', 'O(V³)', 'O(V²)'], answer: 2 },
+              { q: 'Johnson\'s is preferred for:', options: ['Dense graphs', 'Large sparse graphs', 'Trees', 'Unweighted graphs'], answer: 1 },
+              { q: 'Johnson\'s reweights edges using:', options: ['Dijkstra', 'BFS', 'Bellman-Ford from virtual node', 'Floyd-Warshall'], answer: 2 },
+              { q: 'Floyd-Warshall supports:', options: ['Positive weights only', 'Negative weights without negative cycles', 'Unweighted only', 'Trees only'], answer: 1 }
+            ]
+          }
+        ]
+      },
+      {
+        module: 'Module 4',
+        title: 'Minimum Spanning Trees (MST)',
+        topics: [
+          {
+            title: "Introduction to MST & Prim's Algorithm",
+            tag: 'Core',
+            body: `<p>A Minimum Spanning Tree connects all V vertices with V-1 edges at minimum total weight. Prim's algorithm grows a tree vertex-by-vertex using a min-heap.</p><pre><code>import heapq
+def prim(graph, start):
+    visited = {start}
+    edges = [(w, start, v) for v, w in graph[start]]
+    heapq.heapify(edges)
+    mst_weight = 0
+    while edges:
+        w, u, v = heapq.heappop(edges)
+        if v not in visited:
+            visited.add(v)
+            mst_weight += w
+            for to, weight in graph[v]:
+                if to not in visited:
+                    heapq.heappush(edges, (weight, v, to))
+    return mst_weight</code></pre>`,
+            exercises: [
+              { q: 'How many edges in an MST with 6 vertices?', diff: 'easy', type: 'Conceptual', hint: 'V - 1 edges.', sol: '5 edges.' },
+              { q: 'Difference between Prim\'s and Dijkstra\'s edge selection?', diff: 'medium', type: 'Analysis', hint: 'Single edge cost vs cumulative path distance.', sol: 'Prim\'s minimizes individual connecting edge weight; Dijkstra minimizes cumulative distance from source.' },
+              { q: 'Why does Prim\'s greedy choice never form cycles?', diff: 'hard', type: 'Analysis', hint: 'Always connects a tree node to a non-tree node.', sol: 'Every added edge connects a visited node to an unvisited node, structurally preventing cycles.' }
+            ],
+            mcqs: [
+              { q: 'MST edge count for V vertices:', options: ['V', 'V - 1', 'V + 1', '2V'], answer: 1 },
+              { q: 'Prim\'s algorithm grows by:', options: ['Sorting all edges', 'Adding cheapest edge to new vertex', 'Removing heavy edges', 'Random choice'], answer: 1 },
+              { q: 'Prim\'s is structurally similar to:', options: ['Bellman-Ford', 'Dijkstra', 'Kahn\'s', 'DFS'], answer: 1 },
+              { q: 'MST requires graph to be:', options: ['Directed', 'Connected', 'Unweighted', 'DAG'], answer: 1 },
+              { q: 'Prim\'s avoids cycles because:', options: ['It sorts edges', 'Added edge joins tree to non-tree vertex', 'Uses DSU', 'Ignores weights'], answer: 1 }
+            ]
+          },
+          {
+            title: "Kruskal's Algorithm",
+            tag: 'Core',
+            body: `<p>Kruskal's sorts all edges globally and adds the cheapest edge that does not form a cycle using Union-Find.</p>`,
+            exercises: [
+              { q: 'Edges: A-B(1), B-C(2), A-C(3). Trace Kruskal\'s.', diff: 'easy', type: 'Coding', hint: 'Sort and add if no cycle.', sol: 'Add A-B(1), B-C(2). A-C(3) creates a cycle so it is skipped. Total weight: 3.' },
+              { q: 'Why does Kruskal\'s need DSU while Prim\'s does not?', diff: 'medium', type: 'Analysis', hint: 'Global edge picking vs connected tree growth.', sol: 'Kruskal\'s considers edges globally across disconnected components; Prim\'s grows one tree continuously.' },
+              { q: 'Kruskal vs Prim on dense graphs?', diff: 'hard', type: 'Analysis', hint: 'Compare O(E log E) vs O(V²).', sol: 'Prim\'s is better on dense graphs where E ≈ V² because edge sorting overhead dominates Kruskal\'s.' }
+            ],
+            mcqs: [
+              { q: 'Kruskal\'s processes edges by:', options: ['Random', 'Increasing weight', 'Decreasing weight', 'Vertex index'], answer: 1 },
+              { q: 'Kruskal\'s uses which structure for cycle detection?', options: ['Queue', 'Union-Find (DSU)', 'Stack', 'BST'], answer: 1 },
+              { q: 'Kruskal\'s complexity is dominated by:', options: ['DSU ops', 'Sorting edges O(E log E)', 'Adj list build', 'BFS'], answer: 1 },
+              { q: 'An edge is skipped if:', options: ['Max weight', 'Endpoints already connected', 'First edge', 'Directed'], answer: 1 },
+              { q: 'Kruskal\'s is great for sparse graphs because:', options: ['No sorting', 'Sorting E edges is fast when E is small', 'Works on digraphs', 'Ignores weights'], answer: 1 }
+            ]
+          },
+          {
+            title: 'Disjoint Set Union (Union-Find), Path Compression & Applications',
+            tag: 'Structure',
+            body: `<p>DSU tracks partitioned sets with <code>find()</code> and <code>union()</code> operations in O(α(V)) amortized time via path compression and union by rank.</p>`,
+            exercises: [
+              { q: 'What does path compression do during find()?', diff: 'easy', type: 'Conceptual', hint: 'Flattening tree paths.', sol: 'Re-points all visited nodes directly to the root, making future lookups O(1).' },
+              { q: 'Trace union(A,B), union(C,D), union(B,C) with union by rank.', diff: 'medium', type: 'Coding', hint: 'Attach smaller rank tree under larger.', sol: 'A-B formed (rank 1), C-D formed (rank 1). union(B,C) joins A and C roots; A becomes root with rank 2.' },
+              { q: 'How to cluster data into k groups using an MST?', diff: 'hard', type: 'Design', hint: 'Remove most expensive edges.', sol: 'Build MST and remove the k-1 most expensive edges. The resulting k components represent natural clusters.' }
+            ],
+            mcqs: [
+              { q: 'find() operation answers:', options: ['Is graph connected?', 'Which set does x belong to?', 'Shortest path?', 'Is cycle?'], answer: 1 },
+              { q: 'Path compression works by:', options: ['Deleting nodes', 'Re-pointing visited nodes to root', 'Sorting elements', 'Merging by weight'], answer: 1 },
+              { q: 'Union by rank prevents:', options: ['Cycles', 'DSU tree becoming a long chain', 'Duplicate edges', 'Negative weights'], answer: 1 },
+              { q: 'Optimized DSU operation time:', options: ['O(log V)', 'O(V)', 'O(α(V)) near-constant', 'O(V²)'], answer: 2 },
+              { q: 'To cluster MST into k components, remove:', options: ['Cheapest edges', 'Most expensive k-1 edges', 'Middle edges', 'All edges'], answer: 1 }
+            ]
+          }
+        ]
+      },
+      {
+        module: 'Module 5',
+        title: 'Directed Acyclic Graphs (DAG)',
+        topics: [
+          {
+            title: 'DAG Basics & Topological Sorting (DFS-based)',
+            tag: 'Concept',
+            body: `<p>A Topological Sort orders vertices in a DAG such that for every u → v, u precedes v.</p><pre><code>def topo_sort_dfs(graph, V):
+    visited = [False] * V
+    stack = []
+    def dfs(node):
+        visited[node] = True
+        for neighbor in graph[node]:
+            if not visited[neighbor]:
+                dfs(neighbor)
+        stack.append(node)
+    for v in range(V):
+        if not visited[v]:
+            dfs(v)
+    return stack[::-1]</code></pre>`,
+            exercises: [
+              { q: 'Why can cyclic graphs not have topological order?', diff: 'easy', type: 'Conceptual', hint: 'Creates ordering contradiction.', sol: 'Cycle A→B→A requires A before B AND B before A simultaneously.' },
+              { q: 'Given A→B, A→C, B→D, C→D, give a topological order.', diff: 'medium', type: 'Coding', hint: 'Dependencies come first.', sol: 'A, B, C, D (or A, C, B, D).' },
+              { q: 'Why push to stack AFTER exploring neighbors?', diff: 'hard', type: 'Analysis', hint: 'Guarantees descendants are placed first before reversal.', sol: 'Ensures all reachable nodes finish and drop into the stack before the parent, putting dependencies first after reversal.' }
+            ],
+            mcqs: [
+              { q: 'Topological sort exists for:', options: ['Undirected graphs', 'DAGs', 'Weighted graphs', 'Connected only'], answer: 1 },
+              { q: 'DFS topological sort pushes node to stack:', options: ['On first visit', 'After exploring all neighbors', 'Randomly', 'If no neighbors'], answer: 1 },
+              { q: 'Topological order is obtained by:', options: ['Reading stack directly', 'Reversing DFS finish order', 'Sorting alphabetically', 'BFS'], answer: 1 },
+              { q: 'Prerequisites system is modeled as:', options: ['Cyclic graph', 'DAG', 'MST', 'Bipartite'], answer: 1 },
+              { q: 'If two nodes have no path between them, their order is:', options: ['Error', 'Flexible (either works)', 'Alphabetical', 'By index'], answer: 1 }
+            ]
+          },
+          {
+            title: "Kahn's Algorithm (BFS-based) & Cycle Detection",
+            tag: 'Core',
+            body: `<p>Kahn's algorithm repeatedly removes in-degree 0 nodes to build topological order and detect cycles.</p><pre><code>from collections import deque
+def kahn(graph, V):
+    indegree = [0] * V
+    for u in graph:
+        for v in graph[u]:
+            indegree[v] += 1
+    queue = deque([v for v in range(V) if indegree[v] == 0])
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            indegree[neighbor] -= 1
+            if indegree[neighbor] == 0:
+                queue.append(neighbor)
+    return order if len(order) == V else "Cycle detected"</code></pre>`,
+            exercises: [
+              { q: 'What does in-degree 0 mean?', diff: 'easy', type: 'Conceptual', hint: 'No incoming dependencies.', sol: 'All prerequisites are satisfied; node can be processed immediately.' },
+              { q: 'Why does Kahn\'s fail on A→B→C→A?', diff: 'medium', type: 'Analysis', hint: 'Initial in-degrees.', sol: 'All nodes have in-degree 1. Queue starts empty, stopping execution with 0 processed nodes.' },
+              { q: 'How does Kahn\'s isolate cycle nodes?', diff: 'hard', type: 'Analysis', hint: 'Unprocessed nodes remaining.', sol: 'Nodes left unprocessed with in-degree > 0 when queue empties form the cycle.' }
+            ],
+            mcqs: [
+              { q: 'Kahn\'s algorithm operates on:', options: ['DFS finish order', 'In-degree 0 removal (BFS)', 'Edge weight sorting', 'Union-Find'], answer: 1 },
+              { q: 'If Kahn\'s order length < V:', options: ['Tree', 'Cycle exists', 'Undirected', 'Error'], answer: 1 },
+              { q: 'In-degree counts:', options: ['Outgoing', 'Incoming', 'Total', 'Loops'], answer: 1 },
+              { q: 'Kahn\'s uses which data structure?', options: ['Stack', 'Queue', 'Priority Queue', 'DSU'], answer: 1 },
+              { q: 'Leftover nodes in Kahn\'s are:', options: ['Isolated', 'Part of a cycle', 'First node', 'Random'], answer: 1 }
+            ]
+          },
+          {
+            title: 'Longest Path in DAG & Course Schedule Problems',
+            tag: 'Applications',
+            body: `<p>Longest paths in DAGs can be computed in O(V + E) by relaxing edges along topological order. Course Schedule problems map to cycle detection and topological sorting.</p>`,
+            exercises: [
+              { q: 'Why is longest path linear in DAGs but NP-hard in general graphs?', diff: 'easy', type: 'Conceptual', hint: 'Cycles create infinite simple path variations.', sol: 'DAGs lack cycles, allowing topological order to process dependencies in one pass.' },
+              { q: 'Prerequisites: [0 needs 1], [1 needs 2]. Can you complete all?', diff: 'medium', type: 'Coding', hint: 'Check for cycles.', sol: 'Yes, sequence 2 → 1 → 0.' },
+              { q: 'Find longest prerequisite chain.', diff: 'hard', type: 'Design', hint: 'Set weights to 1 and maximize path in DAG.', sol: 'Run longest-path DAG algorithm starting with distance 0 at all in-degree 0 nodes.' }
+            ],
+            mcqs: [
+              { q: 'Longest path in general graph is:', options: ['O(V + E)', 'NP-hard', 'Shortest path', 'Undefined'], answer: 1 },
+              { q: 'Longest path in DAG time:', options: ['O(V + E)', 'O(V³)', 'Exponential', 'Unsolvable'], answer: 0 },
+              { q: 'Course Schedule maps to:', options: ['Shortest path', 'DAG cycle detection', 'MST', 'Max flow'], answer: 1 },
+              { q: 'Course Schedule II maps to:', options: ['BFS shortest', 'Topological sort', 'Dijkstra', 'DSU'], answer: 1 },
+              { q: 'Longest path in DAG relaxes by:', options: ['Minimizing', 'Maximizing along topological order', 'Random', 'Ignoring weight'], answer: 1 }
+            ]
+          }
+        ]
+      },
+      {
+        module: 'Module 6',
+        title: 'Connectivity Algorithms',
+        topics: [
+          {
+            title: 'Connected Components, Bridges & Articulation Points',
+            tag: 'Concept',
+            body: `<p>Bridges (critical edges) and Articulation Points (critical nodes) are identified using DFS discovery times and low-link values.</p>`,
+            exercises: [
+              { q: 'Line graph A-B-C-D: which edges are bridges?', diff: 'easy', type: 'Conceptual', hint: 'Removing any edge disconnects the line.', sol: 'All edges (A-B, B-C, C-D) are bridges.' },
+              { q: 'What does low-link value represent?', diff: 'medium', type: 'Conceptual', hint: 'Earliest discovery time reachable via subtree.', sol: 'Earliest discovery time reachable from DFS subtree including back-edges.' },
+              { q: 'Articulation point condition for non-root vs root?', diff: 'hard', type: 'Design', hint: 'Non-root: child low >= parent disc. Root: >=2 children.', sol: 'Non-root u is cut-node if low[v] >= disc[u]. Root is cut-node if it has >=2 DFS children.' }
+            ],
+            mcqs: [
+              { q: 'Removing a bridge:', options: ['No effect', 'Increases connected components', 'Creates cycle', 'Directed only'], answer: 1 },
+              { q: 'Removing an articulation point:', options: ['No effect', 'Disconnects graph', 'Creates cycle', 'Tree only'], answer: 1 },
+              { q: 'Low-link represents:', options: ['Degree', 'Earliest discovery time reachable via back-edge', 'Index', 'Edges'], answer: 1 },
+              { q: 'Bridge condition for edge (u,v):', options: ['low[v] > disc[u]', 'low[v] < disc[u]', 'disc[v] == disc[u]', 'low[v] == 0'], answer: 0 },
+              { q: 'Root node is cut-point when:', options: ['1 child', '>=2 DFS children', 'No children', 'Odd degree'], answer: 1 }
+            ]
+          },
+          {
+            title: "Strongly Connected Components — Kosaraju's Algorithm",
+            tag: 'Core',
+            body: `<p>Kosaraju's algorithm computes SCCs in O(V + E) using two DFS passes (finish time stack + transposed graph DFS).</p>`,
+            exercises: [
+              { q: 'SCC structure of cycle A→B→C→A?', diff: 'easy', type: 'Conceptual', hint: 'Can all reach each other?', sol: 'One single SCC {A, B, C}.' },
+              { q: 'Why reverse graph in Kosaraju\'s step 2?', diff: 'medium', type: 'Analysis', hint: 'Prevents second DFS from bleeding into other SCCs.', sol: 'Reversing prevents DFS from traversing forward into unrelated SCCs.' },
+              { q: 'What is a condensation graph?', diff: 'hard', type: 'Analysis', hint: 'Collapse each SCC to a node.', sol: 'A DAG formed by contracting each SCC into a single meta-node.' }
+            ],
+            mcqs: [
+              { q: 'SCC requires vertices to:', options: ['Same degree', 'Reach each other via directed paths', 'Directly adjacent', 'No outgoing'], answer: 1 },
+              { q: 'Kosaraju\'s DFS pass count:', options: ['1', '2', '3', 'V'], answer: 1 },
+              { q: 'Second DFS runs on:', options: ['Original graph', 'Transposed (reversed) graph', 'MST', 'Matrix'], answer: 1 },
+              { q: 'Second DFS process order:', options: ['Increasing finish time', 'Decreasing finish time (stack pop order)', 'Index', 'Random'], answer: 1 },
+              { q: 'Condensation graph is always:', options: ['Cyclic', 'A DAG', 'Undirected', 'Disconnected'], answer: 1 }
+            ]
+          },
+          {
+            title: "Tarjan's Algorithm & Biconnected Components",
+            tag: 'Advanced',
+            body: `<p>Tarjan's algorithm finds all SCCs in a single DFS pass using discovery times, low-link values, and an explicit stack.</p>`,
+            exercises: [
+              { q: 'SCC root condition in Tarjan\'s?', diff: 'easy', type: 'Conceptual', hint: 'low-link equals discovery time.', sol: 'low[u] == disc[u].' },
+              { q: 'Why check "on_stack" in Tarjan\'s?', diff: 'medium', type: 'Analysis', hint: 'Prevent updating low-link from already finalized SCCs.', sol: 'Ensures back-edges only consider nodes in the active SCC.' },
+              { q: 'What is a biconnected component?', diff: 'hard', type: 'Analysis', hint: 'Maximal subgraph with no cut vertices.', sol: 'A maximal subgraph that remains connected after removing any single vertex.' }
+            ],
+            mcqs: [
+              { q: 'Tarjan\'s finds SCCs in:', options: ['2 passes', 'Single DFS pass with stack', 'BFS', 'Sorting'], answer: 1 },
+              { q: 'Node u is SCC root when:', options: ['low[u] == disc[u]', 'low[u] > disc[u]', 'disc[u] == 0', 'No neighbors'], answer: 0 },
+              { q: 'on_stack check prevents:', options: ['Loops', 'Merging with finalized SCCs', 'Negative weights', 'Disconnection'], answer: 1 },
+              { q: 'Biconnected component:', options: ['No cycles', 'Stays connected after removing any 1 node', '1 edge', 'Whole graph'], answer: 1 },
+              { q: 'Block-cut tree links blocks via:', options: ['Bridges', 'Articulation points', 'MST edges', 'SCC roots'], answer: 1 }
+            ]
+          }
+        ]
+      }
+    ];
+
+    const flatTopics = [];
+    course.forEach((mod, mi) => mod.topics.forEach((topic, ti) => flatTopics.push({ mi, ti })));
+    let currentIndex = 0;
+    const completed = new Set();
+
+    function getVisualMarkup(mi, ti, mod, topic) {
+      if (mi === 0) {
+        return `
+          <div class="visual-block">
+            <div class="visual-head">Graph Anatomy Diagram</div>
+            <div style="text-align: center; margin: 1rem 0;">
+              <svg width="100%" height="120" viewBox="0 0 500 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto;">
+                <path d="M100 30 L250 60 M100 30 L100 90 M250 60 L100 90 M250 60 L400 40 M250 60 L400 90" stroke="#4d5171" stroke-width="1.5"/>
+                <circle cx="100" cy="30" r="14" fill="#8162ff" fill-opacity="0.2" stroke="#8162ff" stroke-width="1.5"/>
+                <text x="100" y="34" fill="#fff" font-size="10" text-anchor="middle" font-weight="700">A</text>
+                <circle cx="100" cy="90" r="14" fill="#8162ff" fill-opacity="0.2" stroke="#8162ff" stroke-width="1.5"/>
+                <text x="100" y="94" fill="#fff" font-size="10" text-anchor="middle" font-weight="700">B</text>
+                <circle cx="250" cy="60" r="14" fill="#00ffd0" fill-opacity="0.2" stroke="#00ffd0" stroke-width="1.5"/>
+                <text x="250" y="64" fill="#fff" font-size="10" text-anchor="middle" font-weight="700">C</text>
+                <circle cx="400" cy="40" r="14" fill="#ff3b93" fill-opacity="0.2" stroke="#ff3b93" stroke-width="1.5"/>
+                <text x="400" y="44" fill="#fff" font-size="10" text-anchor="middle" font-weight="700">D</text>
+                <circle cx="400" cy="90" r="14" fill="#ff3b93" fill-opacity="0.2" stroke="#ff3b93" stroke-width="1.5"/>
+                <text x="400" y="94" fill="#fff" font-size="10" text-anchor="middle" font-weight="700">E</text>
+              </svg>
+            </div>
+            <div class="compare-grid">
+              <div class="compare-card"><strong>Vertex</strong><span>A single node — a city, a user, a task.</span></div>
+              <div class="compare-card"><strong>Edge</strong><span>A connection between two vertices, directed or undirected.</span></div>
+              <div class="compare-card"><strong>Degree</strong><span>How many edges touch a given vertex.</span></div>
+            </div>
+          </div>`;
+      }
+      if (mi === 1) {
+        return `
+          <div class="visual-block">
+            <div class="visual-head">Traversal Order Trace</div>
+            <div class="flow-grid">
+              <div class="flow-chip">Start Vertex</div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-chip">Visit Neighbors</div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-chip">Mark Visited</div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-chip">Expand Frontier</div>
+            </div>
+            <div class="visual-caption">${topic.title} follows this exploration loop until every reachable vertex has been visited.</div>
+          </div>`;
+      }
+      if (mi === 3) {
+        return `
+          <div class="visual-block">
+            <div class="visual-head">Spanning Tree Build Order</div>
+            <div style="text-align: center; margin: 1rem 0;">
+              <svg width="100%" height="90" viewBox="0 0 400 90" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto;">
+                <circle cx="60" cy="45" r="12" fill="#8162ff" fill-opacity="0.25" stroke="#8162ff" stroke-width="1.5"/>
+                <circle cx="180" cy="20" r="12" fill="#00ffd0" fill-opacity="0.25" stroke="#00ffd0" stroke-width="1.5"/>
+                <circle cx="180" cy="70" r="12" fill="#00ffd0" fill-opacity="0.25" stroke="#00ffd0" stroke-width="1.5"/>
+                <circle cx="320" cy="45" r="12" fill="#ff3b93" fill-opacity="0.25" stroke="#ff3b93" stroke-width="1.5"/>
+                <path d="M70 40 L170 22" stroke="#00ffd0" stroke-width="2"/>
+                <path d="M70 50 L170 68" stroke="#00ffd0" stroke-width="2"/>
+                <path d="M192 25 L310 43" stroke="#00ffd0" stroke-width="2"/>
+                <path d="M192 65 L310 47" stroke="#4d5171" stroke-width="1.2" stroke-dasharray="3 3"/>
+              </svg>
+            </div>
+            <div class="visual-caption">Solid edges join the growing minimum spanning tree; dashed edges are rejected to prevent cycles.</div>
+          </div>`;
+      }
+      return `
+        <div class="visual-block">
+          <div class="visual-head">Algorithm Pipeline</div>
+          <div class="flow-grid">
+            <div class="flow-chip">Model as Graph</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-chip">Choose Algorithm</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-chip">Trace &amp; Verify</div>
+          </div>
+          <div class="visual-caption">${topic.title} pairs theoretical insights directly with optimal runtime design.</div>
+        </div>`;
+    }
+
+    function getExerciseMarkup(mi, ti, mod, topic) {
+      const exercises = topic.exercises || [];
+      if (!exercises.length) return '';
+      const cards = exercises.map((ex, idx) => {
+        const num = String(idx + 1).padStart(2, '0');
+        const hintId = `hint-${mi}-${ti}-${idx}`;
+        const solId = `sol-${mi}-${ti}-${idx}`;
+        return `
+          <div class="challenge-card">
+            <div class="challenge-row">
+              <div class="challenge-index">GRF_${num}</div>
+              <div class="challenge-main">
+                <div class="challenge-meta">
+                  <span class="diff-badge ${ex.diff}">${ex.diff}</span>
+                  <span class="type-badge">${ex.type}</span>
+                </div>
+                <div class="challenge-question">${ex.q}</div>
+                <div class="challenge-btn-row">
+                  <button class="hint-toggle" onclick="toggleHint('${hintId}')">💡 Reveal Hint</button>
+                  <button class="sol-toggle" onclick="toggleHint('${solId}')">✅ Show Solution</button>
+                </div>
+                <div class="hint-panel" id="${hintId}">${ex.hint}</div>
+                <div class="hint-panel sol-panel" id="${solId}"><strong>Solution:</strong> ${ex.sol || 'Solution coming soon.'}</div>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+      const mcqMarkup = getMcqMarkup(mi, ti, mod, topic);
+      return `
+        <div class="challenge-console">
+          <div class="console-header">
+            <div class="console-title">
+              <div class="console-dot"></div>
+              <div><span>Practice_Protocol // ${mod.module}</span><strong>Exercise Set: ${topic.title}</strong></div>
+            </div>
+            <div class="console-count">${exercises.length} Challenges Loaded</div>
+          </div>
+          <div class="console-body">${cards}</div>
+          <div class="console-footer">
+            <p>Work through each challenge, check the hint if stuck, then reveal the solution to compare your approach.</p>
+            <button class="console-cta" onclick="document.getElementById('markBtn').click()">Mark Topic Complete →</button>
+          </div>
+        </div>
+        ${mcqMarkup}`;
+    }
+
+    function getMcqMarkup(mi, ti, mod, topic) {
+      const mcqs = topic.mcqs || [];
+      if (!mcqs.length) return '';
+      const cards = mcqs.map((mcq, idx) => {
+        const groupName = `mcq-${mi}-${ti}-${idx}`;
+        const optionsHtml = mcq.options.map((opt, oi) => `
+              <label class="mcq-option" data-mcq="${groupName}" data-correct="${oi === mcq.answer ? '1' : '0'}">
+                <input type="radio" name="${groupName}" value="${oi}" onchange="checkMcq(this)" />
+                <span class="mcq-option-letter">${String.fromCharCode(65 + oi)}</span>
+                <span class="mcq-option-text">${opt}</span>
+              </label>`).join('');
+        return `
+          <div class="mcq-card">
+            <div class="mcq-question"><span class="mcq-num">Q${idx + 1}.</span> ${mcq.q}</div>
+            <div class="mcq-options">${optionsHtml}</div>
+          </div>`;
+      }).join('');
+      return `
+        <div class="challenge-console mcq-console">
+          <div class="console-header">
+            <div class="console-title">
+              <div class="console-dot" style="background:var(--neon-magenta); box-shadow:0 0 12px var(--neon-magenta);"></div>
+              <div><span>MCQ_Protocol // ${mod.module}</span><strong>Quick Quiz: ${topic.title}</strong></div>
+            </div>
+            <div class="console-count">${mcqs.length} Questions</div>
+          </div>
+          <div class="console-body">${cards}</div>
+          <div class="console-footer">
+            <p>Pick an answer to instantly reveal whether it's correct — the right answer highlights green either way.</p>
+          </div>
+        </div>`;
+    }
+
+    function checkMcq(input) {
+      const label = input.closest('.mcq-option');
+      const groupName = label.dataset.mcq;
+      document.querySelectorAll(`label[data-mcq="${groupName}"]`).forEach(opt => {
+        opt.classList.remove('correct', 'wrong');
+        opt.querySelector('input').disabled = true;
+      });
+      document.querySelectorAll(`label[data-mcq="${groupName}"]`).forEach(opt => {
+        if (opt.dataset.correct === '1') opt.classList.add('correct');
+      });
+      if (label.dataset.correct !== '1') label.classList.add('wrong');
+    }
+
+    function toggleHint(id) {
+      const panel = document.getElementById(id);
+      if (panel) panel.classList.toggle('open');
+    }
+
+    function buildSidebar() {
+      const list = document.getElementById('moduleList');
+      list.innerHTML = '';
+      course.forEach((mod, mi) => {
+        const block = document.createElement('div');
+        block.className = 'module';
+        block.innerHTML = `<div class="module-head"><span>${mod.module} · ${mod.title}</span><span class="chevron">▸</span></div><div class="module-body"></div>`;
+        const body = block.querySelector('.module-body');
+        mod.topics.forEach((topic, ti) => {
+          const link = document.createElement('div');
+          link.className = 'topic-link';
+          link.textContent = topic.title;
+          link.onclick = () => {
+            currentIndex = flatTopics.findIndex(item => item.mi === mi && item.ti === ti);
+            renderContent(true);
+
+            // Auto-close mobile drawer menu when selecting a topic
+            const sidebar = document.getElementById('sidebarNav');
+            if (window.innerWidth <= 1024) {
+              sidebar.classList.remove('mobile-open');
+              document.getElementById('mobileMenuChevron').textContent = '▸';
+            }
+          };
+          body.appendChild(link);
+        });
+        block.querySelector('.module-head').onclick = () => block.classList.toggle('open');
+        list.appendChild(block);
+      });
+      document.querySelectorAll('.module').forEach((el, index) => { if (index === 0) el.classList.add('open'); });
+    }
+
+    function updateProgress() {
+      const total = flatTopics.length;
+      const done = completed.size;
+      document.getElementById('progressText').textContent = `${done} / ${total} topics`;
+      document.getElementById('progressFill').style.width = `${(done / total) * 100}%`;
+    }
+
+    function buildModuleOutline(mi, ti) {
+      const mod = course[mi];
+      return `
+        <div class="module-outline">
+          <div class="outline-header">
+            <div>
+              <span>${mod.module}</span>
+              <strong>${mod.title}</strong>
+            </div>
+            <span>${mod.topics.length} lessons</span>
+          </div>
+          <div class="outline-list">
+            ${mod.topics.map((topic, idx) => `
+              <button class="outline-chip ${idx === ti ? 'active' : ''}" onclick="goToTopic(${mi}, ${idx})">
+                <span>${String(idx + 1).padStart(2, '0')}</span>
+                <strong>${topic.title}</strong>
+              </button>`).join('')}
+          </div>
+        </div>`;
+    }
+
+    function renderContent(shouldScroll = false) {
+      const { mi, ti } = flatTopics[currentIndex];
+      const mod = course[mi];
+      const topic = mod.topics[ti];
+      const key = `${mi}-${ti}`;
+      const isDone = completed.has(key);
+
+      document.querySelectorAll('.topic-link').forEach(link => link.classList.remove('active'));
+      const activeLink = document.querySelectorAll('.topic-link')[currentIndex];
+      if (activeLink) activeLink.classList.add('active');
+
+      const visualMarkup = getVisualMarkup(mi, ti, mod, topic);
+      const exerciseMarkup = getExerciseMarkup(mi, ti, mod, topic);
+      const moduleOutline = buildModuleOutline(mi, ti);
+
+      document.getElementById('contentArea').innerHTML = `
+        ${moduleOutline}
+        <div class="content-header">
+          <div class="content-tag">${topic.tag}</div>
+          <h2>${topic.title}</h2>
+          <div class="content-meta">${mod.module} · ${mod.title}</div>
+        </div>
+        <div class="content-hero">
+          <div class="eyebrow">Target Learning Objective</div>
+          <p>By the end of this lesson, you will understand the core logic behind ${topic.title.toLowerCase()} and be able to trace, implement, and reason about its complexity confidently.</p>
+        </div>
+        <div class="learning-grid">
+          <div class="learning-card"><strong>Concept Core</strong><span>Theoretical foundation and intuition</span></div>
+          <div class="learning-card"><strong>Implementation</strong><span>Pseudocode and worked traces</span></div>
+          <div class="learning-card"><strong>Interview Prep</strong><span>Complexity reasoning and edge cases</span></div>
+        </div>
+        <div class="content-body">${visualMarkup}${topic.body}</div>
+        ${exerciseMarkup}
+        <div class="actions-row">
+          <button class="mark-btn ${isDone ? 'done' : ''}" id="markBtn">${isDone ? '✓ Completed' : 'Mark as Complete'}</button>
+        </div>
+        <div class="nav-buttons">
+          <div class="nav-btn ${currentIndex > 0 ? '' : 'disabled'}" id="prevBtn">
+            <strong>← Previous</strong>
+            <span>${currentIndex > 0 ? course[flatTopics[currentIndex - 1].mi].topics[flatTopics[currentIndex - 1].ti].title : 'Origin'}</span>
+          </div>
+          <div class="nav-btn ${currentIndex < flatTopics.length - 1 ? '' : 'disabled'}" id="nextBtn">
+            <strong>Next Topic →</strong>
+            <span>${currentIndex < flatTopics.length - 1 ? course[flatTopics[currentIndex + 1].mi].topics[flatTopics[currentIndex + 1].ti].title : 'Terminus'}</span>
+          </div>
+        </div>`;
+
+      document.getElementById('markBtn').onclick = () => {
+        if (completed.has(key)) completed.delete(key);
+        else completed.add(key);
+        updateProgress();
+        renderContent(false);
+      };
+      document.getElementById('prevBtn').onclick = () => { currentIndex--; renderContent(true); };
+      document.getElementById('nextBtn').onclick = () => { currentIndex++; renderContent(true); };
+
+      document.querySelectorAll('.topic-link').forEach((link, idx) => {
+        if (idx === currentIndex) link.classList.add('active');
+        if (completed.has(`${flatTopics[idx].mi}-${flatTopics[idx].ti}`)) link.classList.add('done');
+      });
+
+      updateProgress();
+      if (shouldScroll) { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    }
+
+    document.getElementById('topicSearch').addEventListener('input', (event) => {
+      const query = event.target.value.toLowerCase();
+      document.querySelectorAll('.topic-link').forEach(link => {
+        const match = link.textContent.toLowerCase().includes(query);
+        link.style.display = match ? 'flex' : 'none';
+      });
+    });
+
+    document.getElementById('startLearningBtn').addEventListener('click', () => {
+      document.getElementById('heroShell').classList.add('is-hidden');
+      document.getElementById('interviewShell').classList.remove('active');
+      document.getElementById('curriculumView').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    });
+
+    // Mobile Drawer Toggle Handler
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+      const sidebar = document.getElementById('sidebarNav');
+      const chevron = document.getElementById('mobileMenuChevron');
+      const isOpen = sidebar.classList.toggle('mobile-open');
+      chevron.textContent = isOpen ? '▾' : '▸';
+    });
+
+    function goToTopic(mi, ti) {
+      currentIndex = flatTopics.findIndex(item => item.mi === mi && item.ti === ti);
+      document.getElementById('interviewShell').classList.remove('active');
+      document.getElementById('heroShell').classList.add('is-hidden');
+      document.getElementById('curriculumView').classList.add('active');
+      renderContent(true);
+    }
+
+    function buildTopicsView() {
+      const container = document.getElementById('interviewContent');
+      document.getElementById('interviewShellLabel').textContent = '18 Topics · Full Curriculum List';
+      const cards = flatTopics.map(({ mi, ti }) => {
+        const mod = course[mi];
+        const topic = mod.topics[ti];
+        return `
+          <div class="browse-card" onclick="goToTopic(${mi}, ${ti})">
+            <div class="browse-card-main"><strong>${topic.title}</strong><span>${mod.module} · ${mod.title} · ${topic.tag}</span></div>
+            <div class="browse-arrow">→</div>
+          </div>`;
+      }).join('');
+      container.innerHTML = `
+        <div class="interview-intro">
+          <div class="content-tag">All Topics</div>
+          <h2>18 Topics Across Modules 1–6</h2>
+          <p>Every live topic in AlgoVerse's Graph Algorithms track so far — Fundamentals through Connectivity. Tap any topic to jump straight into that lesson.</p>
+        </div>
+        <div class="console-body" style="padding:0; display:flex; flex-direction:column; gap:0.8rem;">${cards}</div>
+        <div class="roadmap-note">📍 Modules 7–12 (Advanced Algorithms, Network Flow, LCA &amp; Trees, Competitive Patterns, Real-World Applications, and Capstone Projects) are on the roadmap and will be added next.</div>`;
+    }
+
+    function buildModulesView() {
+      const container = document.getElementById('interviewContent');
+      document.getElementById('interviewShellLabel').textContent = '6 Modules · Course Roadmap';
+      const cards = course.map((mod, mi) => `
+          <div class="browse-card" onclick="goToTopic(${mi}, 0)">
+            <div class="browse-card-main"><strong>${mod.module} · ${mod.title}</strong><span>${mod.topics.length} topics in this module</span></div>
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+              <span class="browse-count-pill">${mod.topics.length} topics</span>
+              <div class="browse-arrow">→</div>
+            </div>
+          </div>`).join('');
+      container.innerHTML = `
+        <div class="interview-intro">
+          <div class="content-tag">Modules Live Now</div>
+          <h2>6 Modules · Course Roadmap</h2>
+          <p>Modules 1–6 are live in full depth, covering Graph Fundamentals through Connectivity Algorithms. Tap a module to jump into its first lesson.</p>
+        </div>
+        <div class="console-body" style="padding:0; display:flex; flex-direction:column; gap:0.8rem;">${cards}</div>
+        <div class="roadmap-note">📍 Coming next: Advanced Graph Algorithms, Network Flow, Advanced Topics (LCA/Trees), Competitive Programming Graphs, Real-World Applications, and Capstone Projects.</div>`;
+    }
+
+    const interviewQuestions = [
+      {
+        module: 'Module 1', title: 'Graph Fundamentals',
+        qas: [
+          { q: 'What is a graph, and how is it different from a tree?', a: 'A graph is a set of vertices connected by edges with no restriction on structure — cycles, multiple connections, and disconnected pieces are all allowed. A tree is a special case: a connected, acyclic graph with exactly one path between any two vertices.', analysis: "Almost always the opening question. Interviewers check if you know a tree is a CONSTRAINED graph, not a separate category." },
+          { q: 'Adjacency matrix vs. adjacency list — when would you use each?', a: 'Use an adjacency matrix for dense graphs or when you need O(1) edge-existence checks, accepting O(V²) space. Use an adjacency list for sparse graphs (most real-world graphs), getting O(V + E) space.', analysis: "A near-universal warm-up. Strong answers give a concrete example, e.g. social networks with millions of users." },
+          { q: 'What is the difference between a directed and undirected graph?', a: 'In a directed graph, edges have direction (A→B doesn\'t imply B→A). In an undirected graph, edges work both ways.', analysis: 'Conceptual check, often followed by asking how in-degree/out-degree apply only to directed graphs.' }
+        ]
+      },
+      {
+        module: 'Module 2', title: 'Graph Traversal Algorithms',
+        qas: [
+          { q: 'When would you use BFS vs. DFS?', a: 'Use BFS for shortest path in unweighted graphs, level-order problems, and finding nearest matches. Use DFS for cycle detection, topological sorting, and exhaustive backtracking search.', analysis: 'The single most repeated graph question. Best answers tie choices to concrete structural guarantees.' },
+          { q: 'How do you detect a cycle in a directed graph vs. an undirected graph?', a: 'In a directed graph, use DFS with a recursion-stack tracking set (back-edge). In an undirected graph, DFS detects a cycle when reaching an already-visited neighbor that is not the immediate parent.', analysis: 'Probe into whether you understand the directed vs undirected recursion tracking distinctions.' },
+          { q: 'How would you check if a graph is bipartite?', a: 'Run BFS or DFS while 2-coloring vertices. If any edge connects two vertices of the same color, the graph is not bipartite.', analysis: 'Common in matching and scheduling conflict interview problems.' },
+          { q: "What's the time and space complexity of BFS and DFS?", a: 'Both run in O(V + E) time on an adjacency list. Space is O(V) for the visited set/queue/stack.', analysis: 'Quick complexity check.' }
+        ]
+      },
+      {
+        module: 'Module 3', title: 'Shortest Path Algorithms',
+        qas: [
+          { q: 'Compare Dijkstra, Bellman-Ford, and Floyd-Warshall.', a: 'Dijkstra finds single-source shortest paths in O((V+E) log V) (non-negative weights only). Bellman-Ford handles negative weights in O(VE). Floyd-Warshall computes all-pairs shortest paths in O(V³).', analysis: 'Expect a live follow-up asking WHY Dijkstra fails with negative weights.' },
+          { q: 'Why does Dijkstra fail with negative edge weights?', a: 'Dijkstra greedily finalizes a vertex\'s shortest distance once popped from the priority queue and never revisits it. A negative edge found later cannot correct that finalized distance.', analysis: 'Tests whether you understand the greedy invariant of Dijkstra.' },
+          { q: 'Shortest path when edge weights are only 0 or 1?', a: 'Use 0-1 BFS with a deque: push 0-weight edges to the front and 1-weight edges to the back in O(V + E) time without a priority queue.', analysis: 'Great signal question testing algorithm customization.' }
+        ]
+      },
+      {
+        module: 'Module 4', title: 'Minimum Spanning Trees',
+        qas: [
+          { q: "Compare Prim's and Kruskal's algorithms for MST.", a: "Prim's grows a single tree by adding the cheapest connecting edge (good for dense graphs). Kruskal's sorts all edges globally and adds edges that don't form cycles using Union-Find (good for sparse graphs).", analysis: "Explores when to prefer each based on graph density." },
+          { q: 'What is Union-Find (DSU), and why is it needed for Kruskal\'s?', a: "DSU tracks sets in near-O(1) time. Kruskal's uses it to quickly check if adding an edge connects two already-linked components.", analysis: "Paired with Kruskal's questions." },
+          { q: 'Can a graph have more than one valid MST?', a: 'Yes — if multiple edges share identical weights, different valid choices yield different MSTs with the same total minimum weight.', analysis: 'Conceptual trap question.' }
+        ]
+      },
+      {
+        module: 'Module 5', title: 'Directed Acyclic Graphs (DAG)',
+        qas: [
+          { q: 'How do you perform topological sorting?', a: 'DFS-based: push vertices to a stack after neighbors finish, then reverse. BFS-based (Kahn\'s algorithm): repeatedly remove nodes with in-degree 0.', analysis: 'Extremely common DAG question.' },
+          { q: 'Course Schedule problem (can you finish all courses)?', a: 'Model prerequisites as directed edges and check for a cycle in the DAG.', analysis: 'Standard LeetCode / interview classic.' },
+          { q: 'Why can you find the longest path in a DAG in linear time?', a: 'Topological order guarantees dependencies are processed before descendants, enabling a single O(V + E) relaxation pass.', analysis: 'Strong differentiator question for candidates.' }
+        ]
+      },
+      {
+        module: 'Module 6', title: 'Connectivity Algorithms',
+        qas: [
+          { q: 'What is an SCC and how does Kosaraju\'s algorithm find all of them?', a: "An SCC is a group of vertices where every vertex can reach every other. Kosaraju's runs a finish-time DFS, transposes the graph, then runs DFS in stack-pop order.", analysis: "Core connectivity question." },
+          { q: 'Difference between a bridge and an articulation point?', a: 'A bridge is a critical edge whose removal disconnects the graph; an articulation point is a critical node whose removal disconnects it.', analysis: 'Used in network reliability questions.' },
+          { q: "How does Tarjan's algorithm find SCCs in a single pass?", a: "Tarjan's uses discovery time, low-link values, and a stack. When low[u] == disc[u], vertex u is an SCC root.", analysis: "Advanced qualification question." }
+        ]
+      }
+    ];
+
+    const rankTable = [
+      ['1', 'BFS vs DFS — when to use each', 'Traversal'],
+      ['2', "Dijkstra's algorithm and why it fails with negative weights", 'Shortest Path'],
+      ['3', 'Detect a cycle in directed vs undirected graphs', 'Traversal'],
+      ['4', 'Topological sort — DFS-based and Kahn\'s algorithm', 'DAGs'],
+      ['5', "Prim's vs Kruskal's for MST", 'MST'],
+      ['6', 'Course Schedule (cycle detection on a DAG)', 'DAGs'],
+      ['7', 'Union-Find with path compression and union by rank', 'MST'],
+      ['8', 'Strongly connected components — Kosaraju\'s algorithm', 'Connectivity'],
+      ['9', 'Bridges and articulation points', 'Connectivity'],
+      ['10', 'Comparing Dijkstra, Bellman-Ford, and Floyd-Warshall', 'Shortest Path']
+    ];
+
+    function buildInterviewView() {
+      const container = document.getElementById('interviewContent');
+      document.getElementById('interviewShellLabel').textContent = 'Interview Ready · Q&A Bank';
+      let totalQ = 0;
+      interviewQuestions.forEach(m => totalQ += m.qas.length);
+      const modulesHtml = interviewQuestions.map((mod, mi) => {
+        const cards = mod.qas.map((item, qi) => `
+          <div class="iq-card">
+            <div class="iq-q"><span>Q${qi + 1}.</span>${item.q}</div>
+            <div class="iq-a"><strong>Answer:</strong> ${item.a}</div>
+            <div class="iq-analysis"><strong>Why it's asked:</strong> ${item.analysis}</div>
+          </div>`).join('');
+        return `
+          <div class="iq-module ${mi === 0 ? 'open' : ''}">
+            <div class="iq-module-head" onclick="this.parentElement.classList.toggle('open')">
+              <div><strong>${mod.module} · ${mod.title}</strong><span class="iq-sub">${mod.qas.length} interview questions</span></div>
+              <span class="chevron">▸</span>
+            </div>
+            <div class="iq-module-body">${cards}</div>
+          </div>`;
+      }).join('');
+      const rankHtml = rankTable.map(row => `
+          <div class="iq-rank-row"><div class="rank-num">#${row[0]}</div><div>${row[1]}</div><div class="rank-topic">${row[2]}</div></div>`).join('');
+      container.innerHTML = `
+        <div class="interview-intro">
+          <div class="content-tag">Interview Ready</div>
+          <h2>Top Graph Algorithm Interview Questions</h2>
+          <p>${totalQ} most-repeated graph questions across product and service-based company interviews. Each answer comes with an "Analysis" note explaining why interviewers ask it.</p>
+        </div>
+        ${modulesHtml}
+        <div class="iq-module">
+          <div class="iq-module-head" onclick="this.parentElement.classList.toggle('open')">
+            <div><strong>Quick Frequency Ranking</strong><span class="iq-sub">Most → less frequently asked</span></div>
+            <span class="chevron">▸</span>
+          </div>
+          <div class="iq-module-body"><div class="iq-rank-table">${rankHtml}</div></div>
+        </div>`;
+    }
+
+    document.querySelectorAll('.trigger-interview').forEach(card => {
+      card.addEventListener('click', () => {
+        const view = card.dataset.view;
+        if (view === 'modules') buildModulesView();
+        else if (view === 'topics') buildTopicsView();
+        else buildInterviewView();
+        document.getElementById('heroShell').classList.add('is-hidden');
+        document.getElementById('curriculumView').classList.remove('active');
+        document.getElementById('interviewShell').classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      });
+    });
+
+    document.getElementById('interviewBackBtn').addEventListener('click', () => {
+      document.getElementById('interviewShell').classList.remove('active');
+      document.getElementById('heroShell').classList.remove('is-hidden');
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    });
+
+    document.getElementById('interviewToCourseBtn').addEventListener('click', () => {
+      document.getElementById('interviewShell').classList.remove('active');
+      document.getElementById('heroShell').classList.add('is-hidden');
+      document.getElementById('curriculumView').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    });
+
+    // Mobile Drawer Toggle Event Handler
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+      const sidebar = document.getElementById('sidebarNav');
+      const chevron = document.getElementById('mobileMenuChevron');
+      const isOpen = sidebar.classList.toggle('mobile-open');
+      chevron.textContent = isOpen ? '▾' : '▸';
+    });
+
+    buildSidebar();
+    renderContent(true);
+  </script>
+</body>
+</html>
