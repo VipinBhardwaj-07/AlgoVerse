@@ -10,6 +10,7 @@
         let scrollLockY = 0;
         function setMenu(open) {
             mob.classList.toggle('open', open);
+            document.documentElement.classList.toggle('menu-open', open);
             ham.classList.toggle('open', open);
             if (backdrop) backdrop.classList.toggle('show', open);
             ham.setAttribute('aria-expanded', open ? 'true' : 'false');
@@ -285,15 +286,75 @@
     function showAuthMessage(message, type = 'error') {
         const el = $('#authMessage'); if (!el) return; el.textContent = message; el.classList.toggle('success', type === 'success');
     }
+    function getProfileData(email) {
+        try { return JSON.parse(localStorage.getItem('algoVerseProfile_' + email) || '{}'); }
+        catch (e) { return {}; }
+    }
+    // One place that paints every piece of account UI (desktop nav, dropdown, mobile drawer)
+    function paintAccountUI(email) {
+        const loggedIn = !!email;
+        const users = getUsers();
+        const user = loggedIn ? (users[email] || {}) : {};
+        const profile = loggedIn ? getProfileData(email) : {};
+        const name = (profile.name || user.name || (email ? email.split('@')[0] : '') || 'User').trim();
+        const first = name.split(/\s+/)[0];
+        const initial = name.charAt(0).toUpperCase() || 'U';
+        const img = profile.profileImage || '';
+        const setText = (id, v) => { const el = $('#' + id); if (el) el.textContent = v; };
+
+        const userBadge = $('#userBadge'), loginBtn = $('#loginBtn'), signupBtn = $('#signupBtn');
+        if (userBadge) userBadge.style.display = loggedIn ? 'flex' : 'none';
+        if (loginBtn) loginBtn.style.display = loggedIn ? 'none' : 'inline-flex';
+        if (signupBtn) signupBtn.style.display = loggedIn ? 'none' : 'inline-flex';
+
+        setText('userStatus', 'Hi, ' + first);
+        setText('navUserEmail', email || 'Account');
+        setText('navProfileInitial', initial);
+        setText('dropdownUserName', name);
+        setText('dropdownUserEmail', email || 'Account');
+        setText('dropdownProfileInitial', initial);
+        setText('mobileUserName', name);
+        setText('mobileUserEmail', email || '');
+        setText('mobileAvatarInitial', initial);
+
+        [['dropdownProfileAvatar', 'dropdownProfileImage'], ['mobileAvatar', 'mobileAvatarImg'], ['profileTrigger', null]].forEach(([wrapId, imgId]) => {
+            const wrap = $('#' + wrapId); if (!wrap || !imgId) return;
+            const im = $('#' + imgId);
+            if (img && im) { im.src = img; wrap.classList.add('has-image'); } else { if (im) im.removeAttribute('src'); wrap.classList.remove('has-image'); }
+        });
+        const navAvatar = document.querySelector('.profile-avatar');
+        if (navAvatar) {
+            if (img) { navAvatar.style.backgroundImage = 'url("' + img + '")'; navAvatar.classList.add('has-image'); }
+            else { navAvatar.style.backgroundImage = ''; navAvatar.classList.remove('has-image'); }
+        }
+
+        const mobileAccount = $('#mobileAccount'), mLogin = $('#mobileLoginBtn'), mSignup = $('#mobileSignupBtn');
+        if (mobileAccount) mobileAccount.hidden = !loggedIn;
+        const mAuthWrap = document.querySelector('.mobile-menu-auth'); if (mAuthWrap) mAuthWrap.hidden = loggedIn;
+        if (mLogin) mLogin.style.display = loggedIn ? 'none' : 'block';
+        if (mSignup) mSignup.style.display = loggedIn ? 'none' : 'block';
+    }
+    window.refreshAccountUI = function () { paintAccountUI(localStorage.getItem('algoVerseCurrentUser')); };
+    function syncMobileAuth() { paintAccountUI(localStorage.getItem('algoVerseCurrentUser')); }
     function setLoggedInUser(email) {
-        const users = getUsers(); const user = users[email]; if (!user) return; localStorage.setItem('algoVerseCurrentUser', email);
-        const userBadge = $('#userBadge'); const userStatus = $('#userStatus'); const loginBtn = $('#loginBtn'); const signupBtn = $('#signupBtn');
-        if (userBadge && userStatus && loginBtn && signupBtn) {
-            userStatus.textContent = `Hi, ${user.name}`; userBadge.style.display = 'flex'; loginBtn.style.display = 'none'; signupBtn.style.display = 'none';
+        const users = getUsers();
+        if (!users[email]) return;
+        localStorage.setItem('algoVerseCurrentUser', email);
+        paintAccountUI(email);
+    }
+    function clearLoggedInUser() {
+        localStorage.removeItem('algoVerseCurrentUser');
+        paintAccountUI('');
+    }
+    function restoreLoggedInUser() {
+        const currentEmail = localStorage.getItem('algoVerseCurrentUser');
+
+        if (currentEmail) {
+            setLoggedInUser(currentEmail);
+        } else {
+            syncMobileAuth();
         }
     }
-    function clearLoggedInUser() { localStorage.removeItem('algoVerseCurrentUser'); const userBadge = $('#userBadge'); const loginBtn = $('#loginBtn'); const signupBtn = $('#signupBtn'); if (userBadge && loginBtn && signupBtn) { userBadge.style.display = 'none'; loginBtn.style.display = 'inline-flex'; signupBtn.style.display = 'inline-flex'; } }
-    function restoreLoggedInUser() { const currentEmail = localStorage.getItem('algoVerseCurrentUser'); if (currentEmail) setLoggedInUser(currentEmail); }
     function handleAuthSubmit(e) {
         e.preventDefault(); const modal = $('#authModal'); if (!modal) return; const mode = modal.dataset.mode || 'login'; const name = ($('#authName')?.value || '').trim(); const email = ($('#authEmail')?.value || '').trim().toLowerCase(); const password = ($('#authPassword')?.value || '');
         if (!email || !password) { showAuthMessage('Please fill in both email and password.'); return; }
@@ -301,7 +362,7 @@
         if (mode === 'signup') {
             if (!name) { showAuthMessage('Please enter your full name to create an account.'); return; }
             if (users[email]) { showAuthMessage('This email is already registered. Try logging in.'); return; }
-            users[email] = { name, password }; saveUsers(users); setLoggedInUser(email); showAuthMessage(`Account created successfully. Welcome, ${name}!`, 'success'); setTimeout(closeAuthModal, 1000); return;
+            users[email] = { name, password, createdAt: new Date().toISOString() }; saveUsers(users); setLoggedInUser(email); showAuthMessage(`Account created successfully. Welcome, ${name}!`, 'success'); setTimeout(closeAuthModal, 1000); return;
         }
         const user = users[email]; if (!user || user.password !== password) { showAuthMessage('Invalid email or password. Please try again.'); return; }
         setLoggedInUser(email); showAuthMessage(`Login successful. Welcome back, ${user.name}!`, 'success'); setTimeout(closeAuthModal, 1000);
@@ -470,8 +531,296 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
     window.addEventListener('load', () => {
         const currentUser = localStorage.getItem('algoVerseCurrentUser');
-        if (!currentUser) setTimeout(() => openAuthModal('signup'), 800);
+        let seen = false;
+        try { seen = sessionStorage.getItem('algoVerseAuthPrompted') === '1'; } catch (e) {}
+        if (!currentUser && !seen) {
+            try { sessionStorage.setItem('algoVerseAuthPrompted', '1'); } catch (e) {}
+            setTimeout(() => openAuthModal('signup'), 800);
+        }
     });
     window.openVideoDemo = function () { const videoModal = $('#videoModal'); const demoVideo = $('#demoVideo'); if (!videoModal || !demoVideo) return; videoModal.hidden = false; videoModal.classList.add('show'); demoVideo.currentTime = 0; demoVideo.play().catch(() => {}); };
     window.closeVideoDemo = function () { const videoModal = $('#videoModal'); const demoVideo = $('#demoVideo'); if (!videoModal || !demoVideo) return; demoVideo.pause(); videoModal.classList.remove('show'); videoModal.hidden = true; };
+})();
+
+
+
+/* =====================================================
+   ALGOVERSE PROFILE DROPDOWN
+   ===================================================== */
+
+document.addEventListener('DOMContentLoaded', function () {
+    const profileWrapper = document.getElementById('userBadge');
+    const profileTrigger = document.getElementById('profileTrigger');
+    const profileDropdown = document.getElementById('profileDropdown');
+
+    if (!profileWrapper || !profileTrigger || !profileDropdown) {
+        return;
+    }
+
+    profileTrigger.addEventListener('click', function (event) {
+        event.stopPropagation();
+
+        const isOpen = profileWrapper.classList.contains('open');
+
+        profileWrapper.classList.toggle('open', !isOpen);
+        profileTrigger.setAttribute('aria-expanded', String(!isOpen));
+    });
+
+    document.addEventListener('click', function (event) {
+        if (!profileWrapper.contains(event.target)) {
+            profileWrapper.classList.remove('open');
+            profileTrigger.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            profileWrapper.classList.remove('open');
+            profileTrigger.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    profileDropdown.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+            profileWrapper.classList.remove('open');
+            profileTrigger.setAttribute('aria-expanded', 'false');
+        });
+    });
+});
+
+/* =====================================================
+   HERO BACKGROUND — live algorithm animation
+   A drifting graph runs breadth-first search (click anywhere in the
+   hero to start it from the nearest node) while bubble sort plays
+   along the bottom edge. Pauses off-screen / in background tabs.
+   ===================================================== */
+(function () {
+    'use strict';
+    var hero = document.getElementById('hero');
+    var wrap = document.getElementById('auroraVideoWrap');
+    var cv = document.getElementById('heroCanvas');
+    if (!hero || !wrap || !cv || !cv.getContext) return;
+    var ctx = cv.getContext('2d');
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var TEAL = '0,229,192', VIO = '124,92,252';
+
+    var W = 0, H = 0, mobile = false, running = false, raf = 0, last = 0;
+    var nodes = [], link = 150, trav = null, nextTravAt = 0;
+    var mouse = { x: -9999, y: -9999, on: false };
+    var bars = null;
+
+    function rnd(a, b) { return a + Math.random() * (b - a); }
+
+    function resize() {
+        var r = wrap.getBoundingClientRect();
+        W = Math.max(1, r.width); H = Math.max(1, r.height);
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        mobile = W < 720;
+        link = mobile ? 105 : 150;
+        buildNodes(); buildBars(); trav = null; nextTravAt = 0;
+        if (!running) draw(performance.now());
+    }
+
+    function buildNodes() {
+        var count = mobile ? 22 : Math.max(24, Math.min(58, Math.round(W * H / 24000)));
+        var x0 = mobile ? 0.04 : 0.36;
+        nodes = [];
+        for (var i = 0; i < count; i++) {
+            nodes.push({
+                x: rnd(x0, 0.97) * W, y: rnd(0.07, 0.8) * H,
+                vx: rnd(-0.16, 0.16), vy: rnd(-0.16, 0.16), r: rnd(1.8, 3.2)
+            });
+        }
+    }
+
+    /* ---------- bubble sort strip ---------- */
+    function buildBars() {
+        var n = mobile ? 16 : Math.max(18, Math.min(40, Math.round(W / 46)));
+        bars = { n: n, a: [], i: 0, j: 0, ca: -1, cb: -1, acc: 0, wait: 0, done: false };
+        resetBars();
+    }
+    function resetBars() {
+        var n = bars.n, a = [];
+        for (var k = 1; k <= n; k++) a.push(k);
+        for (var m = n - 1; m > 0; m--) { var q = Math.floor(Math.random() * (m + 1)); var t = a[m]; a[m] = a[q]; a[q] = t; }
+        bars.a = a; bars.i = 0; bars.j = 0; bars.ca = bars.cb = -1; bars.done = false; bars.wait = 0;
+    }
+    function stepBars() {
+        var b = bars, a = b.a, n = b.n;
+        if (b.i >= n - 1) { b.done = true; b.ca = b.cb = -1; b.wait = 1600; return; }
+        b.ca = b.j; b.cb = b.j + 1;
+        if (a[b.j] > a[b.j + 1]) { var t = a[b.j]; a[b.j] = a[b.j + 1]; a[b.j + 1] = t; }
+        b.j++;
+        if (b.j >= n - 1 - b.i) { b.j = 0; b.i++; }
+    }
+    function updateBars(dt) {
+        var b = bars;
+        if (b.done) { b.wait -= dt; if (b.wait <= 0) resetBars(); return; }
+        b.acc += dt * (mobile ? 0.05 : 0.11);
+        var guard = 0;
+        while (b.acc >= 1 && guard++ < 8) { b.acc -= 1; stepBars(); if (b.done) break; }
+    }
+    function drawBars(now) {
+        var b = bars, n = b.n, pad = mobile ? 16 : 40;
+        var slot = (W - pad * 2) / n, bw = slot * 0.62;
+        var maxH = H * (mobile ? 0.09 : 0.15), base = H - (mobile ? 18 : 22);
+        var sortedFrom = b.done ? 0 : n - b.i;
+        var flash = b.done ? 0.5 + 0.5 * Math.sin(now / 160) : 0;
+        for (var k = 0; k < n; k++) {
+            var h = (b.a[k] / n) * maxH + 4, x = pad + k * slot + (slot - bw) / 2, col;
+            if (b.done) col = 'rgba(' + TEAL + ',' + (0.3 + flash * 0.35) + ')';
+            else if (k === b.ca || k === b.cb) col = 'rgba(' + TEAL + ',0.85)';
+            else if (k >= sortedFrom) col = 'rgba(' + TEAL + ',0.3)';
+            else col = 'rgba(' + VIO + ',0.28)';
+            ctx.fillStyle = col;
+            ctx.fillRect(x, base - h, bw, h);
+        }
+    }
+
+    /* ---------- BFS across the drifting graph ---------- */
+    function startTrav(start, now) {
+        var n = nodes.length, adj = [], i, j;
+        for (i = 0; i < n; i++) adj.push([]);
+        for (i = 0; i < n; i++) for (j = i + 1; j < n; j++) {
+            var dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
+            if (dx * dx + dy * dy < link * link) { adj[i].push(j); adj[j].push(i); }
+        }
+        var level = new Array(n), parent = new Array(n), q = [start], head = 0, maxL = 0;
+        for (i = 0; i < n; i++) { level[i] = -1; parent[i] = -1; }
+        level[start] = 0;
+        while (head < q.length) {
+            var u = q[head++];
+            for (var k = 0; k < adj[u].length; k++) {
+                var v = adj[u][k];
+                if (level[v] < 0) { level[v] = level[u] + 1; parent[v] = u; if (level[v] > maxL) maxL = level[v]; q.push(v); }
+            }
+        }
+        var lvlMs = 300;
+        trav = { start: start, t0: now, lvlMs: lvlMs, level: level, parent: parent, end: now + (maxL + 1) * lvlMs + 2400 };
+    }
+    function pickStart(x, y) {
+        var best = -1, bd = 1e12;
+        for (var i = 0; i < nodes.length; i++) {
+            var dx = nodes[i].x - x, dy = nodes[i].y - y, d = dx * dx + dy * dy;
+            if (d < bd) { bd = d; best = i; }
+        }
+        return best;
+    }
+
+    function update(dt) {
+        var i, nd, step = dt / 16.7;
+        for (i = 0; i < nodes.length; i++) {
+            nd = nodes[i];
+            nd.x += nd.vx * step; nd.y += nd.vy * step;
+            var minX = (mobile ? 0.02 : 0.32) * W, maxX = W * 0.99, minY = H * 0.05, maxY = H * 0.82;
+            if (nd.x < minX || nd.x > maxX) { nd.vx *= -1; nd.x = Math.max(minX, Math.min(maxX, nd.x)); }
+            if (nd.y < minY || nd.y > maxY) { nd.vy *= -1; nd.y = Math.max(minY, Math.min(maxY, nd.y)); }
+            if (mouse.on) {
+                var dx = nd.x - mouse.x, dy = nd.y - mouse.y, d2 = dx * dx + dy * dy;
+                if (d2 < 130 * 130 && d2 > 1) { var d = Math.sqrt(d2), f = (1 - d / 130) * 0.5 * step; nd.x += dx / d * f; nd.y += dy / d * f; }
+            }
+        }
+        updateBars(dt);
+    }
+
+    function draw(now) {
+        ctx.clearRect(0, 0, W, H);
+        var i, j, n = nodes.length, mAlpha = mobile ? 0.7 : 1;
+        ctx.globalAlpha = mAlpha;
+        /* ambient edges */
+        ctx.lineWidth = 1;
+        for (i = 0; i < n; i++) for (j = i + 1; j < n; j++) {
+            var dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y, d2 = dx * dx + dy * dy;
+            if (d2 < link * link) {
+                ctx.strokeStyle = 'rgba(' + VIO + ',' + ((1 - Math.sqrt(d2) / link) * 0.22).toFixed(3) + ')';
+                ctx.beginPath(); ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke();
+            }
+        }
+        /* cursor links */
+        if (mouse.on) {
+            for (i = 0; i < n; i++) {
+                var mx = nodes[i].x - mouse.x, my = nodes[i].y - mouse.y, md = Math.sqrt(mx * mx + my * my);
+                if (md < 160) {
+                    ctx.strokeStyle = 'rgba(' + TEAL + ',' + ((1 - md / 160) * 0.35).toFixed(3) + ')';
+                    ctx.beginPath(); ctx.moveTo(mouse.x, mouse.y); ctx.lineTo(nodes[i].x, nodes[i].y); ctx.stroke();
+                }
+            }
+        }
+        /* BFS wave */
+        var glow = new Array(n);
+        for (i = 0; i < n; i++) glow[i] = 0;
+        if (trav) {
+            ctx.lineWidth = 1.6;
+            for (i = 0; i < n; i++) {
+                var lv = trav.level[i]; if (lv < 0) continue;
+                var age = now - (trav.t0 + lv * trav.lvlMs); if (age < 0) continue;
+                glow[i] = Math.max(0, 1 - age / 2300);
+                var p = trav.parent[i];
+                if (p >= 0) {
+                    var prog = Math.min(1, age / 240), a = Math.max(0, 0.9 - age / 2600);
+                    if (a > 0) {
+                        ctx.strokeStyle = 'rgba(' + TEAL + ',' + a.toFixed(3) + ')';
+                        ctx.beginPath(); ctx.moveTo(nodes[p].x, nodes[p].y);
+                        ctx.lineTo(nodes[p].x + (nodes[i].x - nodes[p].x) * prog, nodes[p].y + (nodes[i].y - nodes[p].y) * prog);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+        /* nodes */
+        for (i = 0; i < n; i++) {
+            var nd = nodes[i], g = glow[i];
+            if (g > 0.01) {
+                var rad = nd.r + 4 + g * 14, grad = ctx.createRadialGradient(nd.x, nd.y, 0, nd.x, nd.y, rad);
+                grad.addColorStop(0, 'rgba(' + TEAL + ',' + (0.55 * g).toFixed(3) + ')');
+                grad.addColorStop(1, 'rgba(' + TEAL + ',0)');
+                ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(nd.x, nd.y, rad, 0, 6.2832); ctx.fill();
+            }
+            ctx.fillStyle = g > 0.05 ? 'rgba(' + TEAL + ',' + (0.55 + g * 0.45).toFixed(3) + ')' : 'rgba(' + VIO + ',0.6)';
+            ctx.beginPath(); ctx.arc(nd.x, nd.y, nd.r + g * 1.6, 0, 6.2832); ctx.fill();
+        }
+        if (trav) { /* start-node ring */
+            var s = nodes[trav.start], ra = (now - trav.t0) / 900;
+            if (s && ra < 1) {
+                ctx.strokeStyle = 'rgba(' + TEAL + ',' + (0.6 * (1 - ra)).toFixed(3) + ')'; ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.arc(s.x, s.y, 6 + ra * 26, 0, 6.2832); ctx.stroke();
+            }
+        }
+        ctx.globalAlpha = 1;
+        drawBars(now);
+    }
+
+    function frame(now) {
+        if (!running) return;
+        var dt = Math.min(50, now - (last || now)); last = now;
+        if (!trav && now >= nextTravAt) startTrav(Math.floor(Math.random() * nodes.length), now);
+        else if (trav && now > trav.end) { trav = null; nextTravAt = now + 600; }
+        update(dt); draw(now);
+        raf = requestAnimationFrame(frame);
+    }
+    function start() { if (running || reduce) return; running = true; last = 0; raf = requestAnimationFrame(frame); }
+    function stop() { running = false; cancelAnimationFrame(raf); }
+
+    /* interaction (desktop pointer only) */
+    if (window.matchMedia && window.matchMedia('(hover: hover)').matches && !reduce) {
+        hero.addEventListener('mousemove', function (e) {
+            var r = wrap.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; mouse.on = true;
+        });
+        hero.addEventListener('mouseleave', function () { mouse.on = false; });
+        hero.addEventListener('click', function (e) {
+            if (e.target.closest('a, button')) return;
+            var r = wrap.getBoundingClientRect();
+            startTrav(pickStart(e.clientX - r.left, e.clientY - r.top), performance.now());
+        });
+    }
+
+    resize();
+    if (reduce) { startTrav(Math.floor(nodes.length / 2), performance.now() - 1400); draw(performance.now()); }
+    var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(resize, 150); });
+    if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (en) { en[0].isIntersecting && !document.hidden ? start() : stop(); }, { threshold: 0 }).observe(hero);
+    } else { start(); }
+    document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
 })();

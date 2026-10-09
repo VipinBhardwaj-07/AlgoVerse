@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Help &amp; Support | AlgoVerse</title>
+  <meta name="description" content="Get help with your AlgoVerse account, courses, payments and privacy.">
+  <meta name="theme-color" content="#05050a">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="account.css">
+</head>
+<body>
+  <header class="ac-topbar">
+    <div class="ac-topbar-inner">
+      <a class="ac-logo" href="index.html"><img src="logo.png" alt=""> Algo<span>Verse</span></a>
+      <div class="ac-topbar-actions">
+        <a class="ac-link-btn" href="index.html">← <span class="lbl">Back to site</span></a>
+        <span id="topbarUser"></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="ac-wrap" style="max-width:860px">
+    <h1 class="ac-page-title">Help &amp; Support</h1>
+    <p class="ac-page-sub">Find quick answers, or reach the AlgoVerse team.</p>
+
+    <div class="help-cards">
+      <a class="help-card" href="settings.html#security"><span class="ico">🔐</span><strong>Account &amp; security</strong><span>Password, sessions, sign-in</span></a>
+      <a class="help-card" href="settings.html#payments"><span class="ico">💳</span><strong>Billing</strong><span>Plans and payment history</span></a>
+      <a class="help-card" href="settings.html#privacy"><span class="ico">🔒</span><strong>Privacy</strong><span>Visibility and your data</span></a>
+    </div>
+
+    <section class="ac-card" id="faq">
+      <h2>Frequently asked questions</h2>
+      <p class="desc">The most common questions from learners.</p>
+      <details class="faq"><summary>How do I reset or change my password?</summary><p>If you're signed in, go to Settings → Security and use “Change password”. You'll need your current password.</p></details>
+      <details class="faq"><summary>I forgot my password. What can I do?</summary><p>Automated password reset isn't available yet. Email us from the address you signed up with and we'll help you recover access.</p></details>
+      <details class="faq"><summary>How do I update my name or photo?</summary><p>Open My Profile and choose “Edit profile”. You can change your name, photo, headline, skills and links.</p></details>
+      <details class="faq"><summary>Where can I see my payments?</summary><p>Settings → Billing lists purchases made with your account. Stripe also emails a receipt after each payment.</p></details>
+      <details class="faq"><summary>Can I download or delete my data?</summary><p>Yes. Settings → Data &amp; legal lets you export your profile and settings, or permanently delete your account.</p></details>
+      <details class="faq"><summary>How do I contact Vera, the AI study assistant?</summary><p>Use the chat button at the bottom-right of the home page. For account or billing issues, email the team instead.</p></details>
+    </section>
+
+    <section class="ac-card" id="contact">
+      <h2>Contact support</h2>
+      <p class="desc">Tell us what's going on and we'll get back to you by email.</p>
+      <form id="supportForm" novalidate>
+        <div class="ac-grid">
+          <div class="ac-field"><label for="spTopic">Topic</label>
+            <select id="spTopic"><option>Account &amp; sign-in</option><option>Billing &amp; payments</option><option>Course content</option><option>Privacy &amp; data</option><option>Bug report</option><option>Other</option></select></div>
+          <div class="ac-field"><label for="spEmail">Your email</label><input id="spEmail" type="email" autocomplete="email" inputmode="email"></div>
+          <div class="ac-field full"><label for="spMsg">Message</label><textarea id="spMsg" maxlength="2000" placeholder="Describe the issue, including any steps to reproduce it"></textarea></div>
+        </div>
+        <div class="ac-actions"><button class="ac-btn primary" type="submit">Open in my email app</button><a class="ac-btn ghost" href="mailto:officialalgoverse@gmail.com">officialalgoverse@gmail.com</a></div>
+        <p class="ac-hint" style="margin-top:.7rem">This opens your email app with the message filled in, so you can review it before sending.</p>
+      </form>
+    </section>
+
+    <section class="ac-card">
+      <h2>Policies</h2>
+      <div class="ac-legal-links" style="margin-top:.8rem">
+        <a href="legal.html#privacy-policy"><span>Privacy Policy</span><span aria-hidden="true">→</span></a>
+        <a href="legal.html#terms"><span>Terms of Service</span><span aria-hidden="true">→</span></a>
+        <a href="legal.html#cookies"><span>Cookie Policy</span><span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+  </main>
+
+  <script src="account.js"></script>
+  <script>
+  (function () {
+    const { $ } = Account;
+    if (Account.email()) $('#spEmail').value = Account.email();
+    $('#supportForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const msg = $('#spMsg').value.trim(), em = $('#spEmail').value.trim();
+      if (!/^\S+@\S+\.\S+$/.test(em)) return Account.toast('Please enter a valid email address.', 'err');
+      if (msg.length < 10) return Account.toast('Please add a few more details to your message.', 'err');
+      const subject = 'AlgoVerse support: ' + $('#spTopic').value;
+      const body = msg + '\n\n— ' + em;
+      location.href = 'mailto:officialalgoverse@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    });
+  })();
+  </script>
+</body>
+</html>
