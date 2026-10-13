@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Trie Data Structure: Prefix Trees and Autocomplete | AlgoVerse</title><meta name="description" content="Learn how trie prefix trees store words, implement insert and search, and power autocomplete and dictionary queries."><meta name="theme-color" content="#05050a"><link rel="icon" type="image/png" href="logo.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="account.css"><link rel="stylesheet" href="article.css"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Tries: Prefix Trees for Fast Word Search","datePublished":"2026-10-13","dateModified":"2026-10-13","author":{"@type":"Organization","name":"AlgoVerse"}}</script></head>
+<body><header class="ac-topbar"><div class="ac-topbar-inner"><a class="ac-logo" href="index.html"><img src="logo.png" alt=""> Algo<span>Verse</span></a><div class="ac-topbar-actions"><a class="ac-link-btn" href="index.html#blog">← <span class="lbl">All DSA guides</span></a></div></div></header><main class="ac-wrap article-wrap"><a class="article-back" href="index.html#blog">← Back to the DSA journal</a><article><header><div class="article-kicker">Data Structures · Interview Guide</div><h1 class="article-title">Tries: Prefix Trees for Fast Word Search</h1><p class="article-deck">A trie stores strings by sharing nodes for common prefixes. It can answer prefix questions in time proportional to the query length rather than scanning every stored word.</p><div class="article-meta"><span>AlgoVerse Editorial</span><span>Updated October 13, 2026</span><span>6 min read</span></div></header><nav class="article-toc" aria-label="Table of contents"><h2>In this guide</h2><ul><li><a href="#structure">How a trie is organized</a></li><li><a href="#code">Insert and search</a></li><li><a href="#tradeoffs">Tradeoffs and extensions</a></li></ul></nav><div class="article-content">
+<section id="structure"><h2>How a trie is organized</h2><p>Each edge represents a character, and a path from the root spells a prefix. A terminal marker distinguishes a complete word from a prefix of a longer word: without it, searching for “app” could incorrectly succeed just because “apple” exists. Inserting a word of length <code>L</code> takes <code>O(L)</code>; exact lookup and prefix lookup also take <code>O(L)</code>, independent of the number of stored words.</p><p>The cost is memory. A separate node per possible next character can use more space than a hash set for a small vocabulary. Dictionary-based child maps save space for sparse alphabets but add per-node map overhead.</p></section>
+<section id="code"><h2>Compact Python implementation</h2><pre><code>class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_word = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word):
+        node = self.root
+        for char in word:
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+        node.is_word = True
+
+    def search(self, word):
+        node = self._walk(word)
+        return node is not None and node.is_word
+
+    def starts_with(self, prefix):
+        return self._walk(prefix) is not None
+
+    def _walk(self, text):
+        node = self.root
+        for char in text:
+            node = node.children.get(char)
+            if node is None:
+                return None
+        return node</code></pre><p>In production code, normalize case and Unicode consistently if words are meant to compare independent of those details. Keep that policy the same for insertion and queries.</p></section>
+<section id="tradeoffs"><h2>Autocomplete, deletion, and tradeoffs</h2><p>Autocomplete first walks the prefix, then explores descendants to enumerate matching words. Enumeration costs at least the number of output characters, so a trie cannot make returning a huge result set free. A popular product may also store frequency or ranking metadata to return the most useful suggestions first.</p><p>Deletion clears the terminal marker. A cleanup pass may remove nodes that are no longer on a path to any word, but only when they have no children and are not terminal. Common trie extensions include wildcard matching, bitwise tries for integer XOR queries, and compressed radix trees that combine chains of single-child nodes.</p><div class="article-callout"><p><strong>Use a trie when:</strong> many queries share prefixes or you need prefix enumeration. For exact membership only, a hash set is often simpler and more memory-efficient.</p></div></section><h2>Related DSA guides</h2><div class="article-related"><a href="backtracking-guide.html">Backtracking</a><a href="prefix-sums.html">Prefix sums</a><a href="heaps-priority-queues.html">Heaps</a></div></div></article><p class="article-footer">AlgoVerse DSA Journal · <a href="index.html#blog">Explore all 15 guides</a></p></main><script src="account.js"></script></body></html>

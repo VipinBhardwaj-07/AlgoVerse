@@ -22,4 +22,85 @@
     <priority>0.8</priority>
 </url>
 
+<url>
+    <loc>https://algoverseweb.vercel.app/about.html</loc>
+    <priority>0.5</priority>
+</url>
+
+<url>
+    <loc>https://algoverseweb.vercel.app/contact.html</loc>
+    <priority>0.5</priority>
+</url>
+
+<url>
+    <loc>https://algoverseweb.vercel.app/privacy-policy.html</loc>
+    <priority>0.4</priority>
+</url>
+
+<url>
+    <loc>https://algoverseweb.vercel.app/terms.html</loc>
+    <priority>0.4</priority>
+</url>
+
+<url>
+    <loc>https://algoverseweb.vercel.app/sliding-window-patterns.html</loc>
+    <priority>0.8</priority>
+</url>
+<url>
+    <loc>https://algoverseweb.vercel.app/bfs-vs-dfs.html</loc>
+    <priority>0.8</priority>
+</url>
+<url>
+    <loc>https://algoverseweb.vercel.app/dynamic-programming-patterns.html</loc>
+    <priority>0.8</priority>
+</url>
+<url>
+    <loc>https://algoverseweb.vercel.app/two-pointers-technique.html</loc>
+    <priority>0.7</priority>
+</url>
+<url>
+    <loc>https://algoverseweb.vercel.app/binary-search-guide.html</loc>
+    <priority>0.7</priority>
+</url>
+<url>
+    <loc>https://algoverseweb.vercel.app/backtracking-guide.html</loc>
+    <priority>0.7</priority>
+</url>
+<url>
+    <loc>https://algoverseweb.vercel.app/monotonic-stack.html</loc>
+    <priority>0.7</priority>
+</url>
+<url>
+    <loc>https://algoverseweb.vercel.app/heaps-priority-queues.html</loc>
+    <priority>0.7</priority>
+</url>
+<url>
+    <loc>https://algoverseweb.vercel.app/union-find.html</loc>
+    <priority>0.7</priority>
+</url>
+<url>
+    <loc>https://algoverseweb.vercel.app/topological-sort.html</loc>
+    <priority>0.7</priority>
+</url>
+<url>
+    <loc>https://algoverseweb.vercel.app/dijkstra-shortest-path.html</loc>
+    <priority>0.7</priority>
+</url>
+<url>
+    <loc>https://algoverseweb.vercel.app/trie-data-structure.html</loc>
+    <priority>0.7</priority>
+</url>
+<url>
+    <loc>https://algoverseweb.vercel.app/prefix-sums.html</loc>
+    <priority>0.7</priority>
+</url>
+<url>
+    <loc>https://algoverseweb.vercel.app/linked-list-cycle-detection.html</loc>
+    <priority>0.7</priority>
+</url>
+<url>
+    <loc>https://algoverseweb.vercel.app/greedy-algorithms.html</loc>
+    <priority>0.7</priority>
+</url>
+
 </urlset>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BFS vs DFS: Differences, Use Cases, and Code | AlgoVerse</title>
+  <meta name="description" content="Compare BFS and DFS graph traversal, understand complexity and shortest paths, and learn when each algorithm is the right choice.">
+  <meta name="theme-color" content="#05050a">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="account.css"><link rel="stylesheet" href="article.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"BFS vs DFS: How to Choose the Right Graph Traversal","datePublished":"2026-10-13","dateModified":"2026-10-13","author":{"@type":"Organization","name":"AlgoVerse"}}</script>
+</head>
+<body><header class="ac-topbar"><div class="ac-topbar-inner"><a class="ac-logo" href="index.html"><img src="logo.png" alt=""> Algo<span>Verse</span></a><div class="ac-topbar-actions"><a class="ac-link-btn" href="index.html#blog">← <span class="lbl">All DSA guides</span></a></div></div></header>
+<main class="ac-wrap article-wrap"><a class="article-back" href="index.html#blog">← Back to the DSA journal</a><article>
+<header><div class="article-kicker">Graph Algorithms · Interview Guide</div><h1 class="article-title">BFS vs. DFS: How to Choose the Right Graph Traversal</h1><p class="article-deck">Breadth-first search and depth-first search both visit a graph, but their exploration order makes them useful for different questions. Learn their shared foundation and their critical differences.</p><div class="article-meta"><span>AlgoVerse Editorial</span><span>Updated October 13, 2026</span><span>8 min read</span></div></header>
+<nav class="article-toc" aria-label="Table of contents"><h2>In this guide</h2><ul><li><a href="#basics">What traversal means</a></li><li><a href="#bfs">Breadth-first search</a></li><li><a href="#dfs">Depth-first search</a></li><li><a href="#choose">Choosing an approach</a></li></ul></nav>
+<div class="article-content">
+<section id="basics"><h2>What graph traversal means</h2><p>A graph consists of vertices connected by edges. Traversal systematically visits reachable vertices while avoiding repeated work. With an adjacency-list representation, a complete traversal takes <code>O(V + E)</code> time and <code>O(V)</code> additional space, where <code>V</code> is the number of vertices and <code>E</code> the number of edges.</p><p>Mark a node as visited <strong>when it is enqueued or pushed</strong>, not only when it is removed. This prevents the same vertex entering the worklist many times, especially when multiple edges lead to it. For a disconnected graph, start a traversal from every still-unvisited vertex.</p></section>
+<section id="bfs"><h2>Breadth-first search (BFS)</h2><p>BFS visits vertices in layers of increasing distance from a start node. A FIFO queue preserves that order, which is why BFS finds the shortest path measured in number of edges in an unweighted graph.</p><pre><code>from collections import deque
+
+def bfs(graph, start):
+    seen = {start}
+    queue = deque([start])
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order</code></pre><p>Use BFS for minimum-hop paths, level-order tree traversal, nearest-source problems, and spreading simulations. Its frontier can become wide: a tree with a broad level may require <code>O(V)</code> queue space.</p></section>
+<section id="dfs"><h2>Depth-first search (DFS)</h2><p>DFS follows one branch as far as possible before backtracking. A stack gives an iterative implementation; recursion expresses the same idea but consumes call-stack space and may overflow on a very deep graph.</p><pre><code>def dfs(graph, start):
+    seen = {start}
+    stack = [start]
+    order = []
+    while stack:
+        node = stack.pop()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                stack.append(neighbor)
+    return order</code></pre><p>DFS is a natural fit for connected-component discovery, maze exploration, cycle detection, backtracking, and topological sorting. In directed graphs, cycle checks often need three states—unvisited, active on the current recursion path, and finished—because merely having visited a vertex does not prove a back edge.</p></section>
+<section id="choose"><h2>Which one should you choose?</h2><ul><li>Choose <strong>BFS</strong> when the question asks for the fewest edges, nearest node, or values by level.</li><li>Choose <strong>DFS</strong> when exploring complete paths, detecting structural properties, or processing dependencies.</li><li>For reachability alone, either is usually correct; consider whether a wide queue or deep call stack is safer.</li><li>For weighted shortest paths, ordinary BFS only works when every edge has equal cost. Use Dijkstra for nonnegative weights or a suitable algorithm for the weight structure.</li></ul><div class="article-callout"><p><strong>Remember:</strong> traversal order matters for the answer, not for whether all reachable vertices can eventually be visited. Name the required property before picking a traversal.</p></div></section>
+<h2>Related DSA guides</h2><div class="article-related"><a href="dijkstra-shortest-path.html">Dijkstra's algorithm</a><a href="topological-sort.html">Topological sort</a><a href="union-find.html">Union-Find</a></div>
+</div></article><p class="article-footer">AlgoVerse DSA Journal · <a href="index.html#blog">Explore all 15 guides</a></p></main><script src="account.js"></script></body></html>
