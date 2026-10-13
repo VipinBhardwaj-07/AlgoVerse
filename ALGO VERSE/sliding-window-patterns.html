@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sliding Window Algorithm: Fixed and Variable Patterns | AlgoVerse</title>
+  <meta name="description" content="Learn the sliding window technique with fixed and variable windows, step-by-step Python examples, complexity analysis, and interview tips.">
+  <meta name="theme-color" content="#05050a">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="account.css">
+  <link rel="stylesheet" href="article.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Sliding Window Algorithm: Fixed and Variable Patterns","datePublished":"2026-10-13","dateModified":"2026-10-13","author":{"@type":"Organization","name":"AlgoVerse"}}</script>
+</head>
+<body>
+  <header class="ac-topbar"><div class="ac-topbar-inner"><a class="ac-logo" href="index.html"><img src="logo.png" alt=""> Algo<span>Verse</span></a><div class="ac-topbar-actions"><a class="ac-link-btn" href="index.html#blog">← <span class="lbl">All DSA guides</span></a></div></div></header>
+  <main class="ac-wrap article-wrap">
+    <a class="article-back" href="index.html#blog">← Back to the DSA journal</a>
+    <article>
+      <header><div class="article-kicker">Array Patterns · Interview Guide</div><h1 class="article-title">Mastering Sliding Window Patterns</h1><p class="article-deck">Sliding window maintains information about a contiguous range as its boundaries move. It replaces repeated subarray work with a single pass in many array and string problems.</p><div class="article-meta"><span>AlgoVerse Editorial</span><span>Updated October 13, 2026</span><span>8 min read</span></div></header>
+      <nav class="article-toc" aria-label="Table of contents"><h2>In this guide</h2><ul><li><a href="#intuition">The core idea</a></li><li><a href="#fixed">Fixed-size windows</a></li><li><a href="#variable">Variable-size windows</a></li><li><a href="#pitfalls">When it works and common mistakes</a></li></ul></nav>
+      <div class="article-content">
+        <section id="intuition"><h2>The core idea: reuse the work</h2><p>Suppose a problem asks for the best result among every contiguous block of length <code>k</code>. Computing each block independently examines up to <code>k</code> values each time, for roughly <code>O(nk)</code> work. A sliding window starts with the first block, then updates its state when it moves: remove the value leaving on the left and add the value entering on the right. Each item is handled a constant number of times, so the scan is <code>O(n)</code>.</p><p>The “window” is usually represented by two indices, <code>left</code> and <code>right</code>. The state might be a running sum, a frequency table, a count of distinct values, or a maximum maintained by a deque. The key is to define precisely what the state means after every boundary change.</p></section>
+        <section id="fixed"><h2>Fixed-size windows</h2><p>For a known length, initialize the first window once and slide one position at a time. For example, this returns the largest sum of any <code>k</code> consecutive numbers:</p><pre><code>def max_window_sum(nums, k):
+    if k &lt;= 0 or k &gt; len(nums):
+        raise ValueError("k must be between 1 and len(nums)")
+
+    window = sum(nums[:k])
+    best = window
+    for right in range(k, len(nums)):
+        window += nums[right] - nums[right - k]
+        best = max(best, window)
+    return best</code></pre><p>Initialization costs <code>O(k)</code>; the loop costs <code>O(n-k)</code>, giving <code>O(n)</code> time and <code>O(1)</code> auxiliary space. The same pattern works for averages, counts of a property, and fixed-length substring frequencies.</p></section>
+        <section id="variable"><h2>Variable-size windows</h2><p>When the valid range can grow and shrink, expand the right boundary and shrink from the left until a condition is restored. For nonnegative values, the shortest subarray with sum at least a target can be found this way:</p><pre><code>def min_subarray_len(target, nums):
+    left = 0
+    total = 0
+    best = len(nums) + 1
+
+    for right, value in enumerate(nums):
+        total += value
+        while total &gt;= target:
+            best = min(best, right - left + 1)
+            total -= nums[left]
+            left += 1
+
+    return 0 if best &gt; len(nums) else best</code></pre><p>The inner loop does not make this quadratic: <code>left</code> only moves forward and can cross each element once. Together both pointers perform <code>O(n)</code> total moves. This version relies on nonnegative values; with negative numbers, expanding the window no longer guarantees that its sum moves predictably.</p></section>
+        <section id="pitfalls"><h2>When it works—and common mistakes</h2><p>Sliding windows are strongest when the target is a <strong>contiguous</strong> range and the maintained state can be updated incrementally. For “longest substring without repeating characters,” track the most recent position of each character and jump the left boundary past duplicates. For “at most K distinct values,” maintain a frequency map and shrink until its size is at most <code>K</code>.</p><ul><li>Do not confuse contiguous subarrays with arbitrary subsequences.</li><li>Prove that the shrink condition is safe; negative values often break sum-based assumptions.</li><li>Be clear whether the result is the longest valid range, shortest valid range, or best fixed-size range.</li><li>Check empty input, <code>k</code> at the boundaries, and whether the answer may be zero.</li></ul><div class="article-callout"><p><strong>Interview habit:</strong> State the window invariant aloud. For example: “After shrinking, the current window has at most K distinct characters.” It makes correctness and pointer movement easier to explain.</p></div></section>
+        <h2>Related DSA guides</h2><div class="article-related"><a href="two-pointers-technique.html">Two pointers</a><a href="prefix-sums.html">Prefix sums</a><a href="dynamic-programming-patterns.html">Dynamic programming</a></div>
+      </div>
+    </article>
+    <p class="article-footer">AlgoVerse DSA Journal · <a href="index.html#blog">Explore all 15 guides</a></p>
+  </main>
+  <script src="account.js"></script>
+</body>
+</html>

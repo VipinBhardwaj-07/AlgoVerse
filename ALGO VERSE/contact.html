@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact AlgoVerse | Questions, Feedback, and Support</title>
+  <meta name="description" content="Contact the AlgoVerse team with questions, feedback, partnership ideas, or help with your account and courses.">
+  <meta name="theme-color" content="#05050a">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="account.css">
+</head>
+<body>
+  <header class="ac-topbar"><div class="ac-topbar-inner">
+    <a class="ac-logo" href="index.html"><img src="logo.png" alt=""> Algo<span>Verse</span></a>
+    <div class="ac-topbar-actions"><a class="ac-link-btn" href="index.html">← <span class="lbl">Back to site</span></a></div>
+  </div></header>
+  <main class="ac-wrap" style="max-width:860px">
+    <h1 class="ac-page-title">Contact AlgoVerse</h1>
+    <p class="ac-page-sub">Have a question, found an issue, or want to share feedback? Send us a note and we’ll get back to you by email.</p>
+
+    <section class="ac-card">
+      <h2>Send a message</h2>
+      <p class="desc">Your email app will open with a message prepared for you to review and send.</p>
+      <form id="contactPageForm" novalidate>
+        <div class="ac-grid">
+          <div class="ac-field"><label for="contactName">Your name</label><input id="contactName" name="name" type="text" autocomplete="name" maxlength="100" required></div>
+          <div class="ac-field"><label for="contactEmail">Your email</label><input id="contactEmail" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" required></div>
+          <div class="ac-field full"><label for="contactTopic">Topic</label><select id="contactTopic" name="topic"><option>General question</option><option>Account or billing support</option><option>Course feedback</option><option>Bug report</option><option>Partnership or team plans</option></select></div>
+          <div class="ac-field full"><label for="contactMessage">Message</label><textarea id="contactMessage" name="message" maxlength="3000" required placeholder="How can we help?"></textarea></div>
+        </div>
+        <div class="ac-actions"><button class="ac-btn primary" type="submit">Open email draft</button><a class="ac-btn ghost" href="mailto:officialalgoverse@gmail.com">Email us directly</a></div>
+        <p id="contactFormHint" class="ac-hint" role="status" aria-live="polite" style="margin-top:.7rem">This form opens your email application; it does not send or store your message on this page.</p>
+      </form>
+    </section>
+
+    <section class="ac-card">
+      <h2>Other ways to reach us</h2>
+      <p>Email <a href="mailto:officialalgoverse@gmail.com" style="color:var(--c-accent2)">officialalgoverse@gmail.com</a> for support. You can also visit the <a href="https://discord.gg/algoverse" rel="noreferrer" target="_blank" style="color:var(--c-accent2)">AlgoVerse Discord community</a>.</p>
+      <div class="ac-actions"><a class="ac-btn ghost" href="support.html">Help &amp; support</a><a class="ac-btn ghost" href="privacy-policy.html">Privacy questions</a></div>
+    </section>
+  </main>
+  <script>
+    (function () {
+      var form = document.getElementById('contactPageForm');
+      var hint = document.getElementById('contactFormHint');
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        var name = document.getElementById('contactName').value.trim();
+        var email = document.getElementById('contactEmail').value.trim();
+        var message = document.getElementById('contactMessage').value.trim();
+        if (!name || !/^\S+@\S+\.\S+$/.test(email) || message.length < 10) {
+          hint.textContent = 'Please enter your name, a valid email, and a message of at least 10 characters.';
+          hint.className = 'ac-hint err';
+          return;
+        }
+        var subject = 'AlgoVerse: ' + document.getElementById('contactTopic').value;
+        var body = message + '\n\nFrom: ' + name + ' (' + email + ')';
+        window.location.href = 'mailto:officialalgoverse@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+      });
+    })();
+  </script>
+</body>
+</html>
