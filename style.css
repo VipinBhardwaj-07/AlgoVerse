@@ -1792,3 +1792,49 @@ nav nav { position: static; background: none; border: 0; box-shadow: none; backd
 .mobile-menu-auth[hidden] { display: none; }
 .mobile-nav-list .menu-icon { margin: 0; }
 html.menu-open #vera-chat-btn, html.menu-open #btt, html.menu-open .mobile-sticky-cta { display: none !important; }
+
+/* Scroll reveals stay subtle, but make the motion visible across every section. */
+.fade-in {
+  transform: translate3d(0, 34px, 0) scale(.985);
+  filter: blur(5px);
+  transition:
+    opacity .8s cubic-bezier(.2,.7,.2,1),
+    transform .8s cubic-bezier(.2,.7,.2,1),
+    filter .8s cubic-bezier(.2,.7,.2,1);
+}
+html:not(.motion-ready) .fade-in {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: blur(0);
+}
+
+/* A small pointer tilt adds depth without changing card sizes or content. */
+.feature-card.is-tilting,
+.course-card.is-tilting,
+.price-card.is-tilting,
+.testi-card.is-tilting,
+.blog-card.is-tilting {
+  z-index: 2;
+  transform:
+    perspective(900px)
+    rotateX(var(--tilt-y, 0deg))
+    rotateY(var(--tilt-x, 0deg))
+    translateY(-5px);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, .28), 0 0 24px rgba(0, 229, 192, .08);
+  transition: transform .16s ease-out, box-shadow .2s ease, border-color .2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
+  }
+  .algorithm-traveller { display: none; }
+}

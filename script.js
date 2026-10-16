@@ -145,6 +145,62 @@
         window.addEventListener('resize', update);
         update();
     }
+    function initAlgorithmTraveller() {
+        const traveller = $('#algorithmTraveller');
+        if (!traveller) return;
+        const label = traveller.querySelector('[data-traveller-label]');
+        const code = traveller.querySelector('[data-traveller-code]');
+        const stages = [
+            { selector: '#hero .aurora-actions', label: 'Initialize', code: 'O(1)' },
+            { selector: '#explore .section-head', label: 'Traverse', code: 'BFS' },
+            { selector: '#courses .section-head', label: 'Build', code: 'O(n log n)' },
+            { selector: '#blog .section-head', label: 'Solve', code: 'DP[i]' },
+            { selector: '#contact .contact-info', label: 'Ship', code: 'return true' },
+            { selector: 'footer', label: 'Complete', code: 'ACCEPTED' }
+        ].map(stage => ({ ...stage, element: $(stage.selector) })).filter(stage => stage.element);
+        if (!label || !code || stages.length < 2) return;
+
+        let frame = 0;
+        function update() {
+            frame = 0;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const scrollY = window.scrollY;
+            const points = stages.map((stage, index) => {
+                const rect = stage.element.getBoundingClientRect();
+                const x = Math.max(74, Math.min(viewportWidth - 74, viewportWidth * (index % 2 ? 0.18 : 0.82)));
+                return { ...stage, x, y: rect.top + scrollY + rect.height / 2 };
+            });
+
+            let index = 0;
+            while (index < points.length - 2 && scrollY > points[index + 1].y - viewportHeight * 0.5) index++;
+            const from = points[index];
+            const to = points[index + 1];
+            const start = from.y - viewportHeight * 0.68;
+            let end = to.y - viewportHeight * 0.32;
+            if (end <= start) end = start + Math.max(1, to.y - from.y);
+            const progress = Math.max(0, Math.min(1, (scrollY - start) / (end - start)));
+            const x = from.x + (to.x - from.x) * progress;
+            const y = from.y + (to.y - from.y) * progress - scrollY;
+
+            traveller.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+            traveller.dataset.side = x > viewportWidth / 2 ? 'right' : 'left';
+            traveller.classList.toggle('is-visible', y > -60 && y < viewportHeight + 60);
+            const activeStage = progress < 0.5 ? from : to;
+            label.textContent = activeStage.label;
+            code.textContent = activeStage.code;
+        }
+        function scheduleUpdate() {
+            if (!frame) frame = window.requestAnimationFrame(update);
+        }
+
+        window.addEventListener('scroll', scheduleUpdate, { passive: true });
+        window.addEventListener('resize', scheduleUpdate);
+        window.addEventListener('load', scheduleUpdate, { once: true });
+        const loadMore = $('#loadMoreArticlesBtn');
+        if (loadMore) loadMore.addEventListener('click', () => window.setTimeout(scheduleUpdate, 0));
+        scheduleUpdate();
+    }
     function initCarouselDots(gridSelector, dotsId) {
         const grid = document.querySelector(gridSelector);
         const dotsWrap = document.getElementById(dotsId);
@@ -246,10 +302,70 @@
         });
     }
     function initScrollAnimations() {
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
-        }, { threshold: 0.15 });
-        $$('.fade-in').forEach(el => observer.observe(el));
+        const elements = $$('.fade-in');
+        const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduceMotion || !('IntersectionObserver' in window)) {
+            elements.forEach(el => el.classList.add('visible'));
+            return;
+        }
+        document.documentElement.classList.add('motion-ready');
+        const pending = new Set(elements);
+        let frame = 0;
+        let observer;
+        function reveal(el) {
+            el.classList.add('visible');
+            pending.delete(el);
+            observer.unobserve(el);
+        }
+        observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                reveal(entry.target);
+            });
+        }, { threshold: 0.01, rootMargin: '0px 0px -6% 0px' });
+        elements.forEach(el => observer.observe(el));
+        function updateVisible() {
+            frame = 0;
+            const edge = window.innerHeight * 0.94;
+            pending.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top <= edge && rect.bottom >= 0) reveal(el);
+            });
+            if (!pending.size) {
+                window.removeEventListener('scroll', scheduleUpdate);
+                window.removeEventListener('resize', scheduleUpdate);
+                observer.disconnect();
+            }
+        }
+        function scheduleUpdate() {
+            if (!frame) frame = window.requestAnimationFrame(updateVisible);
+        }
+        window.addEventListener('scroll', scheduleUpdate, { passive: true });
+        window.addEventListener('resize', scheduleUpdate);
+        const loadMore = $('#loadMoreArticlesBtn');
+        if (loadMore) loadMore.addEventListener('click', () => window.setTimeout(scheduleUpdate, 0));
+        $$('#mobileMenu [data-reveal-more]').forEach(link => link.addEventListener('click', () => window.setTimeout(scheduleUpdate, 0)));
+        scheduleUpdate();
+    }
+    function initCardMotion() {
+        const hasHover = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!hasHover || reduceMotion) return;
+        $$('.feature-card, .course-card, .price-card, .testi-card, .blog-card').forEach(card => {
+            card.addEventListener('pointermove', event => {
+                const rect = card.getBoundingClientRect();
+                const x = (event.clientX - rect.left) / rect.width - 0.5;
+                const y = (event.clientY - rect.top) / rect.height - 0.5;
+                card.style.setProperty('--tilt-x', `${(x * 5).toFixed(2)}deg`);
+                card.style.setProperty('--tilt-y', `${(-y * 5).toFixed(2)}deg`);
+                card.classList.add('is-tilting');
+            });
+            card.addEventListener('pointerleave', () => {
+                card.classList.remove('is-tilting');
+                card.style.removeProperty('--tilt-x');
+                card.style.removeProperty('--tilt-y');
+            });
+        });
     }
     function initNavbarShadow() {
         const nav = document.querySelector('nav'); // page uses a <nav>
@@ -522,7 +638,7 @@
     }
     function init() {
         initMobileMenu(); initMarquee(); initBackToTop(); initMobileStickyCta(); initFAQ(); initScrollAnimations(); initNavbarShadow(); initAuth(); initPaymentFlow(); initChatbot();
-        initScrollProgress(); initCountUp(); initScrollIndicator();
+        initScrollProgress(); initAlgorithmTraveller(); initCountUp(); initScrollIndicator(); initCardMotion();
         initCarouselDots('.courses-grid', 'coursesDots');
         initCarouselDots('.testimonials-grid', 'testimonialsDots');
         autoInitCarousels('.features-grid');
